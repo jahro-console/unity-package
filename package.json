@@ -1,0 +1,24 @@
+{
+  "name": "io.jahro.console",
+  "version": "0.1.0-alpha",
+  "displayName": "Jahro",
+  "description": "Jahro is a powerful and easy-to-use Unity debugging console and runtime tool. Effortlessly execute commands, monitor variables in real-time, capture logs, and sync snapshots to analyze your game like never before. Perfect for developers who want a smarter way to debug, test, and optimize their Unity projects!",
+  "unity": "2019.1",
+  "unityRelease": "0b5",
+  "dependencies": {},
+  "keywords": [
+    "Jahro",
+    "Console",
+    "Debugging",
+    "Cheats",
+    "Logs",
+    "Unity",
+    "Commands"
+  ],
+  "author": {
+    "name": "Oleksii Bulat",
+    "email": "support@jahro.io",
+    "url": "https://jahro.io"
+  },
+  "type": "tool"
+}
