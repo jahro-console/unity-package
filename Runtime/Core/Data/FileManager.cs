@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Jahro.Core.Snapshots;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace Jahro.Core.Data
@@ -206,9 +205,8 @@ namespace Jahro.Core.Data
             try
             {
                 string jsonContent = File.ReadAllText(packageJsonPath);
-                JObject jsonObject = JObject.Parse(jsonContent);
-                version = jsonObject["version"]?.ToString();
-
+                var pack = JsonUtility.FromJson<PackageObject>(jsonContent);
+                if (pack != null) version = pack.version.ToString();
             }
             catch (Exception ex)
             {
