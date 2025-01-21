@@ -77,6 +77,7 @@ namespace Jahro.Core.Snapshots
         internal override void FillHeaders(UnityWebRequest request)
         {
             request.SetRequestHeader("x-api-key", _key);
+            request.SetRequestHeader("x-log-version", "1.1");
         }
 
         protected override void OnRequestComplete(string result)

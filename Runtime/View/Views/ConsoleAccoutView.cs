@@ -1,12 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using Jahro;
-using System.IO.IsolatedStorage;
-using Jahro.Core;
 using Jahro.Core.Context;
 
 namespace Jahro.View
@@ -23,25 +16,12 @@ namespace Jahro.View
         private UserAvatar _activeUserAvatar;
 
         [SerializeField]
-        private Text _currentPlanLabel;
-
-        [SerializeField]
         private RectTransform _teamMembersContainer;
 
         [SerializeField]
         private GameObject _teamMemberPrefab;
 
-        void Start()
-        {
-            RefreshSafeArea();
-        }
-
         public void ManageAccountClick()
-        {
-            Application.OpenURL(Context.TeamInfo.Url);
-        }
-
-        public void UpgradeAccountClick()
         {
             Application.OpenURL(Context.TeamInfo.Url);
         }
@@ -103,23 +83,6 @@ namespace Jahro.View
         {
             base.OnWindowRectChanged(rect);
 
-        }
-
-        protected override void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-            base.OnSafeAreaChanged(safeArea, scaleFactor);
-
-            RefreshSafeArea();
-        }
-
-        private void RefreshSafeArea()
-        {
-            // int leftPadding = (int)Mathf.Max(SafeArea.x/ScaleFactor, 0);
-            // int rightPadding = (int)Mathf.Max((Screen.width - (SafeArea.x + SafeArea.width))/ScaleFactor, 0);
-            // if (_contentLayoutGroup != null)
-            // {
-            //     _contentLayoutGroup.padding = new RectOffset(leftPadding, rightPadding, 0, 0);
-            // }
         }
     }
 }

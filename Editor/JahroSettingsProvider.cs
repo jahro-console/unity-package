@@ -4,7 +4,6 @@ using Jahro.Core.Data;
 using Jahro.Core.Network;
 using UnityEditor;
 using UnityEngine;
-using static Jahro.Core.Network.KeyValidator.ValidateKeyResponse;
 
 namespace Jahro.Editor
 {

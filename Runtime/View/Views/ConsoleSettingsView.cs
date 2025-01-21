@@ -27,12 +27,6 @@ namespace Jahro.View
             _keepInWindowBounds.onValueChanged.AddListener(OnKeepInWindowBoundsValueChanged);
         }
 
-        public void Start()
-        {
-            RefreshSafeArea();
-
-        }
-
         public override void OnStateLoad(ConsoleStorage storage)
         {
             base.OnStateLoad(storage);
@@ -65,23 +59,6 @@ namespace Jahro.View
         {
             base.OnWindowRectChanged(rect);
 
-        }
-
-        protected override void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-            base.OnSafeAreaChanged(safeArea, scaleFactor);
-
-            RefreshSafeArea();
-        }
-
-        private void RefreshSafeArea()
-        {
-            // int leftPadding = (int)Mathf.Max(SafeArea.x/ScaleFactor, 0);
-            // int rightPadding = (int)Mathf.Max((Screen.width - (SafeArea.x + SafeArea.width))/ScaleFactor, 0);
-            // if (_contentLayoutGroup != null)
-            // {
-            //     _contentLayoutGroup.padding = new RectOffset(leftPadding, rightPadding, 0, 0);
-            // }
         }
 
         private void OnKeepInWindowBoundsValueChanged(bool arg0)

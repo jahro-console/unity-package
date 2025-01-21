@@ -52,8 +52,6 @@ namespace Jahro.View
 
         private HorizontalLayoutGroup _layoutGroup;
 
-        private LayoutElement _layoutElement;
-
         private MobileMenu _mobileMenu;
 
         private UserAvatar _userAvatar;
@@ -71,7 +69,6 @@ namespace Jahro.View
             _windowTransform = mainWindow.GetComponent<RectTransform>();
             _canvasTransform = mainWindow.JahroCanvas.GetComponent<RectTransform>();
             _layoutGroup = GetComponent<HorizontalLayoutGroup>();
-            _layoutElement = GetComponent<LayoutElement>();
             _userAvatar = GetComponentInChildren<UserAvatar>();
             if (_context != null)
             {
@@ -79,7 +76,6 @@ namespace Jahro.View
                 _mobileMenu.InitContext(_context);
             }
 
-            mainWindow.OnSafeAreaChanged += OnSafeAreaChanged;
             if (mainWindow.IsMobileMode)
             {
                 FullscreenButton.SetActive(false);
@@ -168,18 +164,6 @@ namespace Jahro.View
         public void OnOptionsClick()
         {
             _mainWindow.OpenOptionsMenu();
-        }
-
-        private void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-
-            var currentOffset = _layoutGroup.padding;
-            int leftPadding = (int)Mathf.Max(safeArea.x / scaleFactor, 14);
-            int topPadding = (int)Mathf.Max((Screen.height - (safeArea.y + safeArea.height)) / scaleFactor, 0);
-            float heightOffset = 52 + topPadding;
-
-            _layoutGroup.padding = new RectOffset(leftPadding, currentOffset.right, topPadding, currentOffset.bottom);
-            _layoutElement.preferredHeight = heightOffset;
         }
 
         private void InitDrag()

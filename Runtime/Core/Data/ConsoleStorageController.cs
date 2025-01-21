@@ -83,23 +83,6 @@ namespace Jahro.Core.Data
         internal static void LoadState()
         {
             Instance.ReadLocalSaves();
-#if UNITY_EDITOR
-            string version = "";
-            var asm = Instance.GetType().Assembly;
-            var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssembly(asm);
-            if (packageInfo == null)
-            {
-                var assembly = UnityEditor.Compilation.CompilationPipeline.GetAssemblyDefinitionFilePathFromAssemblyName("Jahro.Console");
-                var parentDirectory = Directory.GetParent(Path.GetDirectoryName(assembly));
-                var filePath = Path.Combine(parentDirectory.FullName, "package.json");
-                version = FileManager.ReadPackageJsonVersion(filePath);
-            }
-            else
-            {
-                version = packageInfo.version;
-            }
-            Instance._storage.CurrentJahroVersion = version;
-#endif
         }
 
         internal static void SaveState()

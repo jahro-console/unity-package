@@ -49,7 +49,10 @@ namespace Jahro.Core.Context
 
         internal static IEnumerator RefreshSession()
         {
-            yield return JahroContext.RefreshCoroutine(ConsoleStorageController.Instance.ConsoleStorage, Current._context);
+            if (Current._context != null)
+            {
+                yield return JahroContext.RefreshCoroutine(ConsoleStorageController.Instance.ConsoleStorage, Current._context);
+            }
         }
 
         internal static void PauseSession(bool pause)

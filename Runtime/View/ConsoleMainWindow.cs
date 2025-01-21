@@ -62,6 +62,8 @@ namespace Jahro.View
 
         private Rect _lastSafeArea = new Rect(0, 0, 0, 0);
 
+        private LayoutGroup _layoutGroup;
+
         public Mode CurrentMode { get; private set; }
 
         public bool IsTightMode = false;
@@ -73,8 +75,6 @@ namespace Jahro.View
         public Action OnWindowSizeChanged;
 
         public Action<bool> OnTightModeChanged;
-
-        public Action<Rect, float> OnSafeAreaChanged;
 
         public enum Mode
         {
@@ -94,6 +94,7 @@ namespace Jahro.View
             _rootCanvasTransform = RootCanvas.GetComponent<RectTransform>();
             ScalingBehaviour = GetComponent<CanvasScalingBehaviour>();
             ScalingBehaviour.OnScaleChanged += OnScaleChanged;
+            _layoutGroup = GetComponent<LayoutGroup>();
 
             HeaderPanelBehaviour = GetComponentInChildren<HeaderPanelBehaviour>();
             BottomPanelBehaviour = GetComponentInChildren<BottomPanelBehaviour>();
@@ -170,7 +171,7 @@ namespace Jahro.View
             if (safeArea != _lastSafeArea)
             {
                 _lastSafeArea = safeArea;
-                OnSafeAreaChanged?.Invoke(safeArea, RootCanvas.scaleFactor);
+                StartCoroutine(SafeAreaChanged(safeArea));
             }
         }
 
@@ -216,6 +217,25 @@ namespace Jahro.View
         internal void WindowPositionChanged(Vector2 anchoredPosition)
         {
             Fullscreen = IsCloseToFullscreen();
+        }
+
+        internal IEnumerator SafeAreaChanged(Rect safeArea)
+        {
+            yield return new WaitForSeconds(0.1f);
+            float scaleFactor = RootCanvas.scaleFactor;
+            int leftPadding = (int)Mathf.Max(safeArea.x / scaleFactor, 0);
+            int topPadding = (int)Mathf.Max((Screen.height - (safeArea.y + safeArea.height)) / scaleFactor, 0);
+            int rightPadding = (int)Mathf.Max((Screen.width - (safeArea.x + safeArea.width)) / scaleFactor, 0);
+            int bottomPadding = (int)Mathf.Max(safeArea.y / scaleFactor, 0);
+            if (_layoutGroup != null)
+            {
+                _layoutGroup.padding = new RectOffset(leftPadding, rightPadding, topPadding, bottomPadding);
+            }
+
+            if (Fullscreen)
+            {
+                SetFullscreenMode();
+            }
         }
 
         internal void Show()

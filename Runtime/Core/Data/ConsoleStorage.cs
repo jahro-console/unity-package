@@ -28,8 +28,6 @@ namespace Jahro.Core.Data
 
         [SerializeField] internal UserInfo SelectedUserInfo;
 
-        [SerializeField] internal string CurrentJahroVersion;
-
         [NonSerialized] internal IProjectSettings ProjectSettings;
 
         internal ConsoleStorage()

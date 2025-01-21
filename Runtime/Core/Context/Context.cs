@@ -54,6 +54,7 @@ namespace Jahro.Core.Context
             storage.ProjectInfo = _projectInfo = projectInfo;
             storage.TeamInfo = _teamInfo = teamInfo;
             storage.TeamMembers = _teamMembers = users;
+            storage.SelectedUserInfo = _teamMembers.FirstOrDefault(u => u.Id == storage.SelectedUserInfo?.Id);
             if (versionInfo != null)
             {
                 storage.VersionInfo = _versionInfo = versionInfo;
@@ -81,7 +82,7 @@ namespace Jahro.Core.Context
             }
             else
             {
-                var initContextRequest = new InitContextRequest(storage.ProjectSettings.APIKey, storage.CurrentJahroVersion);
+                var initContextRequest = new InitContextRequest(storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
                 context._selectedUserInfo = ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo;
                 initContextRequest.OnComplete = (result) =>
                 {
@@ -96,6 +97,7 @@ namespace Jahro.Core.Context
                 };
                 initContextRequest.OnFail = (error, responseCode) =>
                 {
+                    Jahro.LogError($"Context request failed: {responseCode} - {error}");
                     if (responseCode == 401)
                     {
                         OnApiError(storage, context);
@@ -123,6 +125,7 @@ namespace Jahro.Core.Context
             };
             refreshRequest.OnFail = (error, responseCode) =>
             {
+                Jahro.LogError($"Context refresh request failed: {responseCode} - {error}");
                 if (responseCode == 401)
                 {
                     OnApiError(storage, context);

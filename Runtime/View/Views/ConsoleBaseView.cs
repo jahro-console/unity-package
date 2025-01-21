@@ -15,16 +15,11 @@ namespace Jahro.View
 
         public ConsoleMainWindow MainWindow { get; private set; }
 
-        protected Rect SafeArea;
-
-        protected float ScaleFactor;
-
         protected JahroContext Context;
 
         public virtual void InitView(ConsoleMainWindow mainWindow)
         {
             MainWindow = mainWindow;
-            mainWindow.OnSafeAreaChanged += OnSafeAreaChanged;
         }
 
         public virtual void InitContext(JahroContext context)
@@ -84,14 +79,6 @@ namespace Jahro.View
         internal virtual void OnWindowRectChanged(Rect rect)
         {
 
-        }
-
-        protected virtual void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-            SafeArea = safeArea;
-            ScaleFactor = scaleFactor;
-            if (OptionsView != null)
-                OptionsView.OnSafeAreaChanged(safeArea, scaleFactor);
         }
     }
 }

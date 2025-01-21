@@ -74,7 +74,7 @@ namespace Jahro.View
         private void OnContextInfoChanged(JahroContext context)
         {
             _projectInfo = context.ProjectInfo;
-            VersionStatusLabel.UpdateInfo(ConsoleStorageController.Instance.ConsoleStorage.CurrentJahroVersion, context.VersionInfo);
+            VersionStatusLabel.UpdateInfo(JahroConfig.CurrentVersion, context.VersionInfo);
             if (_projectInfo == null)
             {
                 ProjectNameLabel.text = "Unknown project";

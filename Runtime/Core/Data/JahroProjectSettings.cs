@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor;
+using Jahro.View;
 using UnityEngine;
 
 namespace Jahro.Core.Data
@@ -50,7 +50,6 @@ namespace Jahro.Core.Data
             {
                 settings = CreateDefault();
             }
-            ValidateSettingsFile(settings);
             return settings;
         }
 
@@ -75,22 +74,5 @@ namespace Jahro.Core.Data
             return settings;
         }
 
-        public static void ValidateSettingsFile(JahroProjectSettings settings)
-        {
-#if UNITY_EDITOR
-
-            var assetsResult = AssetDatabase.FindAssets(" t:JahroProjectSettings " + FileManager.ProjectSettingFile);
-
-            if (assetsResult == null || assetsResult.Length == 0)
-            {
-                // if (AssetDatabase.IsValidFolder(FileManager.PackageSettingPath))
-                // {
-                //     CreateAssetsFolder();
-                // }
-                AssetDatabase.CreateAsset(settings, FileManager.AssetsSettingPath + "/" + FileManager.ProjectSettingFile + ".asset");
-                AssetDatabase.SaveAssets();
-            }
-#endif
-        }
     }
 }

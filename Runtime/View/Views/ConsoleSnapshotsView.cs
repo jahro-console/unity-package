@@ -25,14 +25,8 @@ namespace Jahro.View
 
         private SnapshotSessionsGroupLayout _inactiveSessionGroupLayout;
 
-        public void Awake()
-        {
-
-        }
-
         public void Start()
         {
-            RefreshSafeArea();
             InitSessions(SnapshotsManager.Instance.SnapshotSessions);
 
             SnapshotsManager.Instance.OnSessionAdded += OnSessionAdded;
@@ -117,23 +111,6 @@ namespace Jahro.View
         {
             base.OnWindowRectChanged(rect);
             CloseModalView();
-        }
-
-        protected override void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-            base.OnSafeAreaChanged(safeArea, scaleFactor);
-
-            RefreshSafeArea();
-        }
-
-        private void RefreshSafeArea()
-        {
-            // int leftPadding = (int)Mathf.Max(SafeArea.x/ScaleFactor, 0);
-            // int rightPadding = (int)Mathf.Max((Screen.width - (SafeArea.x + SafeArea.width))/ScaleFactor, 0);
-            // if (_contentLayoutGroup != null)
-            // {
-            //     _contentLayoutGroup.padding = new RectOffset(leftPadding, rightPadding, 0, 0);
-            // }
         }
 
         private SnapshotSessionsGroupLayout CreateGroup(bool isActiveGroup)

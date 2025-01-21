@@ -70,7 +70,6 @@ namespace Jahro.View
 
             currentScale = scaleValue;
             CanvasScaler.referenceResolution = initialReferenceResolution * (2 - currentScale);
-
             StartCoroutine(EventFireScale());
         }
 

@@ -6,14 +6,17 @@ using UnityEngine;
 
 namespace Jahro.Core.Data
 {
-    internal static class FileManager
+    public static class FileManager
     {
 
-        internal const string ProjectSettingFile = "jahro-settings";
+        public const string ProjectSettingFile = "jahro-settings";
+
+        public const string RootFolder = "Assets";
+
+        public const string SettingsFolder = "Jahro";
+
 
         internal const string AssetsSettingPath = AssetsFolder + "/" + JahroConsoleAssetsFolder + "/" + "Resources";
-
-        internal const string PackageSettingPath = AssetsFolder + "/" + JahroConsoleAssetsFolder + "/" + "Resources";
 
         const string AssetsFolder = "Assets";
 
@@ -192,28 +195,5 @@ namespace Jahro.Core.Data
             }
             return folderPath;
         }
-
-#if UNITY_EDITOR
-        internal static string ReadPackageJsonVersion(string packageJsonPath)
-        {
-            string version = "unknown";
-            if (!File.Exists(packageJsonPath))
-            {
-                return "";
-            }
-
-            try
-            {
-                string jsonContent = File.ReadAllText(packageJsonPath);
-                var pack = JsonUtility.FromJson<PackageObject>(jsonContent);
-                if (pack != null) version = pack.version.ToString();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError("Error reading package.json: " + ex.Message);
-            }
-            return version;
-        }
-#endif
     }
 }

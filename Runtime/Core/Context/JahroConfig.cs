@@ -10,6 +10,8 @@ namespace Jahro.Core.Context
 
         internal const Environment ENV = Environment.PROD;
 
+        internal static readonly string CurrentVersion = "0.1.0-alpha.1";
+
         internal static readonly string RegisterUrl = "https://console.jahro.io";
 
         internal static readonly string DocumentationRoot = "https://docs.jahro.io/";

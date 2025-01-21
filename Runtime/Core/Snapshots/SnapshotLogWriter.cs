@@ -83,7 +83,7 @@ namespace Jahro.Core.Snapshots
         internal void Log(string message, string logType, string stackTrace)
         {
             var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            var logEntry = $"{timestamp} [{logType}] {message}\n{stackTrace}\n";
+            var logEntry = $"{{\"timestamp\": \"{timestamp}\", \"type\": \"{logType}\", \"message\": \"{message}\", \"stacktrace\": \"{stackTrace}\"}}\n=%J%=\n";
             _logQueue.Enqueue(logEntry);
             _logSignal.Release();
         }

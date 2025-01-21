@@ -18,21 +18,22 @@ namespace Jahro.View
 
         private StatusBar _statusBar;
 
+        private LayoutGroup _statusBarLayoutGroup;
+
         void Awake()
         {
             _sizeDragBehaviour = GetComponentInChildren<SizeDragBehaviour>();
             _sizeDragBehaviour.OnWindowRectChanged += OnWindowRectChanged;
             _layoutElement = GetComponent<LayoutElement>();
             _statusBar = GetComponentInChildren<StatusBar>();
+            _statusBarLayoutGroup = _statusBar.GetComponent<LayoutGroup>();
         }
 
         internal void Init(ConsoleMainWindow mainWindow)
         {
             _mainWindow = mainWindow;
-
             if (mainWindow.IsMobileMode)
             {
-                mainWindow.OnSafeAreaChanged += OnSafeAreaChanged;
                 _sizeDragBehaviour.gameObject.SetActive(false);
                 _statusBar.gameObject.SetActive(false);
                 OnWindowRectChanged(mainWindow.WindowTransform.rect);
@@ -57,11 +58,6 @@ namespace Jahro.View
         private void OnCloseButtonClick()
         {
             _mainWindow.Close();
-        }
-
-        private void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-            OnWindowRectChanged(_mainWindow.WindowTransform.rect);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Jahro.View
                 _initialsLabel.text = "~";
                 return;
             }
-            _initialsLabel.text = userAccountInfo.GetInitialsName();
+            _initialsLabel.text = userAccountInfo.GetInitialsName().ToUpper();
         }
 
     }

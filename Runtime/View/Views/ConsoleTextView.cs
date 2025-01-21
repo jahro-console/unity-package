@@ -43,8 +43,6 @@ namespace Jahro.View
 
             InputBehavior = GetComponentInChildren<ConsoleWindowInputBehaviour>();
             InputBehavior.DidEnterCommand += DidEnterCommand;
-
-            RefreshSafeArea();
         }
 
         protected override void OnDeactivate()
@@ -174,22 +172,6 @@ namespace Jahro.View
         private void DidEnterCommand(string obj)
         {
             OutputBehavior.ScrollToBottom();
-        }
-
-        private void RefreshSafeArea()
-        {
-            int leftPadding = (int)Mathf.Max(SafeArea.x / ScaleFactor, 0);
-            int rightPadding = (int)Mathf.Max((Screen.width - (SafeArea.x + SafeArea.width)) / ScaleFactor, 0);
-            if (_layoutGroup != null)
-            {
-                _layoutGroup.padding = new RectOffset(leftPadding, rightPadding, 0, 0);
-            }
-        }
-
-        protected override void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
-        {
-            base.OnSafeAreaChanged(safeArea, scaleFactor);
-            RefreshSafeArea();
         }
     }
 }

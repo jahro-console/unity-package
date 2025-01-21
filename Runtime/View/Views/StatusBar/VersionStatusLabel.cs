@@ -26,7 +26,8 @@ namespace Jahro.View
 
         public void OnLabelClick()
         {
-            Application.OpenURL(_versionInfo.ChangelogUrl);
+            string url = _versionInfo?.ChangelogUrl;
+            Application.OpenURL(url != null ? url : "https://jahro.io/changelog");
         }
 
         public void UpdateInfo(string currentVersion, VersionInfo versionInfo)

@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
+
 #if ENABLE_INPUT_SYSTEM
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 #endif
@@ -41,9 +43,13 @@ namespace JahroPackage.Runtime.View.InputHandling
 
 #if ENABLE_INPUT_SYSTEM
 #pragma warning disable CS0162 // Unreachable code detected
-                  return UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count;
+                  if (EnhancedTouchSupport.enabled)
+                  {
+                        return UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count;
+                  }
 #pragma warning restore CS0162 // Unreachable code detected
 #endif
+                  return 0;
             }
 
             public static bool IsTouchEnded(int index)
