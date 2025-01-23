@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.InputSystem.EnhancedTouch;
 
 #if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 #endif
 
