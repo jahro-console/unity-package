@@ -1,8 +1,7 @@
-﻿using System.Data;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class FilterTogglesBehaviour : MonoBehaviour
     {
@@ -15,14 +14,14 @@ namespace Jahro.View
         public Toggle ToggleErrors;
 
         public Toggle ToggleCommands;
-        
+
         private void Awake()
         {
             var toggles = GetComponentsInChildren<Toggle>();
-            
+
             foreach (var toggle in toggles)
             {
-                toggle.onValueChanged.AddListener(delegate(bool arg0)
+                toggle.onValueChanged.AddListener(delegate (bool arg0)
                 {
                     Output.SetFilter(ToggleDebug.isOn, ToggleWarnings.isOn, ToggleErrors.isOn, ToggleCommands.isOn);
                 });

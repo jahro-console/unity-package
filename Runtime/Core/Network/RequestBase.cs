@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Jahro.Core.Network
+namespace JahroConsole.Core.Network
 {
     internal abstract class RequestBase
     {

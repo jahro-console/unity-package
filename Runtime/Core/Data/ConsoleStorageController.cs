@@ -1,9 +1,8 @@
 ﻿using System;
-using System.IO;
-using Jahro.Core.Logging;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
     internal class ConsoleStorageController
     {

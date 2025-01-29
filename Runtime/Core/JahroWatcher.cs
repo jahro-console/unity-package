@@ -1,6 +1,6 @@
-﻿using Jahro.Core.Registry;
+﻿using JahroConsole.Core.Registry;
 
-namespace Jahro
+namespace JahroConsole
 {
     public static partial class Jahro
     {

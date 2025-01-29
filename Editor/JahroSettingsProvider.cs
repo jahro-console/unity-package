@@ -1,11 +1,11 @@
 ﻿
 using System;
-using Jahro.Core.Data;
-using Jahro.Core.Network;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Network;
 using UnityEditor;
 using UnityEngine;
 
-namespace Jahro.Editor
+namespace JahroConsole.Editor
 {
     public class JahroSettingsProvider : EditorWindow
     {
@@ -273,6 +273,7 @@ namespace Jahro.Editor
             }
             catch (Exception ex)
             {
+                Debug.Log(ex);
                 _validation = new KeyValidator.ValidateKeyResponse() { success = false, message = ex.Message };
             }
             finally

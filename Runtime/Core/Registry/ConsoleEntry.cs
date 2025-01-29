@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jahro.Core.Registry
+namespace JahroConsole.Core.Registry
 {
     internal abstract class ConsoleEntry
     {
@@ -8,7 +8,7 @@ namespace Jahro.Core.Registry
 
         internal string Description { get; private set; }
 
-        internal bool Favorite { get; private set; } 
+        internal bool Favorite { get; private set; }
 
         internal Action<bool> FavoritesStateChanged;
 
@@ -45,7 +45,7 @@ namespace Jahro.Core.Registry
 
         public override int GetHashCode()
         {
-            return new {Name, Description}.GetHashCode();
+            return new { Name, Description }.GetHashCode();
         }
     }
 }

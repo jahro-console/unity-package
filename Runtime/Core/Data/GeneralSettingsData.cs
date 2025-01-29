@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
     [Serializable]
     internal class GeneralSettingsData

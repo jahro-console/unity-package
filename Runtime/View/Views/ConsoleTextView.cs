@@ -1,13 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Jahro.Core.Data;
-using Jahro.Logging;
-using Jahro;
-using Jahro.Core.Logging;
+﻿using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleTextView : ConsoleBaseView
     {

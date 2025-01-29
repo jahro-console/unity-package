@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
-using Jahro.Core.Watcher;
+using JahroConsole.Core.Watcher;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class WatcherItem : MonoBehaviour, IFlexGridItem
     {
 
         internal ConsoleWatcherEntry WatcherEntry { get; private set; }
 
-        internal RectTransform RectTransform { get {return GetComponent<RectTransform>();}}
+        internal RectTransform RectTransform { get { return GetComponent<RectTransform>(); } }
 
         [SerializeField]
         private Text _entryNameText;
@@ -22,7 +20,7 @@ namespace Jahro.View
 
         private int _requiredSize;
 
-        public Action OnClickedAction = delegate {};
+        public Action OnClickedAction = delegate { };
 
         internal void Init(ConsoleWatcherEntry commandEntry)
         {

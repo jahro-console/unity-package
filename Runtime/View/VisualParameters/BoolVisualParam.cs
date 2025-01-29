@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Jahro.Core.Utilities;
-using UnityEngine;
+﻿using JahroConsole.Core.Utilities;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class BoolVisualParam : BaseVisualParam
     {

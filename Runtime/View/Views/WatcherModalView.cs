@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using Jahro.Core;
-using Jahro.Core.Watcher;
+﻿using JahroConsole.Core.Watcher;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Jahro.Logging;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class WatcherModalView : MonoBehaviour, IPointerClickHandler
     {
-        
+
         public RectTransform ModalViewTransform;
 
         public Text TitleText;
@@ -44,7 +41,7 @@ namespace Jahro.View
             _dynamicContentHolderLayout = DynamicScrollContent.GetComponent<LayoutElement>();
 
             CloseButton.onClick.AddListener(OnCloseClick);
-            
+
             FavoritesToggle.onValueChanged.AddListener(OnFavoritesStateChanged);
         }
 
@@ -63,7 +60,7 @@ namespace Jahro.View
 
             DynamicScrollContent.verticalScrollbar.value = 1f;
             gameObject.SetActive(true);
-            
+
             if (!_subscribed) mainWindow.OnWindowSizeChanged += OnMainWindowSizeChanged;
             _subscribed = true;
 
@@ -94,12 +91,12 @@ namespace Jahro.View
             {
                 float keyboardHeight = KeyboardTracker.GetSoftKeyboardHeight();
 
-                Vector2 screenKeyboard = new Vector2(0, keyboardHeight*Screen.height);
+                Vector2 screenKeyboard = new Vector2(0, keyboardHeight * Screen.height);
                 Vector2 rectPoint;
-                RectTransformUtility.ScreenPointToLocalPointInRectangle(ModalViewTransform, screenKeyboard, null, out rectPoint);                
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(ModalViewTransform, screenKeyboard, null, out rectPoint);
 
                 float holderHeight = Mathf.Max(0, rectPoint.y - ModalViewTransform.rect.min.y);
-                if (holderHeight != 0) 
+                if (holderHeight != 0)
                 {
                     _keyboardHeightPlace = holderHeight;
                     SetPosition(_parentRect);
@@ -114,7 +111,7 @@ namespace Jahro.View
         public void UpdateDynamicContentHolder()
         {
             float height = 0f;
-            for (int i=0; i<DynamicScrollContent.content.childCount; i++)
+            for (int i = 0; i < DynamicScrollContent.content.childCount; i++)
             {
                 var child = DynamicScrollContent.content.GetChild(i);
                 height += LayoutUtility.GetPreferredHeight((RectTransform)child) + 5f;
@@ -153,7 +150,7 @@ namespace Jahro.View
 
         private void OnMainWindowSizeChanged()
         {
-            Close();    
+            Close();
         }
 
         private void SetDescription(ConsoleWatcherEntry entry)
@@ -164,7 +161,7 @@ namespace Jahro.View
                 descriptionText += entry.Description + "\n";
             }
             descriptionText += entry.GetTypeDescription();
-            DescriptionText.text = descriptionText;   
+            DescriptionText.text = descriptionText;
         }
 
         private void UpdateDetails(ConsoleWatcherEntry entry)
@@ -181,7 +178,7 @@ namespace Jahro.View
             float size = 0;
             size += TitleText.transform.parent.GetComponent<LayoutElement>().preferredHeight + spacing;
             size += CloseButton.transform.parent.GetComponent<LayoutElement>().preferredHeight;
-            size += DynamicScrollContent.gameObject.activeSelf ? _dynamicContentHolderLayout.preferredHeight + spacing: 0f;
+            size += DynamicScrollContent.gameObject.activeSelf ? _dynamicContentHolderLayout.preferredHeight + spacing : 0f;
             size += DescriptionText.gameObject.activeSelf ? LayoutUtility.GetPreferredHeight((RectTransform)DescriptionText.transform) + spacing : 0f;
             return size;
         }
@@ -192,8 +189,8 @@ namespace Jahro.View
             var commandRect = CurrentWatcherItem.GetComponent<RectTransform>();
 
             ModalViewTransform.position = commandRect.position;
-            Vector2 deltaX = Vector2.left * commandRect.rect.width/2f;
-            Vector2 deltaY = Vector2.up * commandRect.rect.height/2f;
+            Vector2 deltaX = Vector2.left * commandRect.rect.width / 2f;
+            Vector2 deltaY = Vector2.up * commandRect.rect.height / 2f;
             Vector2 pivot = new Vector2(0f, 1f);
             ModalViewTransform.pivot = pivot;
             ModalViewTransform.anchoredPosition += deltaX + deltaY;
@@ -214,11 +211,11 @@ namespace Jahro.View
             {
                 pivot.x = 0.5f;
                 ModalViewTransform.pivot = pivot;
-                float x = parentRect.position.x + parentSize.x/2f;
+                float x = parentRect.position.x + parentSize.x / 2f;
                 ModalViewTransform.position = new Vector2(x, commandRect.position.y);
-                ModalViewTransform.anchoredPosition += Vector2.up * commandRect.rect.height/2f;
+                ModalViewTransform.anchoredPosition += Vector2.up * commandRect.rect.height / 2f;
             }
-            
+
             float modalViewHeight = CalculateModalViewHeight();
             float headerHeight = 52f;
             if (Mathf.Abs(ModalViewTransform.anchoredPosition.y - modalViewHeight + headerHeight) > parentRect.rect.size.y)
@@ -226,9 +223,9 @@ namespace Jahro.View
                 pivot.y = 0f;
                 deltaY += Vector2.down * commandRect.rect.height;
             }
-            
+
             ModalViewTransform.pivot = pivot;
-            ModalViewTransform.anchoredPosition += Vector2.up * deltaY;   
+            ModalViewTransform.anchoredPosition += Vector2.up * deltaY;
         }
     }
 }

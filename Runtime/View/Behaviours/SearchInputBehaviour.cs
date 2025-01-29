@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class SearchInputBehaviour : MonoBehaviour
     {

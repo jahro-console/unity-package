@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Jahro.Logging;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class JahroScrollItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
     {

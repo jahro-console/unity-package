@@ -2,16 +2,16 @@
 using System.Text;
 using UnityEngine;
 
-namespace Jahro.Core.Watcher
+namespace JahroConsole.Core.Watcher
 {
-    internal static class WatcherStringMapper 
+    internal static class WatcherStringMapper
     {
         internal static void MapValueToShortString(ConsoleWatcherEntry entry, object obj, StringBuilder stringBuilder, out int requiredSize)
         {
             int limit = 0;
             requiredSize = 1;
             stringBuilder.Clear();
-            
+
             if (obj is null || obj.Equals(null))
             {
                 stringBuilder.Append("<color=#FF5C01><b>null</b></color>");
@@ -31,7 +31,7 @@ namespace Jahro.Core.Watcher
                 requiredSize = 1;
                 limit = 1;
             }
-            else if (entryType == typeof (string))
+            else if (entryType == typeof(string))
             {
                 string objStr = obj.ToString();
                 stringBuilder.Append(objStr.Substring(0, Math.Min(49, objStr.Length)));
@@ -40,7 +40,7 @@ namespace Jahro.Core.Watcher
             {
                 Array array = (Array)obj;
                 string typeName = entryType.GetElementType().Name;
-                stringBuilder.AppendFormat("{0}[{1}]",typeName, array.Length);
+                stringBuilder.AppendFormat("{0}[{1}]", typeName, array.Length);
             }
             else if (entryType == typeof(Vector3))
             {
@@ -124,7 +124,7 @@ namespace Jahro.Core.Watcher
                 stringBuilder.AppendFormat("{0}/{1}", entryType.Name, go.gameObject.name);
                 limit = 2;
             }
-            else 
+            else
             {
                 string objStr = obj.ToString();
                 stringBuilder.Append(objStr.Substring(0, Math.Min(49, objStr.Length)));
@@ -154,7 +154,7 @@ namespace Jahro.Core.Watcher
                 stringBuilder.Append("null");
                 return;
             }
-            
+
             var entryType = obj.GetType();
             if (entryType.IsPrimitive)
             {
@@ -166,7 +166,7 @@ namespace Jahro.Core.Watcher
             }
             else if (entryType == typeof(Vector3))
             {
-                MapVector3(obj, stringBuilder);    
+                MapVector3(obj, stringBuilder);
             }
             else if (entryType == typeof(Vector2))
             {
@@ -178,15 +178,15 @@ namespace Jahro.Core.Watcher
             }
             else if (entryType == typeof(Transform))
             {
-                MapTransform(obj, stringBuilder);   
+                MapTransform(obj, stringBuilder);
             }
             else if (entryType == typeof(RectTransform))
             {
-                MapRectTransform(obj, stringBuilder);   
+                MapRectTransform(obj, stringBuilder);
             }
             else if (entryType == typeof(GameObject))
             {
-                MapGameObject(obj, stringBuilder);   
+                MapGameObject(obj, stringBuilder);
             }
             else if (entryType == typeof(Rigidbody2D))
             {
@@ -228,7 +228,7 @@ namespace Jahro.Core.Watcher
             {
                 MapCanvas(obj, stringBuilder);
             }
-            else 
+            else
             {
                 stringBuilder.Append(obj.ToString());
             }
@@ -238,7 +238,7 @@ namespace Jahro.Core.Watcher
         {
             Array array = (Array)obj;
             stringBuilder.Append("Array Length[").Append(array.Length).Append("]").AppendLine();
-            foreach(var i in array)
+            foreach (var i in array)
             {
                 stringBuilder.Append(i.ToString()).Append("; ");
             }
@@ -303,7 +303,7 @@ namespace Jahro.Core.Watcher
             stringBuilder.Append("Active Self: ").Append(gameobject.activeSelf).AppendLine();
             stringBuilder.Append("Scene Name: ").Append(gameobject.scene.name).AppendLine();
             stringBuilder.Append("Tag: ").Append(gameobject.tag).AppendLine().AppendLine();
-            
+
             Transform transform = gameobject.transform;
             stringBuilder.Append("Transform: ").AppendLine();
             MapTransform(transform, stringBuilder);
@@ -363,7 +363,7 @@ namespace Jahro.Core.Watcher
         private static void MapAnimator(object obj, StringBuilder stringBuilder)
         {
             Animator animator = (Animator)obj;
-            
+
             stringBuilder.Append("Current State: ").Append(animator.GetCurrentAnimatorStateInfo(0).shortNameHash).AppendLine();
             stringBuilder.Append("Speed: ").Append(animator.speed).AppendLine();
             stringBuilder.Append("Layer Count: ").Append(animator.layerCount).AppendLine();

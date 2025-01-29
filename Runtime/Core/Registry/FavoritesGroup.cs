@@ -1,6 +1,6 @@
-﻿namespace Jahro.Core.Registry
+﻿namespace JahroConsole.Core.Registry
 {
-    internal class FavoritesGroup<T> : SimpleGroup<T> where T: ConsoleEntry
+    internal class FavoritesGroup<T> : SimpleGroup<T> where T : ConsoleEntry
     {
 
         internal FavoritesGroup() : base("Favorites")

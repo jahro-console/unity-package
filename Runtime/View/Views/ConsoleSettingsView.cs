@@ -1,9 +1,8 @@
-﻿using System;
-using Jahro.Core.Data;
+﻿using JahroConsole.Core.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleSettingsView : ConsoleBaseView
     {

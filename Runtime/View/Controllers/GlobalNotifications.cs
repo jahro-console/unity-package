@@ -1,10 +1,9 @@
 using UnityEngine;
 using System.Collections;
-using System;
-using Jahro.Core.Notifications;
 using UnityEngine.UI;
+using JahroConsole.Core.Notifications;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     public class GlobalNotifications : MonoBehaviour
     {

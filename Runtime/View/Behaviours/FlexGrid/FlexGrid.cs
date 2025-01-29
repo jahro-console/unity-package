@@ -1,17 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class FlexGrid : LayoutGroup
     {
-        public static Vector2 Spacing = new Vector2(10,10);
+        public static Vector2 Spacing = new Vector2(10, 10);
 
-        internal bool NativeOrder {get; set;} 
+        internal bool NativeOrder { get; set; }
 
         private int _rows = 0;
 
@@ -41,12 +39,12 @@ namespace Jahro.View
 
         public override void SetLayoutHorizontal()
         {
-            
+
         }
 
         public override void SetLayoutVertical()
         {
-            
+
         }
 
         private void CalculateAndSetChildPositions()
@@ -60,10 +58,10 @@ namespace Jahro.View
             float itemPreferedWidth = _gridLayout.GetPreferedWidth();
             float itemPreferedHeight = _gridLayout.GetPreferedHeight();
 
-            foreach(var item in gridItems)
+            foreach (var item in gridItems)
             {
                 var child = item.GetRectTransform();
-                float childWidth = itemPreferedWidth * item.GetRequeredSize() + Spacing.x * (item.GetRequeredSize()-1);
+                float childWidth = itemPreferedWidth * item.GetRequeredSize() + Spacing.x * (item.GetRequeredSize() - 1);
                 float childHeight = itemPreferedHeight;
                 _itemHeight = childHeight;
                 child.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, childWidth);
@@ -78,7 +76,7 @@ namespace Jahro.View
                         if (itemsWidth + Spacing.x + childWidth <= gridWidth)
                         {
                             row = items.Last().Key;
-                        }   
+                        }
                         else
                         {
                             row = -1;
@@ -118,7 +116,7 @@ namespace Jahro.View
                 return -1;
             }
 
-            foreach(var row in items.Keys)
+            foreach (var row in items.Keys)
             {
                 float itemsWidth = GetItemsWidth(items[row]);
 
@@ -137,7 +135,7 @@ namespace Jahro.View
                 return 0;
             }
             var rectTransform = items.Last().GetRectTransform();
-            return rectTransform.anchoredPosition.x + rectTransform.rect.width/2f;
+            return rectTransform.anchoredPosition.x + rectTransform.rect.width / 2f;
         }
     }
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
 
     public interface IProjectSettings

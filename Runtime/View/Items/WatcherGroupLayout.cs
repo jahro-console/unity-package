@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Jahro.Core.Registry;
-using Jahro.Core.Watcher;
 using UnityEngine.UI;
+using JahroConsole.Core.Watcher;
+using JahroConsole.Core.Registry;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class WatcherGroupLayout : MonoBehaviour, IFlexGridLayout
     {

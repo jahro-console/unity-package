@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Jahro.Core.Snapshots;
+using JahroConsole.Core.Snapshots;
 using UnityEngine;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
     public static class FileManager
     {

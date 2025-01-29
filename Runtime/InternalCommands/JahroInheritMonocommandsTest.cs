@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Jahro.Core.Commands;
 using UnityEngine;
 
-namespace Jahro.Core.Internal
+namespace JahroConsole.Core.Internal
 {
     public class JahroInheritMonocommandsTest : JahroMonocommandsTest
     {

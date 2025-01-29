@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jahro.Logging;
+using JahroConsole.Core.Logging;
+using JahroConsole.Core.Notifications;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
-using Jahro.Core.Notifications;
-using UnityEngine.Events;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class JahroScrollView : MonoBehaviour, IDropHandler, IScrollHandler
     {

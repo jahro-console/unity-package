@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Jahro.Core.Registry;
+using JahroConsole.Core.Registry;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     internal static class ConsoleCommandValidator
     {

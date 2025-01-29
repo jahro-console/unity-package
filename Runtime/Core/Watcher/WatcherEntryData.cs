@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Jahro.Core.Watcher
+namespace JahroConsole.Core.Watcher
 {
     [Serializable]
     internal struct WatcherEntryData

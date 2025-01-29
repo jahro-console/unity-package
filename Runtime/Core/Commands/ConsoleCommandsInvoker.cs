@@ -1,7 +1,7 @@
 ﻿using System;
-using Jahro.Core.Logging;
+using JahroConsole.Core.Logging;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     internal static class ConsoleCommandsInvoker
     {

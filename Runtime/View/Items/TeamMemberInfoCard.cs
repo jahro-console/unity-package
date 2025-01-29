@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Jahro.View;
-using Jahro;
-using Jahro.Core.Context;
+using JahroConsole.Core.Context;
+using JahroConsole.View;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class EnumVisualParam : BaseVisualParam
     {
@@ -35,8 +33,8 @@ namespace Jahro.View
             _enumNames = Enum.GetNames(type);
             List<string> names = new List<string>();
             names.AddRange(_enumNames);
-            
-            Dropdown.AddOptions(names);   
+
+            Dropdown.AddOptions(names);
         }
 
         public override object GetResult()

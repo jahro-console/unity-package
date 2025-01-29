@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Jahro.Core.Snapshots
+namespace JahroConsole.Core.Snapshots
 {
     internal class SnapshotLogWriter
     {

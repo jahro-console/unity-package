@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Jahro.Core.Logging
+namespace JahroConsole.Core.Logging
 {
     internal static class JahroLogsFormatter
     {

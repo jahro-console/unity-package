@@ -1,9 +1,9 @@
 using System;
-using Jahro.Core.Network;
+using JahroConsole.Core.Network;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Jahro.Core.Context
+namespace JahroConsole.Core.Context
 {
     internal class InitContextRequest : RequestBase
     {

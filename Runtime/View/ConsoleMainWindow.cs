@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
-using Jahro.Core.Data;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using Jahro;
-using Jahro.Core.Context;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     public class ConsoleMainWindow : MonoBehaviour
     {

@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Jahro.Core.Data;
-using Jahro;
-using Jahro.Core.Context;
+﻿using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
 using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleBaseView : MonoBehaviour
     {

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using Jahro.View;
 using UnityEngine;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
 
     public class JahroProjectSettings : ScriptableObject, IProjectSettings

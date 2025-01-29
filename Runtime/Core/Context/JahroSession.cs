@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
-using Jahro.Core.Registry;
-using Jahro.Core.Data;
-using Jahro.Core.Snapshots;
-using UnityEngine;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Registry;
+using JahroConsole.Core.Snapshots;
 
-namespace Jahro.Core.Context
+namespace JahroConsole.Core.Context
 {
 
     internal class JahroSession

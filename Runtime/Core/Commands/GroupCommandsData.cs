@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Jahro.Core.Registry;
+using JahroConsole.Core.Registry;
 using UnityEngine;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     [Serializable]
     internal struct GroupCommandsData

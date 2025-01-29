@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class BaseOptionsView : MonoBehaviour, IPointerClickHandler
     {
@@ -70,7 +68,7 @@ namespace Jahro.View
         public void OnSafeAreaChanged(Rect safeArea, float scaleFactor)
         {
             float preferedWidth = (safeArea.width - 12) / scaleFactor;
-            PanelTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(preferedWidth,350));
+            PanelTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Min(preferedWidth, 350));
 
         }
     }

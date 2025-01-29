@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class Vector3VisualParam : BaseVisualParam
     {
@@ -21,7 +19,7 @@ namespace Jahro.View
         public override void Init(string paramName, object defaultParam)
         {
             base.Init(paramName, defaultParam);
-            
+
             if (defaultParam == null)
             {
                 ValueDraggerX.Value = "0";
@@ -59,17 +57,17 @@ namespace Jahro.View
 
         private void OnValueChangedX(float delta)
         {
-            ValueDraggerX.Value = (_currentValueX + delta/51f).ToString("0.00");
+            ValueDraggerX.Value = (_currentValueX + delta / 51f).ToString("0.00");
         }
 
         private void OnValueChangedY(float delta)
         {
-            ValueDraggerY.Value = (_currentValueY + delta/51f).ToString("0.00");
+            ValueDraggerY.Value = (_currentValueY + delta / 51f).ToString("0.00");
         }
 
         private void OnValueChangedZ(float delta)
         {
-            ValueDraggerZ.Value = (_currentValueZ + delta/51f).ToString("0.00");
+            ValueDraggerZ.Value = (_currentValueZ + delta / 51f).ToString("0.00");
         }
     }
 }

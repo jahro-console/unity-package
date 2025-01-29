@@ -1,7 +1,7 @@
 
 using System;
 
-namespace Jahro.Core.Notifications
+namespace JahroConsole.Core.Notifications
 {
     internal class Notification
     {

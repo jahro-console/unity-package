@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
-using Jahro.Core.Commands;
+using JahroConsole.Core.Commands;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class AutocompliteCommandEntry : MonoBehaviour
     {
@@ -13,7 +11,7 @@ namespace Jahro.View
 
         private Text _textComponent;
 
-        internal ConsoleCommandEntry CurrentCommand {get; private set;}
+        internal ConsoleCommandEntry CurrentCommand { get; private set; }
 
         private Action<ConsoleCommandEntry> _onSubmitAction;
 
@@ -25,7 +23,7 @@ namespace Jahro.View
 
         public void Init(Action<ConsoleCommandEntry> onSubmitAction)
         {
-            _onSubmitAction = onSubmitAction;         
+            _onSubmitAction = onSubmitAction;
         }
 
         public void Show(ConsoleCommandEntry entry)

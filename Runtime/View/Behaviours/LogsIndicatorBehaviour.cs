@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Jahro.Logging;
+﻿using JahroConsole.Core.Logging;
+using JahroConsole.Core.Notifications;
+using JahroConsole.Logging;
 using UnityEngine;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
-using Jahro.Core.Notifications;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class LogsIndicatorBehaviour : MonoBehaviour
     {

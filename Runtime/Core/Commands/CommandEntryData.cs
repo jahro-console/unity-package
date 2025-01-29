@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
-using Jahro.Core.Utilities;
+using JahroConsole.Core.Utilities;
 using UnityEngine;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     [Serializable]
     internal struct CommandEntryData
@@ -15,7 +15,7 @@ namespace Jahro.Core.Commands
         internal string SimpleName;
 
         [SerializeField]
-        internal string[] DefaultValues; 
+        internal string[] DefaultValues;
 
         [SerializeField]
         internal string LastUsed;
@@ -31,7 +31,7 @@ namespace Jahro.Core.Commands
             if (parameters != null)
             {
                 string[] convertedParams = new string[parameters.Length];
-                for(int i=0; i<parameters.Length; i++)
+                for (int i = 0; i < parameters.Length; i++)
                 {
                     var param = parameters[i];
                     if (param == null)
@@ -43,7 +43,7 @@ namespace Jahro.Core.Commands
                     {
                         string concatResult = "";
                         var cParam = param as IEnumerable;
-                        foreach(var t in cParam)
+                        foreach (var t in cParam)
                         {
                             concatResult += t.ToString() + "|";
                         }
@@ -74,13 +74,13 @@ namespace Jahro.Core.Commands
             }
 
             if (defaultValues == null || defaultValues.Length != parameters.Length)
-            {    
+            {
                 return;
             }
-            
+
             object[] resultArray = new object[parameters.Length];
 
-            for(int i=0; i<parameters.Length; i++)
+            for (int i = 0; i < parameters.Length; i++)
             {
                 var param = parameters[i];
                 var value = defaultValues[i];
@@ -92,8 +92,8 @@ namespace Jahro.Core.Commands
                 }
 
                 if (param.ParameterType.IsPrimitive)
-                {   
-                    if(ConsoleCommandsParamsMapper.MapPrimitiveEntryParams(param.ParameterType, value, out object res))
+                {
+                    if (ConsoleCommandsParamsMapper.MapPrimitiveEntryParams(param.ParameterType, value, out object res))
                     {
                         result = res;
                     }
@@ -134,7 +134,7 @@ namespace Jahro.Core.Commands
 
                 resultArray[i] = result;
             }
-            
+
             entry.LatestParams = resultArray;
         }
     }

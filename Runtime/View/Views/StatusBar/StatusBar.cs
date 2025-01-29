@@ -1,18 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Jahro.Core;
-using Jahro.Core.Data;
-using Jahro;
-using Jahro.Core.Context;
-using Jahro.Core.Network;
-using Jahro.Core.Notifications;
-using Jahro.Core.Snapshots;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Network;
+using JahroConsole.Core.Notifications;
+using JahroConsole.Core.Snapshots;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class StatusBar : MonoBehaviour
     {

@@ -1,4 +1,4 @@
-namespace Jahro.Core.Context
+namespace JahroConsole.Core.Context
 {
     internal static class JahroConfig
     {

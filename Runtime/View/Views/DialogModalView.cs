@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using Jahro.Core;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Jahro.Logging;
 using System;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class DialogModalView : MonoBehaviour, IPointerClickHandler
     {

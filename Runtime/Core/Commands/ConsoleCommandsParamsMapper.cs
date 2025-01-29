@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     internal static class ConsoleCommandsParamsMapper
     {
@@ -40,11 +40,11 @@ namespace Jahro.Core.Commands
             targetEntry = null;
             object[] resultedParams = null;
             float maxScore = int.MinValue;
-            foreach(var entry in entries)
+            foreach (var entry in entries)
             {
                 var parms = PickEntry(entry, args, out float score);
-                if(score > maxScore && score >= 0)
-                {   
+                if (score > maxScore && score >= 0)
+                {
                     maxScore = score;
                     targetEntry = entry;
                     resultedParams = parms;
@@ -56,7 +56,7 @@ namespace Jahro.Core.Commands
         private static object[] PickEntry(ConsoleCommandEntry entry, string[] args, out float score)
         {
             object[] castedParams = null;
-            
+
             var parametersInfos = entry.MethodInfo.GetParameters();
 
             if (parametersInfos.Length == 0)
@@ -83,7 +83,7 @@ namespace Jahro.Core.Commands
                 {
                     if (float.TryParse(args[0], out float x) && float.TryParse(args[1], out float y) && float.TryParse(args[2], out float z))
                     {
-                        castedParams = new object[]{ new Vector3(x, y, z)};
+                        castedParams = new object[] { new Vector3(x, y, z) };
                         score = 0.9f;
                         return castedParams;
                     }
@@ -97,7 +97,7 @@ namespace Jahro.Core.Commands
                 {
                     if (float.TryParse(args[0], out float x) && float.TryParse(args[1], out float y))
                     {
-                        castedParams = new object[]{ new Vector2(x, y)};
+                        castedParams = new object[] { new Vector2(x, y) };
                         score = 0.8f;
                         return castedParams;
                     }
@@ -110,23 +110,23 @@ namespace Jahro.Core.Commands
                 else if (parametersInfos[0].ParameterType == typeof(string) && args.Length >= 1)
                 {
 
-                    castedParams = new object[]{ string.Concat(args) };
+                    castedParams = new object[] { string.Concat(args) };
                     score = 0.3f;
                     return castedParams;
                 }
                 else if (parametersInfos[0].ParameterType.IsEnum && args.Length == 1)
                 {
                     try
-                    {   
+                    {
                         var result = Enum.Parse(parametersInfos[0].ParameterType, args[0], true);
-                        castedParams = new object[]{result};
+                        castedParams = new object[] { result };
                     }
                     catch
                     {
                         score = -1f;
                         return null;
                     }
-                    
+
                     score = 0.8f;
                     return castedParams;
                 }
@@ -135,7 +135,7 @@ namespace Jahro.Core.Commands
             {
                 castedParams = new object[parametersInfos.Length];
                 int index = 0;
-                foreach(var parameterInfo in parametersInfos)
+                foreach (var parameterInfo in parametersInfos)
                 {
                     if (parameterInfo.ParameterType.IsPrimitive)
                     {
@@ -175,17 +175,17 @@ namespace Jahro.Core.Commands
             }
 
             object[] castedParams = null;
-            
+
             if (parameterInfo.ParameterType == typeof(string[]))
             {
-                castedParams = new[] {args};
+                castedParams = new[] { args };
                 score = 0.2f;
                 return castedParams;
             }
             else if (parameterInfo.ParameterType == typeof(int[]))
             {
                 int[] arr = new int[args.Length];
-                for (int i=0; i<args.Length; i++)
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (int.TryParse(args[i], out int t))
                     {
@@ -198,13 +198,13 @@ namespace Jahro.Core.Commands
                     }
                 }
                 score = 1f;
-                castedParams = new []{arr};
+                castedParams = new[] { arr };
                 return castedParams;
             }
             else if (parameterInfo.ParameterType == typeof(float[]))
             {
                 float[] arr = new float[args.Length];
-                for (int i=0; i<args.Length; i++)
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (float.TryParse(args[i], out float t))
                     {
@@ -217,13 +217,13 @@ namespace Jahro.Core.Commands
                     }
                 }
                 score = 1f;
-                castedParams = new []{arr};
+                castedParams = new[] { arr };
                 return castedParams;
             }
             else if (parameterInfo.ParameterType == typeof(bool[]))
             {
                 bool[] arr = new bool[args.Length];
-                for (int i=0; i<args.Length; i++)
+                for (int i = 0; i < args.Length; i++)
                 {
                     if (bool.TryParse(args[i], out bool t))
                     {
@@ -236,10 +236,10 @@ namespace Jahro.Core.Commands
                     }
                 }
                 score = 1f;
-                castedParams = new []{arr};
+                castedParams = new[] { arr };
                 return castedParams;
             }
-            
+
             score = -1f;
             return castedParams;
         }
@@ -275,18 +275,18 @@ namespace Jahro.Core.Commands
         {
             string[] arrayValues = value.Split('|');
             var arrayType = parameterInfo.ParameterType;
-            object[] resultArray = new object[arrayValues.Length-1];
+            object[] resultArray = new object[arrayValues.Length - 1];
 
             Type itemType = null;
             if (arrayType.Equals(typeof(int[])))
             {
                 itemType = typeof(int);
             }
-            else if(arrayType.Equals(typeof(float[])))
+            else if (arrayType.Equals(typeof(float[])))
             {
                 itemType = typeof(float);
             }
-            else if(arrayType.Equals(typeof(double[])))
+            else if (arrayType.Equals(typeof(double[])))
             {
                 itemType = typeof(double);
             }
@@ -305,7 +305,7 @@ namespace Jahro.Core.Commands
                 return false;
             }
 
-            for(int i=0; i<resultArray.Length; i++)
+            for (int i = 0; i < resultArray.Length; i++)
             {
                 string strValue = arrayValues[i];
                 if (MapPrimitiveEntryParams(itemType, strValue, out object itemResult))

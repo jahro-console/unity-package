@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Jahro.Core.Data;
+using JahroConsole.Core.Data;
 using UnityEditor;
 using UnityEngine;
 
-namespace Jahro.Core.Registry
+namespace JahroConsole.Core.Registry
 {
 
     [InitializeOnLoad]

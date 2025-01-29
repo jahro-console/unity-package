@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Jahro.Core.Context;
-using Jahro.Core.Registry;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
+using JahroConsole.Core.Registry;
 
-namespace Jahro.Core.Watcher
+namespace JahroConsole.Core.Watcher
 {
     internal class ConsoleWatcher
     {

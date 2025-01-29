@@ -2,20 +2,20 @@
 using UnityEngine;
 using JahroPackage.Runtime.View.InputHandling;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class KeyboardTracker : MonoBehaviour
     {
 
-        public Action OnTildaPressed = delegate{};
+        public Action OnTildaPressed = delegate { };
 
-        public Action OnEscPressed = delegate{};
+        public Action OnEscPressed = delegate { };
 
-        public Action SwitchToTextMode = delegate{};
+        public Action SwitchToTextMode = delegate { };
 
-        public Action SwitchToVisualMode = delegate{};
+        public Action SwitchToVisualMode = delegate { };
 
-        public Action SwitchToWatcherMode = delegate{};
+        public Action SwitchToWatcherMode = delegate { };
 
         private KeyCode _launchKeyCode;
 
@@ -29,10 +29,10 @@ namespace Jahro.View
             if (JahroInput.GetKeyDown(_launchKeyCode))
             {
                 OnTildaPressed();
-            }   
+            }
             else if (JahroInput.GetKeyDown(KeyCode.Escape) && Application.isMobilePlatform)
             {
-                OnEscPressed();   
+                OnEscPressed();
             }
             else if (JahroInput.GetKey(KeyCode.LeftAlt) && JahroInput.GetKeyDown(KeyCode.Alpha1))
             {

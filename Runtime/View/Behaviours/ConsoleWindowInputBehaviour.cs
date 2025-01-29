@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
-using Jahro.Core.Registry;
-using Jahro.Core.Commands;
-using Jahro.Core.Data;
+using JahroConsole.Core.Commands;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Registry;
 using JahroPackage.Runtime.View.InputHandling;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
 	internal class ConsoleWindowInputBehaviour : MonoBehaviour
 	{

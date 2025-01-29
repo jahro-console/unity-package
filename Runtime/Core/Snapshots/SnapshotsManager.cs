@@ -3,15 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Jahro.Core.Context;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
-using Jahro.Core.Network;
-using Jahro.Core.Notifications;
-using Jahro.Core.Utilities;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
+using JahroConsole.Core.Network;
+using JahroConsole.Core.Notifications;
+using JahroConsole.Core.Utilities;
 using UnityEngine;
 
-namespace Jahro.Core.Snapshots
+namespace JahroConsole.Core.Snapshots
 {
     internal class SnapshotsManager
     {

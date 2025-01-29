@@ -1,8 +1,7 @@
 ﻿using System;
-using Jahro.Core.Logging;
-using Jahro.Logging;
+using JahroConsole.Core.Logging;
 
-namespace Jahro
+namespace JahroConsole
 {
     public static partial class Jahro
     {

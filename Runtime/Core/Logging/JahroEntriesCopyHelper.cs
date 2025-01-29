@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Jahro.Core.Logging
+namespace JahroConsole.Core.Logging
 {
     internal static class JahroEntriesCopyHelper
     {

@@ -1,12 +1,11 @@
-﻿using Jahro;
-using Jahro.Core.Context;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
-using Jahro.View;
+﻿using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
+using JahroConsole.View;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Jahro
+namespace JahroConsole
 {
     /// <summary>
     /// Main API File

@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
-    
+
     internal class EmptyBehaviour : MonoBehaviour
     {
-        
+
     }
 }

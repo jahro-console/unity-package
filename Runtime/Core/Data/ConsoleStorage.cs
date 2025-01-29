@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jahro.Core.Commands;
-using Jahro.Core.Context;
-using Jahro.Core.Watcher;
+using JahroConsole.Core.Commands;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Watcher;
 using UnityEngine;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
     [Serializable]
     internal class ConsoleStorage

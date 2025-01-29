@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Jahro.Core.Context;
+using JahroConsole.Core.Context;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class MobileMenu : MonoBehaviour, IPointerClickHandler
     {

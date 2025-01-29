@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class JahroScrollDownButtonBehavior : MonoBehaviour
     {

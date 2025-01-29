@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Jahro.View
+﻿namespace JahroConsole.View
 {
     internal class DoubleVisualParam : IntVisualParam
     {
@@ -26,7 +22,7 @@ namespace Jahro.View
 
         protected override void OnValueChange(float delta)
         {
-            _draggerComponent.Value = (_currentDoubleValue + delta/51f).ToString("0.0000");
+            _draggerComponent.Value = (_currentDoubleValue + delta / 51f).ToString("0.0000");
         }
     }
 }

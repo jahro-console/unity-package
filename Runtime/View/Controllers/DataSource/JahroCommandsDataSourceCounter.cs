@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Jahro.Core.Logging;
-using UnityEngine;
-using Jahro.Logging;
+﻿using JahroConsole.Core.Logging;
 
-namespace Jahro.Logging
+namespace JahroConsole.Logging
 {
     internal class JahroCommandsDataSourceCounter
     {

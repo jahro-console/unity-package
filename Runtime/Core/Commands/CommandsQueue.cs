@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     [Serializable]
     internal class CommandsQueue
@@ -14,7 +14,7 @@ namespace Jahro.Core.Commands
 
         private int _currentIndex;
 
-        public int CurrentIndex { get { return _currentIndex; }}
+        public int CurrentIndex { get { return _currentIndex; } }
 
         internal CommandsQueue()
         {
@@ -25,7 +25,7 @@ namespace Jahro.Core.Commands
         {
             if (_commands.Count > 0)
             {
-                string prev = _commands[_commands.Count-1];
+                string prev = _commands[_commands.Count - 1];
                 if (value == prev)
                 {
                     _currentIndex = _commands.Count;
@@ -61,11 +61,11 @@ namespace Jahro.Core.Commands
             {
                 return "";
             }
-            
+
             _currentIndex++;
-            if (_currentIndex > _commands.Count-1)
+            if (_currentIndex > _commands.Count - 1)
             {
-                _currentIndex = _commands.Count-1;
+                _currentIndex = _commands.Count - 1;
             }
             return _commands[_currentIndex];
         }

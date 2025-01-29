@@ -1,4 +1,4 @@
-﻿namespace Jahro.Core.Logging
+﻿namespace JahroConsole.Core.Logging
 {
     internal static class MessagesResource
     {

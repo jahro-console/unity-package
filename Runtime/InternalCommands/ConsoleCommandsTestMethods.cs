@@ -5,7 +5,7 @@ using UnityEngine;
 using System;
 using Jahro.Core.Commands;
 
-namespace Jahro.Core.Internal
+namespace JahroConsole.Core.Internal
 {
     public class ConsoleCommandsTestMethods : MonoBehaviour
     {

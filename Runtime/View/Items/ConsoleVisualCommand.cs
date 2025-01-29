@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
-using Jahro.Core.Commands;
+using JahroConsole.Core.Commands;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleVisualCommand : MonoBehaviour, IFlexGridItem
     {
@@ -13,7 +11,7 @@ namespace Jahro.View
 
         private Text _nameText;
 
-        public Action OnClickedAction = delegate {};
+        public Action OnClickedAction = delegate { };
 
         internal void Init(ConsoleCommandEntry commandEntry)
         {

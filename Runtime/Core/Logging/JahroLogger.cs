@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jahro.Core.Notifications;
+using JahroConsole.Core.Notifications;
 using UnityEngine;
 
-namespace Jahro.Core.Logging
+namespace JahroConsole.Core.Logging
 {
     internal delegate void JahroCommandInputHandler(string message, string context, EJahroLogType logType);
 

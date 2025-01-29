@@ -1,11 +1,7 @@
-
-using System;
-using System.Collections;
-using Jahro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     [RequireComponent(typeof(Toggle))]
     public class ToggleSwitchBehaviour : MonoBehaviour

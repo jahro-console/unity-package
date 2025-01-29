@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
-using Jahro.Core.Notifications;
-using Jahro.Logging;
+﻿using System.Collections;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
+using JahroConsole.Core.Notifications;
 using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
 	internal class ConsoleWindowOutputBehaviour : MonoBehaviour
 	{

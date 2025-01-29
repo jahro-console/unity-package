@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Jahro.Core.Registry;
+using JahroConsole.Core.Registry;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole.Core.Commands
 {
     internal class ConsoleCommandEntry : ConsoleEntry
     {

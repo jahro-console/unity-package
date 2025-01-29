@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Jahro.Core.Registry;
+using JahroConsole.Core.Registry;
 using UnityEngine;
 
-namespace Jahro.Core.Watcher
+namespace JahroConsole.Core.Watcher
 {
     [Serializable]
     internal struct GroupWatcherData

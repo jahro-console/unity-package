@@ -4,10 +4,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
-using Jahro.Core.Data;
-using Jahro.Core.Notifications;
+using JahroConsole.Core.Notifications;
+using JahroConsole.Core.Data;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     public class ConsoleOpenButton : MonoBehaviour
     {

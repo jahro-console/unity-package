@@ -2,11 +2,10 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Threading.Tasks;
-using Jahro.Core.Notifications;
-using UnityEngine;
+using JahroConsole.Core.Notifications;
 using UnityEngine.Networking;
 
-namespace Jahro.Core.Network
+namespace JahroConsole.Core.Network
 {
     internal class NetworkManager
     {

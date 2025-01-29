@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using JahroConsole.Core.Context;
+using UnityEngine;
 using UnityEngine.UI;
-using Jahro.Core.Context;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleAccoutView : ConsoleBaseView
     {

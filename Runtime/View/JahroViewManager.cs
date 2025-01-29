@@ -1,17 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Snapshots;
+using JahroConsole.View;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using UnityEngine.Networking;
-using System;
-using Jahro.Core.Data;
-using Jahro.View;
-using Jahro;
-using Jahro.Core.Context;
-using Jahro.Core.Snapshots;
 
-namespace Jahro
+namespace JahroConsole
 {
 
     public sealed class JahroViewManager : MonoBehaviour

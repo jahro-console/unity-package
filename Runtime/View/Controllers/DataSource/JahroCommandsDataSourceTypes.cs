@@ -1,7 +1,4 @@
-﻿using Jahro.Logging;
-using Jahro.View;
-
-namespace Jahro.Core.Data
+﻿namespace JahroConsole.Core.Data
 {
     internal class JahroDatasourceFilterSettings
     {

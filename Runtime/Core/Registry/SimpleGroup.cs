@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jahro.Core.Registry
+namespace JahroConsole.Core.Registry
 {
-    internal class SimpleGroup<T> where T: ConsoleEntry
+    internal class SimpleGroup<T> where T : ConsoleEntry
     {
         internal string Name { get; private set; }
 
@@ -12,17 +12,17 @@ namespace Jahro.Core.Registry
 
         internal bool LIFO { get; set; }
 
-        internal List<T> Entries { get {return _entries;} } 
+        internal List<T> Entries { get { return _entries; } }
 
         protected List<T> _entries;
 
-        internal Action OnEntriesChanged = delegate{};
+        internal Action OnEntriesChanged = delegate { };
 
         internal SimpleGroup(string name)
         {
             Name = name;
             _entries = new List<T>(); //TODO serialize
-  
+
             Foldout = true;
         }
 
@@ -47,7 +47,7 @@ namespace Jahro.Core.Registry
             if (_entries.Contains(entry))
                 _entries.Remove(entry);
             OnEntriesChanged();
-        } 
+        }
 
         internal bool HasDublicate(T entry)
         {

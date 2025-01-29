@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using Jahro.Core.Registry;
-using Jahro.Core;
-using Jahro.Core.Context;
-using Jahro.Core.Watcher;
 using UnityEngine;
 using UnityEngine.UI;
+using JahroConsole.Core.Watcher;
+using JahroConsole.Core.Registry;
+using JahroConsole.Core.Context;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleWatcherView : ConsoleBaseView
     {

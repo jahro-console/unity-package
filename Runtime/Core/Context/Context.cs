@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
 using System.Linq;
-using Jahro.Core.Data;
-using Jahro.Core.Network;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Network;
 using UnityEngine;
 
-namespace Jahro.Core.Context
+namespace JahroConsole.Core.Context
 {
     internal class JahroContext
     {

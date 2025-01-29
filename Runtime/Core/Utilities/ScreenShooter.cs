@@ -1,11 +1,11 @@
 using System.Collections;
 using System.IO;
-using Jahro.Core.Data;
-using Jahro.Core.Notifications;
-using Jahro.Core.Snapshots;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Notifications;
+using JahroConsole.Core.Snapshots;
 using UnityEngine;
 
-namespace Jahro.Core.Utilities
+namespace JahroConsole.Core.Utilities
 {
     internal class ScreenShooter
     {

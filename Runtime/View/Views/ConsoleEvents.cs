@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Jahro.Logging;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     public sealed class ConsoleEvents
     {

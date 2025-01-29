@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Jahro.Core.Registry;
-using Jahro.Core;
-using Jahro.Core.Commands;
-using Jahro.Core.Context;
 using UnityEngine;
 using UnityEngine.UI;
+using JahroConsole.Core.Commands;
+using JahroConsole.Core.Registry;
+using JahroConsole.Core.Context;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleVisualView : ConsoleBaseView
     {

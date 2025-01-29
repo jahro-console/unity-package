@@ -1,9 +1,8 @@
 using System;
-using Jahro.Core.Context;
-using UnityEngine;
+using JahroConsole.Core.Context;
 using UnityEngine.Networking;
 
-namespace Jahro.Core.Network
+namespace JahroConsole.Core.Network
 {
     internal class ValidateKeyRequest : RequestBase
     {

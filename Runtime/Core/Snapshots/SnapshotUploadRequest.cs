@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Jahro.Core.Context;
-using Jahro.Core.Network;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Network;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Jahro.Core.Snapshots
+namespace JahroConsole.Core.Snapshots
 {
     internal class SnapshotUploadRequest : RequestBase
     {

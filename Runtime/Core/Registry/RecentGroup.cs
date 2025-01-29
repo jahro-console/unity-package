@@ -1,6 +1,6 @@
-﻿using Jahro.Core.Commands;
+﻿using JahroConsole.Core.Commands;
 
-namespace Jahro.Core.Registry
+namespace JahroConsole.Core.Registry
 {
     internal class RecentGroup : SimpleGroup<ConsoleCommandEntry>
     {

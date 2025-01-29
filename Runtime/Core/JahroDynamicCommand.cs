@@ -1,7 +1,7 @@
 ﻿using System;
-using Jahro.Core.Registry;
+using JahroConsole.Core.Registry;
 
-namespace Jahro
+namespace JahroConsole
 {
     /// <summary>
     /// Main API File

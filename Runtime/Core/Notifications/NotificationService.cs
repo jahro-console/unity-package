@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jahro.Core.Logging;
+using JahroConsole.Core.Logging;
 
-namespace Jahro.Core.Notifications
+namespace JahroConsole.Core.Notifications
 {
     internal sealed class NotificationService
     {

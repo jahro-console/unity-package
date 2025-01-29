@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jahro.Core.Commands
+namespace JahroConsole
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public class JahroCommandAttribute : Attribute

@@ -2,7 +2,7 @@
 using JahroPackage.Runtime.View.InputHandling;
 using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class GestureTrackerTap : MonoBehaviour
     {
@@ -14,7 +14,7 @@ namespace Jahro.View
 
         private float _prevTapTimestemp;
 
-        public Action OnTapsTracked = delegate{}; 
+        public Action OnTapsTracked = delegate { };
 
         private void Update()
         {
@@ -23,7 +23,7 @@ namespace Jahro.View
 
             if (JahroInput.IsTouchEnded(0) && JahroInput.GetTouchPosition(0).y > Screen.height * 0.75f)
             {
-                float timeSincePreviousClick = Time.realtimeSinceStartup - _prevTapTimestemp;        
+                float timeSincePreviousClick = Time.realtimeSinceStartup - _prevTapTimestemp;
                 if (timeSincePreviousClick < TAPS_DELTA)
                 {
                     _tapCount++;

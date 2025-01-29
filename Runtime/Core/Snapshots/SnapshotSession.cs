@@ -1,9 +1,9 @@
 using System;
-using Jahro.Core.Context;
-using Jahro.Core.Data;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
 using UnityEngine;
 
-namespace Jahro.Core.Snapshots
+namespace JahroConsole.Core.Snapshots
 {
     [Serializable]
     internal class SnapshotSession

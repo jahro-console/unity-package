@@ -1,16 +1,13 @@
 ﻿using System.Collections.Generic;
-using Jahro.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections;
 using System;
-using Jahro.Core.Registry;
-using Jahro.Core.Commands;
-using Jahro.Core.Logging;
-using Jahro.Logging;
+using JahroConsole.Core.Commands;
+using JahroConsole.Core.Registry;
+using JahroConsole.Core.Logging;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ParamsModalView : MonoBehaviour, IPointerClickHandler
     {

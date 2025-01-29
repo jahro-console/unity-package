@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Jahro.Core.Commands;
-using Jahro.Core.Context;
-using Jahro.Core.Data;
-using Jahro.Core.Logging;
-using Jahro.Core.Watcher;
-using UnityEngine;
+using JahroConsole.Core.Commands;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
+using JahroConsole.Core.Watcher;
 
-namespace Jahro.Core.Registry
+namespace JahroConsole.Core.Registry
 {
     internal static class ConsoleCommandsRegistry
     {

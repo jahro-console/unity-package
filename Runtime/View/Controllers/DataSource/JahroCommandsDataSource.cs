@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Jahro.Core.Logging;
-using Jahro.Logging;
-using Jahro.View;
+using JahroConsole.Core.Logging;
+using JahroConsole.Logging;
+using JahroConsole.View;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
     internal partial class JahroCommandsDataSource
     {

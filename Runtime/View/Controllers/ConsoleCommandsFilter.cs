@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Jahro.Core.Logging;
-using Jahro.Logging;
-using UnityEngine;
+using JahroConsole.Core.Logging;
 
-namespace Jahro.Core.Data
+namespace JahroConsole.Core.Data
 {
     internal class ConsoleCommandsFilter
     {
@@ -14,7 +12,7 @@ namespace Jahro.Core.Data
         private bool isFiltering;
         private bool isFilteringFinished;
         private JahroDatasourceFilterSettings filterSettings;
-        public event Action<List<JahroLogEntity>> FilteringFinished; 
+        public event Action<List<JahroLogEntity>> FilteringFinished;
 
         public ConsoleCommandsFilter(JahroDatasourceFilterSettings settings)
         {
@@ -30,7 +28,7 @@ namespace Jahro.Core.Data
                 filteredList.Clear();
             }
         }
-        
+
         public void FilterCommands(List<JahroLogEntity> unfiltered)
         {
 #if UNITY_WEBGL	
@@ -96,7 +94,7 @@ namespace Jahro.Core.Data
             {
                 return false;
             }
-            
+
             return true;
         }
     }

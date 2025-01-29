@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
-using Jahro.Core.Snapshots;
 using UnityEngine;
-using UnityEngine.UI;
+using JahroConsole.Core.Snapshots;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class ConsoleSnapshotsView : ConsoleBaseView
     {

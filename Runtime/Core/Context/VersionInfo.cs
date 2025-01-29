@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Jahro.Core.Context
+namespace JahroConsole.Core.Context
 {
     [Serializable]
     internal class VersionInfo

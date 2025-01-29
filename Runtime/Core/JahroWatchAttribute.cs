@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jahro.Core.Watcher
+namespace JahroConsole
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
     public class JahroWatchAttribute : Attribute

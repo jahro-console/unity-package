@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Jahro.Core.Internal
+namespace JahroConsole.Core.Internal
 {
     internal class GeneralTestMethods
     {

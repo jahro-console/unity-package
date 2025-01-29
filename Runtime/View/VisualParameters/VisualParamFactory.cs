@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal static class VisualParamFactory
     {

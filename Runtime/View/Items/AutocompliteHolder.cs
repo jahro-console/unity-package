@@ -1,17 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Jahro.Core.Commands;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using JahroConsole.Core.Commands;
 
-namespace Jahro.View
+namespace JahroConsole.View
 {
     internal class AutocompliteHolder : MonoBehaviour
     {
-        internal bool HasFocus {get {return _currentSelectable != null;}}
+        internal bool HasFocus { get { return _currentSelectable != null; } }
 
         private List<AutocompliteCommandEntry> _entriesObjects = new List<AutocompliteCommandEntry>();
 
@@ -25,20 +23,20 @@ namespace Jahro.View
 
         private int _currentEntriesCount;
 
-        public event Action<ConsoleCommandEntry> OnAutocompliteCommandPress = delegate {};
+        public event Action<ConsoleCommandEntry> OnAutocompliteCommandPress = delegate { };
 
         internal void UpdateEntries(List<ConsoleCommandEntry> entries)
         {
             _currentEntriesCount = entries.Count;
             if (entries.Count > _entriesObjects.Count)
             {
-                for (int i=_entriesObjects.Count; i < entries.Count; i++)
+                for (int i = _entriesObjects.Count; i < entries.Count; i++)
                 {
                     _entriesObjects.Add(CreateVisualCommandEntry());
                 }
             }
 
-            for (int i=0; i<_entriesObjects.Count; i++)
+            for (int i = 0; i < _entriesObjects.Count; i++)
             {
                 if (i < entries.Count)
                 {
@@ -118,7 +116,7 @@ namespace Jahro.View
 
         public void Clear()
         {
-            foreach(var entry in _entriesObjects)
+            foreach (var entry in _entriesObjects)
             {
                 entry.Hide();
             }
