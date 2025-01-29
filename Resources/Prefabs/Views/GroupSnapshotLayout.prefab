@@ -348,7 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76141485a75f1430cbbecdfc3a071a4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snapshotItemPrefab: {fileID: 5704053795797714913, guid: 5fbb6d898ca594381b7e203191765614, type: 3}
+  snapshotItemPrefab: {fileID: 5704053795797714913, guid: 746d37655b0214a7590b54b4836e5d06, type: 3}
   ContentTransform: {fileID: 428706203002968589}
   FoldoutImageOn: {fileID: 2548296170841753150}
   FoldoutImageOff: {fileID: 1279775694404700787}
