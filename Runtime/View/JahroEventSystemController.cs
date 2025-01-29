@@ -24,6 +24,8 @@ namespace Jahro
 
     private bool _handled;
 
+    public bool Handled { get => _handled; set => _handled = value; }
+
     private void Awake()
     {
 #if ENABLE_LEGACY_INPUT_MANAGER
@@ -45,7 +47,7 @@ namespace Jahro
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
     {
-      _handled = false;
+      Handled = false;
       ProcessEventSystems();
     }
 
@@ -55,7 +57,7 @@ namespace Jahro
 
 #if ENABLE_LEGACY_INPUT_MANAGER
       HandleWithOldInputSystem();
-      _handled = true;
+      Handled = true;
 #endif
 
 #if ENABLE_INPUT_SYSTEM

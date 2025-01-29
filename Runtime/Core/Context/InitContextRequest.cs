@@ -25,12 +25,15 @@ namespace Jahro.Core.Context
 
         internal Action<string, long> OnFail;
 
+        private string _sessionId;
+
         private string _key;
 
         private string _version;
 
-        internal InitContextRequest(string apiKey, string version)
+        internal InitContextRequest(string sessionId, string apiKey, string version)
         {
+            _sessionId = sessionId;
             _key = apiKey;
             _version = version;
         }
@@ -48,6 +51,7 @@ namespace Jahro.Core.Context
         internal override WWWForm FormDataWWW()
         {
             var form = new WWWForm();
+            form.AddField("sessionId", _sessionId);
             form.AddField("platform", Application.platform.ToString());
             form.AddField("unityVersion", Application.unityVersion);
             form.AddField("jahro-version", _version);

@@ -39,17 +39,14 @@ namespace JahroPackage.Runtime.View.InputHandling
             {
 #if ENABLE_LEGACY_INPUT_MANAGER
                   return Input.touches.Length;
-#endif
-
-#if ENABLE_INPUT_SYSTEM
-#pragma warning disable CS0162 // Unreachable code detected
+#elif ENABLE_INPUT_SYSTEM
                   if (EnhancedTouchSupport.enabled)
                   {
                         return UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count;
                   }
-#pragma warning restore CS0162 // Unreachable code detected
-#endif
+#else
                   return 0;
+#endif
             }
 
             public static bool IsTouchEnded(int index)

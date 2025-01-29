@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Jahro.Core.Snapshots
 {
@@ -49,8 +50,8 @@ namespace Jahro.Core.Snapshots
         // Stop logging and flush everything
         internal async Task StopLoggingAsync()
         {
-            _cts.Cancel();
             _logSignal.Release();
+            _cts.Cancel();
             if (_loggingTask != null)
             {
                 await _loggingTask;
@@ -132,6 +133,10 @@ namespace Jahro.Core.Snapshots
                     await _bufferedStream.FlushAsync();
                 }
             }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
             finally
             {
                 await ForceFlushBuffer();
@@ -142,7 +147,7 @@ namespace Jahro.Core.Snapshots
         private void DisposeStreams()
         {
             _streamWriter?.Dispose();
-            _gzipStream?.Dispose();   // This is key for ensuring all compressed data is written
+            _gzipStream?.Dispose();
             _bufferedStream?.Dispose();
             _fileStream?.Dispose();
         }

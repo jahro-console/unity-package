@@ -71,7 +71,7 @@ namespace Jahro.Core.Context
             OnContextInfoChanged?.Invoke(this);
         }
 
-        internal static IEnumerator InitCoroutine(ConsoleStorage storage, Action<JahroContext> onProcessed)
+        internal static IEnumerator InitCoroutine(ConsoleStorage storage, string sessionId, Action<JahroContext> onProcessed)
         {
             var context = new JahroContext();
             if (string.IsNullOrEmpty(storage.ProjectSettings.APIKey))
@@ -82,7 +82,7 @@ namespace Jahro.Core.Context
             }
             else
             {
-                var initContextRequest = new InitContextRequest(storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
+                var initContextRequest = new InitContextRequest(sessionId, storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
                 context._selectedUserInfo = ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo;
                 initContextRequest.OnComplete = (result) =>
                 {
@@ -114,9 +114,9 @@ namespace Jahro.Core.Context
             }
         }
 
-        internal static IEnumerator RefreshCoroutine(ConsoleStorage storage, JahroContext context)
+        internal static IEnumerator RefreshCoroutine(ConsoleStorage storage, string sessionId, JahroContext context)
         {
-            var refreshRequest = new RefreshContextRequest(storage.ProjectSettings.APIKey, context._projectInfo.Id, context._selectedUserInfo.Id);
+            var refreshRequest = new RefreshContextRequest(sessionId, storage.ProjectSettings.APIKey, context._projectInfo.Id, context._selectedUserInfo.Id);
             refreshRequest.OnComplete = (result) =>
             {
                 context.UpdateInfo(result.projectInfo, result.tenantInfo, result.users, null, storage);

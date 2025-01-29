@@ -23,14 +23,17 @@ namespace Jahro.Core.Context
 
         internal Action<string, long> OnFail;
 
+        private string _sessionId;
+
         private string _key;
 
         private string _projectId;
 
         private string _userId;
 
-        internal RefreshContextRequest(string apiKey, string projectId, string userId)
+        internal RefreshContextRequest(string sessionId, string apiKey, string projectId, string userId)
         {
+            _sessionId = sessionId;
             _key = apiKey;
             _projectId = projectId;
             _userId = userId;
@@ -49,6 +52,7 @@ namespace Jahro.Core.Context
         internal override WWWForm FormDataWWW()
         {
             var form = new WWWForm();
+            form.AddField("sessionId", _sessionId);
             form.AddField("projectId", _projectId);
             form.AddField("userId", _userId);
             return form;
