@@ -7,7 +7,7 @@ using UnityEngine.InputSystem.UI;
 #endif
 using UnityEngine.SceneManagement;
 
-namespace Jahro
+namespace JahroConsole
 {
   public class JahroEventSystemController : MonoBehaviour
   {
