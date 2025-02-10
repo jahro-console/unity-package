@@ -22,6 +22,14 @@ namespace JahroConsole.Core.Context
             }
         }
 
+        internal string Id
+        {
+            get
+            {
+                return _sessionID;
+            }
+        }
+
         private static JahroSession _current;
 
         private JahroContext _context;

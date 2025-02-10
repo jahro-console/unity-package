@@ -57,6 +57,7 @@ namespace JahroConsole.Core.Snapshots
             var formSections = new List<IMultipartFormSection>
             {
                 new MultipartFormDataSection("tenantId", _teamId),
+                new MultipartFormDataSection("sessionId", JahroSession.Current.Id),
                 new MultipartFormDataSection("projectId", _projectId),
                 new MultipartFormDataSection("createdBy", _userId),
                 new MultipartFormDataSection("platform", Application.platform.ToString()),

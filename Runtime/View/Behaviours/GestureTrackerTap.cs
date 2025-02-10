@@ -1,5 +1,5 @@
 ﻿using System;
-using JahroPackage.Runtime.View.InputHandling;
+using JahroConsole.View.InputHandling;
 using UnityEngine;
 
 namespace JahroConsole.View

@@ -3,7 +3,7 @@ using System.Collections;
 using JahroConsole.Core.Commands;
 using JahroConsole.Core.Data;
 using JahroConsole.Core.Registry;
-using JahroPackage.Runtime.View.InputHandling;
+using JahroConsole.View.InputHandling;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 #endif
 
-namespace JahroPackage.Runtime.View.InputHandling
+namespace JahroConsole.View.InputHandling
 {
   public static class KeyboardExtensions
   {

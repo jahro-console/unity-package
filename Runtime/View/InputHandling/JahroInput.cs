@@ -5,7 +5,7 @@ using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 #endif
 
-namespace JahroPackage.Runtime.View.InputHandling
+namespace JahroConsole.View.InputHandling
 {
       public class JahroInput
       {
