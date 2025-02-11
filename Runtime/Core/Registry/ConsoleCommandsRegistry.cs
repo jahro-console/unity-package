@@ -7,6 +7,7 @@ using JahroConsole.Core.Context;
 using JahroConsole.Core.Data;
 using JahroConsole.Core.Logging;
 using JahroConsole.Core.Watcher;
+using UnityEngine;
 
 namespace JahroConsole.Core.Registry
 {

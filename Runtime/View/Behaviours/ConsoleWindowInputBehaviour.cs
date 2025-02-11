@@ -49,7 +49,7 @@ namespace JahroConsole.View
 			SetAutocomplitePanel(false);
 			_commandsQueue = ConsoleStorageController.Instance.ConsoleStorage.CommandsQueue;
 			_commandsQueue.ResetIndex();
-
+			Enable();
 			CommandsInputField.GetComponent<JahroInputField>().onSubmit += OnSubmitEvent;
 		}
 

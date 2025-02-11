@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Threading.Tasks;
 using JahroConsole.Core.Notifications;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace JahroConsole.Core.Network
@@ -17,22 +18,19 @@ namespace JahroConsole.Core.Network
 
         private int _activeRequests = 0;
 
-        private readonly object _lock = new object();
-
         internal bool HasActiveRequests
         {
             get
             {
-                lock (_lock)
-                {
-                    return _activeRequests > 0;
-                }
+                return _activeRequests > 0;
             }
         }
 
         internal IEnumerator SendRequestCoroutine(RequestBase request)
         {
             UnityWebRequest webRequest = CreateWebRequest(request);
+            _activeRequests++;
+            if (_activeRequests == 1) NotificationService.Instance.ActiveNetwork(true);
             request.FillHeaders(webRequest);
 
             webRequest.SendWebRequest();
@@ -43,6 +41,8 @@ namespace JahroConsole.Core.Network
                 yield return null;
             }
 
+            _activeRequests--;
+            if (_activeRequests == 0) NotificationService.Instance.ActiveNetwork(false);
             HandleResponse(webRequest, request);
             webRequest.Dispose();
         }
@@ -66,12 +66,6 @@ namespace JahroConsole.Core.Network
 
         private UnityWebRequest CreateWebRequest(RequestBase request)
         {
-            lock (_lock)
-            {
-                _activeRequests++;
-                if (_activeRequests == 1) NotificationService.Instance.ActiveNetwork(true);
-            }
-
             var url = request.BuildRequestURL();
 
             UnityWebRequest webRequest;
@@ -123,11 +117,6 @@ namespace JahroConsole.Core.Network
 
         private void HandleResponse(UnityWebRequest webRequest, RequestBase request)
         {
-            lock (_lock)
-            {
-                _activeRequests--;
-                if (_activeRequests == 0) NotificationService.Instance.ActiveNetwork(false);
-            }
 
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
