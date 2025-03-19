@@ -3,6 +3,7 @@ using System.Collections;
 using JahroConsole.Core.Data;
 using JahroConsole.Core.Registry;
 using JahroConsole.Core.Snapshots;
+using UnityEngine;
 
 namespace JahroConsole.Core.Context
 {
@@ -46,7 +47,6 @@ namespace JahroConsole.Core.Context
             SnapshotsManager.Instance.StartRecording();
             Current = new JahroSession();
             ConsoleStorageController.LoadState();
-
             yield return JahroContext.InitCoroutine(ConsoleStorageController.Instance.ConsoleStorage, Current._sessionID, (context) =>
             {
                 Current._context = context;

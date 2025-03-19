@@ -82,6 +82,7 @@ namespace JahroConsole.Core.Context
             }
             else
             {
+                //TODO: send user id to server
                 var initContextRequest = new InitContextRequest(sessionId, storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
                 context._selectedUserInfo = ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo;
                 initContextRequest.OnComplete = (result) =>
@@ -92,6 +93,11 @@ namespace JahroConsole.Core.Context
                     if (context._selectedUserInfo == null || string.IsNullOrEmpty(context._selectedUserInfo.Id))
                     {
                         context._selectedUserInfo = context._teamMembers[0];
+                    }
+                    else
+                    {
+                        var selectedUser = context._teamMembers.FirstOrDefault(m => m.Id == context._selectedUserInfo.Id);
+                        context._selectedUserInfo = selectedUser;
                     }
                     onProcessed(context);
                 };

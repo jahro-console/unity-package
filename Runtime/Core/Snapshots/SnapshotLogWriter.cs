@@ -11,6 +11,11 @@ namespace JahroConsole.Core.Snapshots
 {
     internal class SnapshotLogWriter
     {
+        private const string LOG_START = "@JAHRO_LOG_START@";
+        private const string MSG_START = "@JAHRO_MSG_START@";
+        private const string TRACE_START = "@JAHRO_TRACE_START@";
+        private const string LOG_END = "@JAHRO_LOG_END@";
+        private const string LINE_END = "\n";
         private readonly ConcurrentQueue<string> _logQueue = new ConcurrentQueue<string>();
         private readonly SemaphoreSlim _logSignal = new SemaphoreSlim(0);
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -84,7 +89,24 @@ namespace JahroConsole.Core.Snapshots
         internal void Log(string message, string logType, string stackTrace)
         {
             var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            var logEntry = $"{{\"timestamp\": \"{timestamp}\", \"type\": \"{logType}\", \"message\": \"{message}\", \"stacktrace\": \"{stackTrace}\"}}\n=%J%=\n";
+            var messageLength = message?.Length ?? 0;
+            var stackTraceLength = stackTrace?.Length ?? 0;
+
+            var header = $"{{\n" +
+                $"    \"timestamp\": \"{timestamp}\",\n" +
+                $"    \"type\": \"{logType}\",\n" +
+                $"    \"message_length\": {messageLength},\n" +
+                $"    \"stacktrace_length\": {stackTraceLength}\n" +
+                $"}}";
+
+            var logEntry = $"{LOG_START}{LINE_END}" +
+                $"{header}{LINE_END}" +
+                $"{MSG_START}{LINE_END}" +
+                $"{message ?? ""}{LINE_END}" +
+                $"{TRACE_START}{LINE_END}" +
+                $"{stackTrace ?? ""}{LINE_END}" +
+                $"{LOG_END}{LINE_END}";
+
             _logQueue.Enqueue(logEntry);
             _logSignal.Release();
         }
