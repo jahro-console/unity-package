@@ -3,7 +3,6 @@
 **Debug, control, and fine-tune your game directly inside the game view.**  
 Jahro provides powerful tools for Unity developers to streamline debugging, testing, and collaboration.  
 
-> ⚠️ **Note:** Jahro is currently in **closed alpha**. Public access will be available soon. Stay tuned!
 >
 
 ![Jahro Screenshot](https://vdepoiw1jnimcohf.public.blob.vercel-storage.com/Jahro_3%201-f2rMPbdeHAvaTZaFEGHbfxIQ8hqFM0.png)  
