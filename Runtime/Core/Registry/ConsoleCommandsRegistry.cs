@@ -139,6 +139,10 @@ namespace JahroConsole.Core.Registry
             foreach (var memberInfo in members)
             {
                 var attribute = memberInfo.GetCustomAttributes(typeof(JahroWatchAttribute), false)[0] as JahroWatchAttribute;
+                if (string.IsNullOrWhiteSpace(attribute.Name))
+                {
+                    attribute.Name = memberInfo.Name.TrimStart('_');
+                }
                 var entry = new ConsoleWatcherEntry(attribute.Name.Trim(), attribute.Description.Trim());
                 entry.SetMemberInfo(memberInfo);
                 entry.SetRuntimeObject(obj);
@@ -149,6 +153,11 @@ namespace JahroConsole.Core.Registry
             foreach (var methodInfo in methods)
             {
                 JahroCommandAttribute attribute = methodInfo.GetCustomAttributes(typeof(JahroCommandAttribute), false)[0] as JahroCommandAttribute;
+                if (string.IsNullOrWhiteSpace(attribute.MethodName))
+                {
+                    attribute.MethodName = methodInfo.Name;
+                }
+                attribute.MethodName = attribute.MethodName.Replace(" ", "");
                 var entry = new ConsoleCommandEntry(attribute.MethodName.Trim(), attribute.MethodDescription.Trim());
                 entry.SetMethodInfo(methodInfo as MethodInfo);
                 entry.SetReferenceObject(obj);
