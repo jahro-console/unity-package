@@ -64,6 +64,11 @@ namespace JahroConsole.View
             UpdateGroupCounter(_visualCommands.Count);
         }
 
+        void OnDestroy()
+        {
+            Group.OnEntriesChanged -= OnEntriesChanged;
+        }
+
         private void OnFoldoutStateChanged(bool state)
         {
             Group.Foldout = state;
@@ -93,7 +98,7 @@ namespace JahroConsole.View
                 }
             }
 
-            if (_visualView.ParamsModalView.IsOpen()
+            if (_visualView.ParamsModalView != null && _visualView.ParamsModalView.IsOpen()
                 && entriesToRemove.Contains(_visualView.ParamsModalView.CurrentCommandEntry))
             {
                 var visualCommand = _visualCommands[_visualView.ParamsModalView.CurrentCommandEntry];
@@ -135,7 +140,10 @@ namespace JahroConsole.View
         private void RemoveEntry(ConsoleCommandEntry entry)
         {
             var visualCommand = _visualCommands[entry];
-            GameObject.Destroy(visualCommand.gameObject);
+            if (visualCommand != null && visualCommand.gameObject != null)
+            {
+                GameObject.Destroy(visualCommand.gameObject);
+            }
         }
 
         public IEnumerable<IFlexGridItem> GetOrderedItems()

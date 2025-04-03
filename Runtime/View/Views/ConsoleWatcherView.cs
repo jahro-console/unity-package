@@ -113,6 +113,11 @@ namespace JahroConsole.View
             ShowHintView(totalItems == 0);
         }
 
+        void OnDestroy()
+        {
+            _watcher.OnGroupsChanged -= OnGroupsChanged;
+        }
+
         private void ReorderGroups()
         {
             var orderedGroups = _groupLayouts.OrderBy(g => g.Group.Name);

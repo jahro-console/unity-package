@@ -153,7 +153,10 @@ namespace JahroConsole.View
         private void RemoveEntry(ConsoleWatcherEntry entry)
         {
             var visualCommand = _watcherItems[entry];
-            GameObject.Destroy(visualCommand.gameObject);
+            if (visualCommand != null && visualCommand.gameObject != null)
+            {
+                GameObject.Destroy(visualCommand.gameObject);
+            }
         }
 
         public IEnumerable<IFlexGridItem> GetOrderedItems()

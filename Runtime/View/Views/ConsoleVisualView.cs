@@ -108,7 +108,7 @@ namespace JahroConsole.View
             List<ConsoleGroupLayout> layoutsToDestroy = new List<ConsoleGroupLayout>();
             foreach (var layoutGroup in _groupLayouts)
             {
-                if (_commandsHolder.Groups.Contains(layoutGroup.Group) == false)
+                if (_commandsHolder.Groups.Contains(layoutGroup.Group) == false || layoutGroup == null)
                 {
                     layoutsToDestroy.Add(layoutGroup);
                     DestroyGroup(layoutGroup);
@@ -124,6 +124,11 @@ namespace JahroConsole.View
 
             int totalItems = _groupLayouts.Sum(g => g.Group.Entries.Count);
             ShowHintView(totalItems == 0);
+        }
+
+        void OnDestroy()
+        {
+            _commandsHolder.OnGroupsChanged -= OnGroupsChanged;
         }
 
         private void ReorderGroups()
@@ -171,7 +176,10 @@ namespace JahroConsole.View
 
         private void DestroyGroup(ConsoleGroupLayout groupLayout)
         {
-            GameObject.Destroy(groupLayout.gameObject);
+            if (groupLayout != null && groupLayout.gameObject != null)
+            {
+                GameObject.Destroy(groupLayout.gameObject);
+            }
         }
 
         private IEnumerator CreateCommandNotification(ConsoleCommandEntry entry)

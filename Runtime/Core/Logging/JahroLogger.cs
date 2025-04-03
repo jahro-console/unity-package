@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
 using JahroConsole.Core.Notifications;
 using UnityEngine;
 
@@ -24,7 +27,7 @@ namespace JahroConsole.Core.Logging
 
     internal class JahroLogger : IDisposable
     {
-        internal struct PreSplashLogMessage
+        internal struct LogMessageData
         {
             internal string Log;
             internal string StackTrace;
@@ -50,15 +53,24 @@ namespace JahroConsole.Core.Logging
 
         private bool _onHoldForIncomingLog;
 
-        private List<PreSplashLogMessage> _preSplashLogMessages;
+        private List<LogMessageData> _preSplashLogMessages;
+
+        private ConcurrentQueue<LogMessageData> _logQueue = new ConcurrentQueue<LogMessageData>();
+
+        private static SynchronizationContext _mainThreadContext;
 
         internal void StartCatching()
         {
 #if JAHRO_DEBUG
             Debug.Log("Logger start catching...");
 #endif
-            _preSplashLogMessages = new List<PreSplashLogMessage>();
-            Application.logMessageReceived += ApplicationOnlogMessageReceived;
+            _preSplashLogMessages = new List<LogMessageData>();
+            Application.logMessageReceivedThreaded += ApplicationOnlogMessageReceived;
+
+            if (_mainThreadContext == null)
+            {
+                _mainThreadContext = SynchronizationContext.Current;
+            }
         }
 
         private void ApplicationOnlogMessageReceived(string logString, string stacktrace, LogType type)
@@ -70,7 +82,42 @@ namespace JahroConsole.Core.Logging
             }
 
             var jahroLogType = (EJahroLogType)(int)type;
-            JahroLogger.LogUnity(logString, stacktrace, jahroLogType);
+            LogUnity(logString, stacktrace, jahroLogType);
+        }
+
+        private void ProcessLogs()
+        {
+            const int maxLogsPerBatch = 100;
+            int processedCount = 0;
+
+            while (processedCount < maxLogsPerBatch && _logQueue.TryDequeue(out var logEntry))
+            {
+                ProcessLogDirectly(logEntry.Log, logEntry.StackTrace, logEntry.Type);
+                processedCount++;
+            }
+
+            if (_logQueue.Count > 0)
+            {
+                _mainThreadContext?.Post(_ => ProcessLogs(), null);
+            }
+        }
+
+        private void ProcessLogDirectly(string message, string details, EJahroLogType logType)
+        {
+            if (_preSplashLogMessages != null)
+            {
+                _preSplashLogMessages.Add(new LogMessageData()
+                {
+                    StackTrace = details,
+                    Log = message,
+                    Type = logType
+                });
+            }
+            else
+            {
+                OnLogEvent(message, details, logType);
+                NotificationService.Instance.InvokeLogAdded(JahroLogGroup.MatchGroup(logType));
+            }
         }
 
         internal void DumpPreSplashScreenMessages()
@@ -97,24 +144,24 @@ namespace JahroConsole.Core.Logging
 
         public void Dispose()
         {
-            Application.logMessageReceived -= ApplicationOnlogMessageReceived;
+            Application.logMessageReceivedThreaded -= ApplicationOnlogMessageReceived;
         }
 
         internal static void LogUnity(string message, string details, EJahroLogType logType)
         {
-            if (Instance._preSplashLogMessages != null)
+            if (Thread.CurrentThread.ManagedThreadId == 1 || SynchronizationContext.Current == _mainThreadContext)
             {
-                Instance._preSplashLogMessages.Add(new PreSplashLogMessage()
-                {
-                    StackTrace = details,
-                    Log = message,
-                    Type = logType
-                });
+                Instance.ProcessLogDirectly(message, details, logType);
             }
             else
             {
-                OnLogEvent(message, details, logType);
-                NotificationService.Instance.InvokeLogAdded(JahroLogGroup.MatchGroup(logType));
+                Instance._logQueue.Enqueue(new LogMessageData()
+                {
+                    Log = message,
+                    StackTrace = details,
+                    Type = logType
+                });
+                _mainThreadContext?.Post(_ => Instance.ProcessLogs(), null);
             }
         }
 
@@ -186,8 +233,6 @@ namespace JahroConsole.Core.Logging
                     break;
             }
         }
-
-
     }
 
     internal class JahroLogGroup

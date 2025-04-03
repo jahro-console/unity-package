@@ -45,7 +45,9 @@ namespace JahroConsole.Core.Registry
         internal void RemoveEntry(T entry)
         {
             if (_entries.Contains(entry))
+            {
                 _entries.Remove(entry);
+            }
             OnEntriesChanged();
         }
 
