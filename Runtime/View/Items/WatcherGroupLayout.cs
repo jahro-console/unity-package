@@ -64,6 +64,11 @@ namespace JahroConsole.View
             UpdateGroupCounter(_watcherItems.Count);
         }
 
+        void OnDestroy()
+        {
+            Group.OnEntriesChanged -= OnEntriesChanged;
+        }
+
         private void OnFoldoutStateChanged(bool state)
         {
             Group.Foldout = state;
@@ -109,7 +114,7 @@ namespace JahroConsole.View
                 }
             }
 
-            if (_watcherView.WatcherModalView.IsOpen()
+            if (_watcherView.WatcherModalView != null && _watcherView.WatcherModalView.IsOpen()
                 && entriesToRemove.Contains(_watcherView.WatcherModalView.CurrentWatcherEntry))
             {
                 var visualCommand = _watcherItems[_watcherView.WatcherModalView.CurrentWatcherEntry];

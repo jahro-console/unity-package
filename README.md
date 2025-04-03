@@ -20,12 +20,24 @@ Jahro provides powerful tools for Unity Game Creators for debugging, testing, an
 
 - **Run Commands/Cheats Console:** <br/>
   Execute static/non-static methods inside your game on a target device.
+
+  ![Commands](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-visual-full.png)
+
 - **Logs Infrastructure:** <br/>
   Collaborate on logs and screenshots with your team for better debugging and session analysis.
+
+  ![Logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/web-logs-all.png)
+
 - **Watch over Variables:** <br/>
   Track any variable in your game with the Watcher. From simple primitives to complex objects and game states.
+
+  ![Watcher](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-watcher-full.png)
+
 - **Logs In Game View:** <br/>
   See logs directly inside the game.
+
+  ![Logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-logs-full.png)
+
 - **Mobile and UX Friendly:** <br/>
   Jahro designed for mobile games with especial attention to UX.
 

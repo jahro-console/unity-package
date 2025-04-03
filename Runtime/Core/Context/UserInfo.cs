@@ -19,15 +19,32 @@ namespace JahroConsole.Core.Context
 
         internal string GetInitialsName()
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return "~";
+            }
+
             var names = name.Split(' ');
             if (names.Length == 0 || string.IsNullOrEmpty(names[0]))
             {
                 return "~";
             }
+
+            if (names[0].Length == 0)
+            {
+                return "~";
+            }
+
             if (names.Length == 1)
             {
                 return names[0].Substring(0, 1);
             }
+
+            if (string.IsNullOrEmpty(names[1]) || names[1].Length == 0)
+            {
+                return names[0].Substring(0, 1);
+            }
+
             return names[0].Substring(0, 1) + names[1].Substring(0, 1);
         }
     }

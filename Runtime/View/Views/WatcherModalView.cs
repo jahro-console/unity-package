@@ -121,7 +121,7 @@ namespace JahroConsole.View
 
         public bool IsOpen()
         {
-            return gameObject.activeSelf;
+            return gameObject != null && gameObject.activeSelf;
         }
 
         public void Close()
