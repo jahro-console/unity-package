@@ -95,7 +95,7 @@ namespace JahroConsole.Core.Context
             };
             initContextRequest.OnFail = (error, responseCode) =>
             {
-                Debug.LogError($"Jahro: Context request failed - {responseCode} - {error}");
+                Debug.LogError($"Jahro: {responseCode} - {error}");
                 if (responseCode == 401)
                 {
                     OnApiError(storage, context);
@@ -113,7 +113,6 @@ namespace JahroConsole.Core.Context
 
         internal static async void Refresh(ConsoleStorage storage, string sessionId, JahroContext context)
         {
-            Debug.Log("RefreshCoroutine: " + storage.ProjectSettings + " context: " + context._projectInfo + " selectedUser: " + context._selectedUserInfo);
             var refreshRequest = new RefreshContextRequest(sessionId, storage.ProjectSettings.APIKey, context._projectInfo.Id, context._selectedUserInfo.Id);
             refreshRequest.OnComplete = (result) =>
             {
@@ -123,7 +122,7 @@ namespace JahroConsole.Core.Context
             };
             refreshRequest.OnFail = (error, responseCode) =>
             {
-                Debug.LogError($"Jahro: Context refresh request failed - {responseCode} - {error}");
+                Debug.LogError($"Jahro: {responseCode} - {error}");
                 if (responseCode == 401)
                 {
                     OnApiError(storage, context);
