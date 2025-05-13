@@ -95,6 +95,11 @@ namespace JahroConsole.Core.Snapshots
             command = logsCountCommands;
         }
 
+        internal bool isEmpty()
+        {
+            return logsCountDebug == 0 && logsCountWarning == 0 && logsCountErrors == 0 && logsCountCommands == 0;
+        }
+
         internal void StartUploading()
         {
             status = Status.Uploading;

@@ -53,7 +53,7 @@ namespace JahroConsole
 
     private void ProcessEventSystems()
     {
-      _eventSystems = FindObjectsOfType<EventSystem>().ToList();
+      _eventSystems = FindObjectsByType<EventSystem>(FindObjectsSortMode.None).ToList();
 
 #if ENABLE_LEGACY_INPUT_MANAGER
       HandleWithOldInputSystem();

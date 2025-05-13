@@ -1,20 +1,22 @@
 using System;
 using JahroConsole.Core.Context;
+using UnityEditor;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace JahroConsole.Core.Network
 {
-    internal class ValidateKeyRequest : RequestBase
+    internal class VersionCheckRequest : RequestBase
     {
         public Action<string> OnComplete;
 
         public Action<string> OnFail;
 
-        private string _key;
+        private bool _isFreshInstall;
 
-        public ValidateKeyRequest(string key)
+        public VersionCheckRequest(bool isFreshInstall)
         {
-            _key = key;
+            _isFreshInstall = isFreshInstall;
         }
 
         internal override RequestType GetRequestType()
@@ -24,13 +26,18 @@ namespace JahroConsole.Core.Network
 
         internal override string GetURL()
         {
-            return JahroConfig.HostUrl + "/client/verify-key";
+            return JahroConfig.HostUrl + "/client/version-check";
         }
 
-        internal override void FillHeaders(UnityWebRequest request)
+        internal override WWWForm FormDataWWW()
         {
-            base.FillHeaders(request);
-            request.SetRequestHeader("x-api-key", _key);
+            var form = new WWWForm();
+            form.AddField("currentVersion", JahroConfig.CurrentVersion);
+            form.AddField("unityVersion", Application.unityVersion);
+            form.AddField("deviceName", SystemInfo.deviceName);
+            form.AddField("isFreshInstall", _isFreshInstall.ToString());
+            form.AddField("platform", Application.platform.ToString());
+            return form;
         }
 
         protected override void OnRequestComplete(string result)

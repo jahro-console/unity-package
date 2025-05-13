@@ -96,8 +96,14 @@ namespace JahroConsole.Core.Snapshots
             }
         }
 
-        internal IEnumerator UploadSnapshotCoroutine(SnapshotSession snapshotSession)
+        internal async void UploadSnapshotCoroutine(SnapshotSession snapshotSession)
         {
+            if (snapshotSession.isEmpty())
+            {
+                Debug.LogWarning("Snapshot is empty, skipping upload");
+                return;
+            }
+
             bool uploadSuccess = true;
             string errorMessage = "";
 
@@ -122,11 +128,11 @@ namespace JahroConsole.Core.Snapshots
                 uploadSuccess = false;
                 errorMessage = error;
             };
-            yield return NetworkManager.Instance.SendRequestCoroutine(snapshotUploadRequest);
+            await NetworkManager.Instance.SendRequestAsync(snapshotUploadRequest);
 
             if (uploadSuccess)
             {
-                yield return new WaitForSeconds(1f);
+                await Task.Delay(1000);
                 snapshotSession.OnUploadSuccess();
             }
             else

@@ -114,7 +114,7 @@ namespace JahroConsole
         private void OnMainWindowOpen()
         {
             _launchButton.Hide();
-            StartCoroutine(JahroSession.RefreshSession());
+            JahroSession.RefreshSession();
             if (OnStateChanged != null)
             {
                 OnStateChanged(ConsoleViewStates.MainWindowShow);
@@ -254,7 +254,7 @@ namespace JahroConsole
 
         public static JahroViewManager GetInstance()
         {
-            return GameObject.FindObjectOfType<JahroViewManager>();
+            return GameObject.FindFirstObjectByType<JahroViewManager>();
         }
 
         internal static JahroViewManager InstantiateView()
@@ -263,7 +263,7 @@ namespace JahroConsole
             var consoleObject = GameObject.Instantiate(prefab);
             var viewManager = consoleObject.GetComponent<JahroViewManager>();
 
-            var sceneCanvases = Canvas.FindObjectsOfType<Canvas>();
+            var sceneCanvases = Canvas.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
             int maxSortingOrder = 0;
             foreach (var canvas in sceneCanvases)
             {

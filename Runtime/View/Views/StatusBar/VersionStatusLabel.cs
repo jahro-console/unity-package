@@ -1,4 +1,5 @@
 using JahroConsole.Core.Context;
+using JahroConsole.Core.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +11,12 @@ namespace JahroConsole.View
         private Image Indicator;
 
         [SerializeField]
+        private GameObject VersionWarningContainer;
+
+        [SerializeField]
         private Text VersionText;
 
-        private VersionInfo _versionInfo;
+        private VersionChecker.VersionResponse _versionInfo;
 
         void Start()
         {
@@ -22,11 +26,11 @@ namespace JahroConsole.View
 
         public void OnLabelClick()
         {
-            string url = _versionInfo?.ChangelogUrl;
+            string url = _versionInfo?.changelogUrl;
             Application.OpenURL(url != null ? url : "https://jahro.io/changelog");
         }
 
-        public void UpdateInfo(string currentVersion, VersionInfo versionInfo)
+        public void UpdateInfo(string currentVersion, VersionChecker.VersionResponse versionInfo)
         {
             _versionInfo = versionInfo;
             VersionText.text = "v" + currentVersion;
@@ -35,21 +39,21 @@ namespace JahroConsole.View
                 Indicator.color = new Color(0f, 0f, 0f, 0f);
                 return;
             }
-            switch (versionInfo.UpdateSeverity)
+
+            if (_versionInfo.updateRequired)
             {
-                case "critical":
-                    Indicator.color = new Color(0.953f, 0f, 0.173f);
-                    break;
-                case "major":
-                    Indicator.color = new Color(0.102f, 0.231f, 0.945f);
-                    break;
-                case "none":
-                    Indicator.color = new Color(0f, 0f, 0f, 0f);
-                    break;
-                default:
-                    Indicator.color = new Color(0f, 0f, 0f, 0f);
-                    break;
+                Indicator.color = new Color(0.953f, 0f, 0.173f);
+                if (VersionWarningContainer != null) VersionWarningContainer.SetActive(true);
             }
+            else if (_versionInfo.updateRecommended)
+            {
+                Indicator.color = new Color(0.102f, 0.231f, 0.945f);
+            }
+            else
+            {
+                Indicator.color = new Color(0f, 0f, 0f, 0f);
+            }
+
         }
 
     }

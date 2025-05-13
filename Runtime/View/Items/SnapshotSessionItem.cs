@@ -119,7 +119,7 @@ namespace JahroConsole.View
 
         private void OnUploadClick()
         {
-            StartCoroutine(SnapshotsManager.Instance.UploadSnapshotCoroutine(_session));
+            SnapshotsManager.Instance.UploadSnapshotCoroutine(_session);
         }
 
         private void OnDeleteClick()
@@ -133,14 +133,14 @@ namespace JahroConsole.View
         private void OnStopAndUploadClick()
         {
             SnapshotsManager.Instance.StopRecording();
-            StartCoroutine(SnapshotsManager.Instance.UploadSnapshotCoroutine(_session));
+            SnapshotsManager.Instance.UploadSnapshotCoroutine(_session);
         }
 
         private void OnRetryClick()
         {
             ErrorHolder.gameObject.SetActive(false);
             LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
-            StartCoroutine(SnapshotsManager.Instance.UploadSnapshotCoroutine(_session));
+            SnapshotsManager.Instance.UploadSnapshotCoroutine(_session);
         }
 
         private void OnStatusUpdate(SnapshotSession.Status status)

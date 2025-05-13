@@ -35,26 +35,29 @@ namespace JahroConsole.Core.Registry
         private static List<MemberInfo> RetrieveMethods(IProjectSettings projectSettings)
         {
             List<MemberInfo> members = new List<MemberInfo>();
-            var allAssmblies = System.AppDomain.CurrentDomain.GetAssemblies();
+            var allAssmblies = System.AppDomain.CurrentDomain.GetAssemblies()
+                .Where(assembly =>
+                    !assembly.GetName().Name.StartsWith("Unity") &&
+                    !assembly.GetName().Name.StartsWith("System") &&
+                    !assembly.GetName().Name.StartsWith("mscorlib") &&
+                    projectSettings.ActiveAssemblies.Contains(assembly.GetName().Name));
+
             foreach (var assembly in allAssmblies)
             {
-                if (projectSettings.ActiveAssemblies.Contains(assembly.GetName().Name))
-                {
-                    var methodsArray = assembly.GetTypes()
-                        .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-                        .Where(m => m.GetCustomAttributes(typeof(JahroCommandAttribute), false).Length > 0);
-                    members.AddRange(methodsArray);
+                var methodsArray = assembly.GetTypes()
+                    .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+                    .Where(m => m.GetCustomAttributes(typeof(JahroCommandAttribute), false).Length > 0);
+                members.AddRange(methodsArray);
 
-                    var fieldsArray = assembly.GetTypes()
-                        .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-                        .Where(m => m.GetCustomAttributes(typeof(JahroWatchAttribute), false).Length > 0);
-                    members.AddRange(fieldsArray);
+                var fieldsArray = assembly.GetTypes()
+                    .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+                    .Where(m => m.GetCustomAttributes(typeof(JahroWatchAttribute), false).Length > 0);
+                members.AddRange(fieldsArray);
 
-                    var propsArray = assembly.GetTypes()
-                        .SelectMany(t => t.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-                        .Where(m => m.GetCustomAttributes(typeof(JahroWatchAttribute), false).Length > 0);
-                    members.AddRange(propsArray);
-                }
+                var propsArray = assembly.GetTypes()
+                    .SelectMany(t => t.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+                    .Where(m => m.GetCustomAttributes(typeof(JahroWatchAttribute), false).Length > 0);
+                members.AddRange(propsArray);
             }
             return members;
         }

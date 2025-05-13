@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using JahroConsole.Core.Data;
 using JahroConsole.Core.Network;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -19,7 +20,7 @@ namespace JahroConsole.Core.Context
             [SerializeField]
             internal UserInfo[] users;
             [SerializeField]
-            internal VersionInfo versionInfo;
+            internal VersionChecker.VersionResponse versionInfo;
         }
 
         internal Action<InitContextResponse> OnComplete;
@@ -55,6 +56,7 @@ namespace JahroConsole.Core.Context
             form.AddField("sessionId", _sessionId);
             form.AddField("platform", Application.platform.ToString());
             form.AddField("unityVersion", Application.unityVersion);
+            form.AddField("deviceName", SystemInfo.deviceName);
             form.AddField("jahro-version", _version);
             return form;
         }

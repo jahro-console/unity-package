@@ -226,6 +226,10 @@ namespace JahroConsole.Core.Commands
 
         private void LoadEntryState(ConsoleCommandEntry entry, SimpleGroup<ConsoleCommandEntry> group)
         {
+            if (ConsoleStorageController.Instance.ConsoleStorage.CommandGroups == null)
+            {
+                return;
+            }
             var storageGroups = ConsoleStorageController.Instance.ConsoleStorage.CommandGroups;
             var storageGroupData = storageGroups.Where(g => g.Name == group.Name).FirstOrDefault();
             if (storageGroupData.CommandEntries != null)

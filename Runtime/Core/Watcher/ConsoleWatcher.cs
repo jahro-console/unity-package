@@ -119,6 +119,10 @@ namespace JahroConsole.Core.Watcher
 
         private void LoadEntryState(ConsoleWatcherEntry entry, SimpleGroup<ConsoleWatcherEntry> group)
         {
+            if (ConsoleStorageController.Instance.ConsoleStorage.WatcherGroups == null)
+            {
+                return;
+            }
             var storageGroups = ConsoleStorageController.Instance.ConsoleStorage.WatcherGroups;
             var storageGroupData = storageGroups.Where(g => g.Name == group.Name).FirstOrDefault();
             if (storageGroupData.Entries != null)

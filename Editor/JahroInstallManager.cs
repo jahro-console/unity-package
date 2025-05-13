@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using JahroConsole.Core.Data;
+using JahroConsole.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,8 +24,14 @@ namespace JahroConsole.Core.Registry
         {
             if (didDomainReload)
             {
+                bool isSettingsFileExists = JahroProjectSettings.isSettingsFileExists();
                 var settings = JahroProjectSettings.LoadOrCreate();
                 ValidateSettingsFile(settings);
+                if (!isSettingsFileExists)
+                {
+                    JahroEditorView.isFreshInstall = !isSettingsFileExists;
+                    JahroEditorView.ShowWindow();
+                }
             }
         }
 
@@ -51,6 +58,7 @@ namespace JahroConsole.Core.Registry
             if (!AssetDatabase.IsValidFolder(folderPath))
             {
                 AssetDatabase.CreateFolder(parentFolder, folderName);
+                AssetDatabase.SaveAssets();
             }
         }
 

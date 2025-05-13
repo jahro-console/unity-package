@@ -315,8 +315,8 @@ namespace JahroConsole.Core.Watcher
             stringBuilder.Append("Mass: ").Append(rigidbody.mass).AppendLine();
             stringBuilder.Append("Is Kinematic: ").Append(rigidbody.isKinematic).AppendLine();
             stringBuilder.Append("Use Gravity: ").Append(rigidbody.useGravity).AppendLine();
-            stringBuilder.Append("Drag: ").Append(rigidbody.drag).AppendLine();
-            stringBuilder.Append("Angular Drag: ").Append(rigidbody.angularDrag).AppendLine();
+            stringBuilder.Append("Drag: ").Append(rigidbody.linearDamping).AppendLine();
+            stringBuilder.Append("Angular Drag: ").Append(rigidbody.angularDamping).AppendLine();
             stringBuilder.Append("Angular Velocity: ").Append(rigidbody.angularVelocity).AppendLine();
         }
 
@@ -333,10 +333,10 @@ namespace JahroConsole.Core.Watcher
         {
             Rigidbody2D rigidbody = (Rigidbody2D)obj;
             stringBuilder.Append("Mass: ").Append(rigidbody.mass).AppendLine();
-            stringBuilder.Append("Is Kinematic: ").Append(rigidbody.isKinematic).AppendLine();
+            stringBuilder.Append("Is Kinematic: ").Append(rigidbody.bodyType == RigidbodyType2D.Kinematic).AppendLine();
             stringBuilder.Append("Gravity Scale: ").Append(rigidbody.gravityScale).AppendLine();
-            stringBuilder.Append("Drag: ").Append(rigidbody.drag).AppendLine();
-            stringBuilder.Append("Angular Drag: ").Append(rigidbody.angularDrag).AppendLine();
+            stringBuilder.Append("Drag: ").Append(rigidbody.linearDamping).AppendLine();
+            stringBuilder.Append("Angular Drag: ").Append(rigidbody.angularDamping).AppendLine();
             stringBuilder.Append("Angular Velocity: ").Append(rigidbody.angularVelocity).AppendLine();
         }
 

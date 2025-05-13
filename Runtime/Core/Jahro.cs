@@ -37,8 +37,6 @@ namespace JahroConsole
         private static JahroViewManager _viewManager;
         private static bool _isInitialized;
 
-        private static EmptyBehaviour emptyBehaviour;
-
         /// <summary>
         /// Use this method to manually initialize Jahro, if necessary.
         /// </summary>
@@ -49,14 +47,22 @@ namespace JahroConsole
             {
                 return;
             }
+            ///
             LogFileManager.Clear();
 
             var projectSettings = JahroProjectSettings.LoadOrCreate();
             ConsoleStorageController.InitSettings(projectSettings);
-            Enabled = projectSettings.JahroEnabled;
+            if (projectSettings.AutoDisableInRelease && !Debug.isDebugBuild)
+            {
+                Enabled = false;
+            }
+            else
+            {
+                Enabled = projectSettings.JahroEnabled;
+            }
             if (!Enabled)
             {
-                Debug.Log("Jahro Console: Disabled");
+                Debug.Log("Jahro Console: Disabled in this build");
                 return;
             }
 
@@ -77,21 +83,17 @@ namespace JahroConsole
             {
                 return;
             }
-            GameObject go = new GameObject("jahro_session");
-            emptyBehaviour = go.AddComponent<EmptyBehaviour>();
 
             var projectSettings = JahroProjectSettings.LoadOrCreate();
             ConsoleStorageController.InitSettings(projectSettings);
 
-            emptyBehaviour.StartCoroutine(JahroSession.StartNewSession(OnContextLoaded, projectSettings));
-
             InitView();
+            JahroSession.StartNewSession(OnContextLoaded, projectSettings);
         }
 
         private static void OnContextLoaded(JahroContext context)
         {
             _viewManager.InitContext(context);
-            GameObject.Destroy(emptyBehaviour.gameObject);
         }
 
         /// <summary>
@@ -210,6 +212,5 @@ namespace JahroConsole
             }
 #endif
         }
-
     }
 }

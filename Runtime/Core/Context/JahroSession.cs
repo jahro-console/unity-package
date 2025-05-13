@@ -42,12 +42,13 @@ namespace JahroConsole.Core.Context
             _sessionID = Guid.NewGuid().ToString();
         }
 
-        internal static IEnumerator StartNewSession(Action<JahroContext> OnContextLoaded, IProjectSettings projectSettings)
+        internal static void StartNewSession(Action<JahroContext> OnContextLoaded, IProjectSettings projectSettings)
         {
             SnapshotsManager.Instance.StartRecording();
             Current = new JahroSession();
             ConsoleStorageController.LoadState();
-            yield return JahroContext.InitCoroutine(ConsoleStorageController.Instance.ConsoleStorage, Current._sessionID, (context) =>
+
+            JahroContext.Init(ConsoleStorageController.Instance.ConsoleStorage, Current._sessionID, (context) =>
             {
                 Current._context = context;
                 ConsoleCommandsRegistry.Initialize(projectSettings, Current._context);
@@ -56,11 +57,11 @@ namespace JahroConsole.Core.Context
             });
         }
 
-        internal static IEnumerator RefreshSession()
+        internal static void RefreshSession()
         {
-            if (Current._context != null)
+            if (Current._context != null && Current._context.ApiKeyVerified)
             {
-                yield return JahroContext.RefreshCoroutine(ConsoleStorageController.Instance.ConsoleStorage, Current._sessionID, Current._context);
+                JahroContext.Refresh(ConsoleStorageController.Instance.ConsoleStorage, Current._sessionID, Current._context);
             }
         }
 

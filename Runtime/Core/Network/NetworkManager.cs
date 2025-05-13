@@ -3,6 +3,7 @@ using System.Collections;
 using System.Text;
 using System.Threading.Tasks;
 using JahroConsole.Core.Notifications;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -10,6 +11,7 @@ namespace JahroConsole.Core.Network
 {
     internal class NetworkManager
     {
+        private static readonly int DEFAULT_TIMEOUT = 10;
         private static readonly Lazy<NetworkManager> _instance = new Lazy<NetworkManager>(() => new NetworkManager());
 
         internal static NetworkManager Instance => _instance.Value;
@@ -24,27 +26,6 @@ namespace JahroConsole.Core.Network
             {
                 return _activeRequests > 0;
             }
-        }
-
-        internal IEnumerator SendRequestCoroutine(RequestBase request)
-        {
-            UnityWebRequest webRequest = CreateWebRequest(request);
-            _activeRequests++;
-            if (_activeRequests == 1) NotificationService.Instance.ActiveNetwork(true);
-            request.FillHeaders(webRequest);
-
-            webRequest.SendWebRequest();
-
-            while (!webRequest.isDone)
-            {
-                request.UpdateUploadProgress(webRequest.uploadProgress);
-                yield return null;
-            }
-
-            _activeRequests--;
-            if (_activeRequests == 0) NotificationService.Instance.ActiveNetwork(false);
-            HandleResponse(webRequest, request);
-            webRequest.Dispose();
         }
 
         internal async Task SendRequestAsync(RequestBase request)
@@ -105,6 +86,9 @@ namespace JahroConsole.Core.Network
                     webRequest = UnityWebRequest.Get(url);
                     break;
             }
+
+            webRequest.timeout = DEFAULT_TIMEOUT;
+
             return webRequest;
         }
 

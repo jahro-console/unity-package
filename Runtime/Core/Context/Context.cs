@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 using JahroConsole.Core.Data;
 using JahroConsole.Core.Network;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace JahroConsole.Core.Context
 
         private TeamInfo _teamInfo;
 
-        private VersionInfo _versionInfo;
+        private VersionChecker.VersionResponse _versionInfo;
 
         private bool _apiKeyVerified;
 
@@ -34,7 +35,7 @@ namespace JahroConsole.Core.Context
 
         internal UserInfo[] TeamMembers { get { return _teamMembers; } }
 
-        internal VersionInfo VersionInfo { get { return _versionInfo; } }
+        internal VersionChecker.VersionResponse VersionInfo { get { return _versionInfo; } }
 
         internal bool ApiKeyVerified { get { return _apiKeyVerified; } }
 
@@ -49,7 +50,7 @@ namespace JahroConsole.Core.Context
             OnSelectedUserInfoChanged?.Invoke(userInfo);
         }
 
-        private void UpdateInfo(ProjectInfo projectInfo, TeamInfo teamInfo, UserInfo[] users, VersionInfo versionInfo, ConsoleStorage storage)
+        private void UpdateInfo(ProjectInfo projectInfo, TeamInfo teamInfo, UserInfo[] users, VersionChecker.VersionResponse versionInfo, ConsoleStorage storage)
         {
             storage.ProjectInfo = _projectInfo = projectInfo;
             storage.TeamInfo = _teamInfo = teamInfo;
@@ -71,57 +72,48 @@ namespace JahroConsole.Core.Context
             OnContextInfoChanged?.Invoke(this);
         }
 
-        internal static IEnumerator InitCoroutine(ConsoleStorage storage, string sessionId, Action<JahroContext> onProcessed)
+        internal static async void Init(ConsoleStorage storage, string sessionId, Action<JahroContext> onProcessed)
         {
             var context = new JahroContext();
-            if (string.IsNullOrEmpty(storage.ProjectSettings.APIKey))
+            var initContextRequest = new InitContextRequest(sessionId, storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
+            context._selectedUserInfo = ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo;
+            initContextRequest.OnComplete = (result) =>
             {
-                yield return new WaitForEndOfFrame();
-                OnApiError(storage, context);
+                context._apiKeyVerified = true;
+                context.UpdateInfo(result.projectInfo, result.tenantInfo, result.users, result.versionInfo, storage);
+
+                if (context._selectedUserInfo == null || string.IsNullOrEmpty(context._selectedUserInfo.Id))
+                {
+                    context._selectedUserInfo = context._teamMembers[0];
+                }
+                else
+                {
+                    var selectedUser = context._teamMembers.FirstOrDefault(m => m.Id == context._selectedUserInfo.Id);
+                    context._selectedUserInfo = selectedUser;
+                }
                 onProcessed(context);
-            }
-            else
+            };
+            initContextRequest.OnFail = (error, responseCode) =>
             {
-                //TODO: send user id to server
-                var initContextRequest = new InitContextRequest(sessionId, storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
-                context._selectedUserInfo = ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo;
-                initContextRequest.OnComplete = (result) =>
+                Debug.LogError($"Jahro: Context request failed - {responseCode} - {error}");
+                if (responseCode == 401)
+                {
+                    OnApiError(storage, context);
+                    onProcessed(context);
+                }
+                else
                 {
                     context._apiKeyVerified = true;
-                    context.UpdateInfo(result.projectInfo, result.tenantInfo, result.users, result.versionInfo, storage);
-
-                    if (context._selectedUserInfo == null || string.IsNullOrEmpty(context._selectedUserInfo.Id))
-                    {
-                        context._selectedUserInfo = context._teamMembers[0];
-                    }
-                    else
-                    {
-                        var selectedUser = context._teamMembers.FirstOrDefault(m => m.Id == context._selectedUserInfo.Id);
-                        context._selectedUserInfo = selectedUser;
-                    }
+                    context.RestoreInfo(storage);
                     onProcessed(context);
-                };
-                initContextRequest.OnFail = (error, responseCode) =>
-                {
-                    Jahro.LogError($"Context request failed: {responseCode} - {error}");
-                    if (responseCode == 401)
-                    {
-                        OnApiError(storage, context);
-                        onProcessed(context);
-                    }
-                    else
-                    {
-                        context._apiKeyVerified = true;
-                        context.RestoreInfo(storage);
-                        onProcessed(context);
-                    }
-                };
-                yield return NetworkManager.Instance.SendRequestCoroutine(initContextRequest);
-            }
+                }
+            };
+            await NetworkManager.Instance.SendRequestAsync(initContextRequest);
         }
 
-        internal static IEnumerator RefreshCoroutine(ConsoleStorage storage, string sessionId, JahroContext context)
+        internal static async void Refresh(ConsoleStorage storage, string sessionId, JahroContext context)
         {
+            Debug.Log("RefreshCoroutine: " + storage.ProjectSettings + " context: " + context._projectInfo + " selectedUser: " + context._selectedUserInfo);
             var refreshRequest = new RefreshContextRequest(sessionId, storage.ProjectSettings.APIKey, context._projectInfo.Id, context._selectedUserInfo.Id);
             refreshRequest.OnComplete = (result) =>
             {
@@ -131,7 +123,7 @@ namespace JahroConsole.Core.Context
             };
             refreshRequest.OnFail = (error, responseCode) =>
             {
-                Jahro.LogError($"Context refresh request failed: {responseCode} - {error}");
+                Debug.LogError($"Jahro: Context refresh request failed - {responseCode} - {error}");
                 if (responseCode == 401)
                 {
                     OnApiError(storage, context);
@@ -142,7 +134,7 @@ namespace JahroConsole.Core.Context
                     context.RestoreInfo(storage);
                 }
             };
-            yield return NetworkManager.Instance.SendRequestCoroutine(refreshRequest);
+            await NetworkManager.Instance.SendRequestAsync(refreshRequest);
         }
 
         private static void OnApiError(ConsoleStorage storage, JahroContext context)

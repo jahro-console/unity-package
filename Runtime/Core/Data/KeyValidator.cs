@@ -1,8 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using JahroConsole.Core.Network;
 using UnityEngine;
 
-namespace JahroConsole.Core.Network
+namespace JahroConsole.Core.Data
 {
     public static class KeyValidator
     {
@@ -12,8 +13,13 @@ namespace JahroConsole.Core.Network
             public string projectId;
             public string projectName;
             public string projectUrl;
+            public string teamId;
+            public string teamName;
+            public string teamOverviewUrl;
             public string message;
             public bool success;
+            public string apiKey;
+            public string accountSettingsUrl;
         }
 
         public static async Task Send(string key, Action<ValidateKeyResponse> onComplete, Action<ValidateKeyResponse> onError)

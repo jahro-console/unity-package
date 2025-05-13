@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace JahroConsole.Core.Data
 {
@@ -27,6 +28,9 @@ namespace JahroConsole.Core.Data
         [SerializeField]
         private bool _duplicateToUnityConsole;
 
+        [SerializeField]
+        private bool _autoDisableInRelease;
+
         public bool JahroEnabled { get => _jahroEnabled; set => _jahroEnabled = value; }
 
         public bool UseLaunchKeyboardShortcut { get => _useLaunchKeyboardShortcut; set => _useLaunchKeyboardShortcut = value; }
@@ -40,6 +44,13 @@ namespace JahroConsole.Core.Data
         public bool DuplicateToUnityConsole { get => _duplicateToUnityConsole; set => _duplicateToUnityConsole = value; }
 
         public string APIKey { get => _APIKey; set => _APIKey = value; }
+
+        public bool AutoDisableInRelease { get => _autoDisableInRelease; set => _autoDisableInRelease = value; }
+
+        public static bool isSettingsFileExists()
+        {
+            return Resources.Load<JahroProjectSettings>(FileManager.ProjectSettingFile) != null;
+        }
 
         public static JahroProjectSettings LoadOrCreate()
         {
@@ -62,9 +73,18 @@ namespace JahroConsole.Core.Data
             settings._activeAssemblies = new List<string>();
             settings._duplicateToUnityConsole = false;
             settings._launchKey = KeyCode.BackQuote;
+            settings._autoDisableInRelease = false;
+
 
 #if UNITY_EDITOR
-            var assemblies = UnityEditor.Compilation.CompilationPipeline.GetAssemblies(UnityEditor.Compilation.AssembliesType.Player);
+            var assemblies = UnityEditor.Compilation.CompilationPipeline.GetAssemblies(UnityEditor.Compilation.AssembliesType.Player)
+                .Where(assembly =>
+                    !assembly.name.StartsWith("Unity") &&
+                    !assembly.name.StartsWith("System") &&
+                    !assembly.name.StartsWith("mscorlib") &&
+                    !assembly.name.Contains("Editor"))
+                .ToArray();
+
             foreach (var assembly in assemblies)
             {
                 settings._activeAssemblies.Add(assembly.name);

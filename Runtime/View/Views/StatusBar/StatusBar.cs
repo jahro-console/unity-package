@@ -40,6 +40,12 @@ namespace JahroConsole.View
             }
         }
 
+        void OnDestroy()
+        {
+            NotificationService.Instance.NetworkSyncStateChanged -= OnNetworkSyncStateChanged;
+            NotificationService.Instance.SnapshotingStateChanged -= OnSnapshotingStateChanged;
+        }
+
         public void InitContext(JahroContext context)
         {
             _context = context;

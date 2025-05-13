@@ -60,7 +60,18 @@ namespace JahroConsole.Core.Network
 
         internal virtual void FillHeaders(UnityWebRequest request)
         {
-
+#if UNITY_EDITOR
+            if (UnityEditor.EditorPrefs.HasKey("usessionId"))
+            {
+                request.SetRequestHeader("usessionId", UnityEditor.EditorPrefs.GetString("usessionId"));
+            }
+            else
+            {
+                string usessionId = Guid.NewGuid().ToString();
+                request.SetRequestHeader("usessionId", usessionId);
+                UnityEditor.EditorPrefs.SetString("usessionId", usessionId);
+            }
+#endif
         }
 
         internal virtual void UpdateUploadProgress(float uploadProgress)
