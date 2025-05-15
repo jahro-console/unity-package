@@ -6,7 +6,6 @@ using System;
 using UnityEditor.UIElements;
 using UnityEditor;
 using System.Collections.Generic;
-using Unity.Properties;
 using UnityEditor.Compilation;
 using System.Linq;
 
@@ -15,10 +14,10 @@ namespace JahroConsole.Editor
     public class SettingsView
     {
         private VisualElement _container;
-        private TabView _tabView;
         private KeyValidator.ValidateKeyResponse _validationData;
         private JahroProjectSettings _projectSettings;
 
+        private SettingsTabView _tabView;
         private Label _projectNameLabel;
         private Label _teamNameLabel;
         private Label _apiKeyLabel;
@@ -43,9 +42,10 @@ namespace JahroConsole.Editor
         public SettingsView(VisualElement root)
         {
             _container = root.Q<VisualElement>("SettingsBlock");
-            _tabView = _container.Q<TabView>();
+            _tabView = new SettingsTabView(_container);
+            var tabViewContainer = _container.Q<VisualElement>("TabView");
 
-            var accountTab = _tabView.Q<VisualElement>("AccountTab");
+            var accountTab = tabViewContainer.Q<VisualElement>("AccountContainer");
             _projectNameLabel = accountTab.Q<Label>("ProjectName");
             _teamNameLabel = accountTab.Q<Label>("TeamName");
             _apiKeyLabel = accountTab.Q<VisualElement>("APIKeyContainer").Q<Label>("TeamName");
@@ -56,7 +56,7 @@ namespace JahroConsole.Editor
             _teamOverviewButton = linksContainer.Q<Button>("TeamOverviewButton");
             _accountSettingsButton = linksContainer.Q<Button>("AccountSettingsButton");
 
-            var settingsTab = _tabView.Q<VisualElement>("SettingsTab");
+            var settingsTab = tabViewContainer.Q<VisualElement>("SettingsContainer");
             var scrollView = settingsTab.Q<ScrollView>();
             _jahroEnableToggle = scrollView.Q<Toggle>("JahroEnableToggle");
             _autoDisableToggle = scrollView.Q<Toggle>("AutoDisableToggle");
@@ -181,29 +181,63 @@ namespace JahroConsole.Editor
         {
             if (_projectSettings == null) return;
 
-            _container.ClearBindings();
-            _container.dataSource = _projectSettings;
+            if (_jahroEnableToggle != null)
+            {
+                _jahroEnableToggle.value = _projectSettings.JahroEnabled;
+                _jahroEnableToggle.RegisterValueChangedCallback(evt =>
+                {
+                    _projectSettings.JahroEnabled = evt.newValue;
+                    SaveProjectSettings();
+                });
+            }
 
-            BindToggle(_jahroEnableToggle, "_jahroEnabled");
-            BindToggle(_autoDisableToggle, "_autoDisableInRelease");
-            BindToggle(_keyboardShortcutsToggle, "_useLaunchKeyboardShortcut");
-            BindToggle(_mobileTapAreaToggle, "_useLaunchTapArea");
-            BindToggle(_dublicateLogsToggle, "_duplicateToUnityConsole");
+            if (_autoDisableToggle != null)
+            {
+                _autoDisableToggle.value = _projectSettings.AutoDisableInRelease;
+                _autoDisableToggle.RegisterValueChangedCallback(evt =>
+                {
+                    _projectSettings.AutoDisableInRelease = evt.newValue;
+                    SaveProjectSettings();
+                });
+            }
+
+            if (_keyboardShortcutsToggle != null)
+            {
+                _keyboardShortcutsToggle.value = _projectSettings.UseLaunchKeyboardShortcut;
+                _keyboardShortcutsToggle.RegisterValueChangedCallback(evt =>
+                {
+                    _projectSettings.UseLaunchKeyboardShortcut = evt.newValue;
+                    SaveProjectSettings();
+                });
+            }
+
+            if (_mobileTapAreaToggle != null)
+            {
+                _mobileTapAreaToggle.value = _projectSettings.UseLaunchTapArea;
+                _mobileTapAreaToggle.RegisterValueChangedCallback(evt =>
+                {
+                    _projectSettings.UseLaunchTapArea = evt.newValue;
+                    SaveProjectSettings();
+                });
+            }
+
+            if (_dublicateLogsToggle != null)
+            {
+                _dublicateLogsToggle.value = _projectSettings.DuplicateToUnityConsole;
+                _dublicateLogsToggle.RegisterValueChangedCallback(evt =>
+                {
+                    _projectSettings.DuplicateToUnityConsole = evt.newValue;
+                    SaveProjectSettings();
+                });
+            }
 
             if (_launchKeyField != null)
             {
-                _launchKeyField.SetBinding("value", new DataBinding
-                {
-                    dataSourcePath = new PropertyPath("_launchKey")
-                });
-
+                _launchKeyField.value = _projectSettings.LaunchKey;
                 _launchKeyField.RegisterValueChangedCallback(evt =>
                 {
-                    if (_projectSettings != null)
-                    {
-                        _projectSettings.LaunchKey = (KeyCode)evt.newValue;
-                        SaveProjectSettings();
-                    }
+                    _projectSettings.LaunchKey = (KeyCode)evt.newValue;
+                    SaveProjectSettings();
                 });
             }
 
@@ -211,48 +245,27 @@ namespace JahroConsole.Editor
             {
                 _assembliesField.RegisterValueChangedCallback(evt =>
                 {
-                    if (_projectSettings != null && _assembliesNames != null && _assembliesNames.Count > 0)
+                    if (_assembliesNames != null && _assembliesNames.Count > 0)
                     {
                         _assembliesFlag = (int)evt.newValue;
 
-                        bool listChanged = false;
+                        _projectSettings.ActiveAssemblies.Clear();
 
                         for (int i = 0; i < _assembliesNames.Count; i++)
                         {
-                            string name = _assembliesNames[i];
-                            bool active = _projectSettings.ActiveAssemblies.Contains(name);
                             int layer = 1 << i;
                             bool selected = (_assembliesFlag & layer) != 0;
 
-                            if (!active && selected)
+                            if (selected)
                             {
-                                _projectSettings.ActiveAssemblies.Add(name);
-                                listChanged = true;
-                            }
-                            else if (active && !selected)
-                            {
-                                _projectSettings.ActiveAssemblies.Remove(name);
-                                listChanged = true;
+                                _projectSettings.ActiveAssemblies.Add(_assembliesNames[i]);
                             }
                         }
 
-                        if (listChanged)
-                        {
-                            SaveProjectSettings();
-                        }
+                        SaveProjectSettings();
                     }
                 });
             }
-        }
-
-        private void BindToggle(Toggle toggle, string propertyPath)
-        {
-            if (toggle == null) return;
-
-            toggle.SetBinding("value", new DataBinding
-            {
-                dataSourcePath = new PropertyPath(propertyPath)
-            });
         }
 
         private void OnResetApiKeyClicked()

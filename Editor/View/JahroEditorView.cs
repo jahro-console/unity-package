@@ -56,6 +56,13 @@ namespace JahroConsole.Editor
             {
                 Application.OpenURL(JahroConfig.ChangelogUrl);
             };
+            var projectPageLink = root.Q<Button>("ProjectPageLink");
+            projectPageLink.clicked += () =>
+            {
+                Application.OpenURL("https://console.jahro.io");
+            };
+
+            ConfigureFooterLinks(root.Q<VisualElement>("Footer"));
 
             _welcomeView.OnValidationSuccess += OnAPIKeyValidated;
             _settingsView.OnResetApiKey += ResetApiKey;
@@ -183,6 +190,24 @@ namespace JahroConsole.Editor
             {
                 _versionLabel.style.display = DisplayStyle.None;
                 _versionButton.style.backgroundColor = new Color(0.02f, 0.59f, 0.41f);
+            }
+        }
+
+        private void ConfigureFooterLinks(VisualElement root)
+        {
+            SetupLinkButton(root, "HomeLink", "https://jahro.io?utm_source=unity-client&utm_medium=settings&utm_content=footer");
+            SetupLinkButton(root, "DocsLink", "https://docs.jahro.io/?utm_source=unity-client&utm_medium=settings&utm_content=footer");
+            SetupLinkButton(root, "DiscordLink", "https://discord.gg/txcHFRDeV4");
+            SetupLinkButton(root, "GitHubLink", "https://github.com/jahro-console/unity-package");
+            SetupLinkButton(root, "ReportIssueLink", "https://github.com/jahro-console/unity-package/issues");
+        }
+
+        private void SetupLinkButton(VisualElement root, string buttonName, string url)
+        {
+            var button = root.Q<Button>(buttonName);
+            if (button != null)
+            {
+                button.clicked += () => Application.OpenURL(url);
             }
         }
     }

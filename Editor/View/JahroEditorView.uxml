@@ -1,5 +1,5 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <Style src="project://database/Assets/JahroPackage/Editor/View/JahroEditorView.uss?fileID=7433441132597879392&amp;guid=afa15e319e4194e7e86856fb1bea256a&amp;type=3#JahroEditorView" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/unity-package/Editor/View/JahroEditorView.uss?fileID=7433441132597879392&amp;guid=afa15e319e4194e7e86856fb1bea256a&amp;type=3#JahroEditorView" />
     <ui:VisualElement name="Root" class="background" style="flex-grow: 1; min-width: 50px; min-height: 120px;">
         <ui:VisualElement name="Header" class="header" style="flex-grow: 10; flex-direction: row; align-items: stretch; justify-content: space-between; align-self: stretch; flex-shrink: 0; align-content: center; padding-top: 32px; padding-right: 32px; padding-bottom: 18px; padding-left: 32px; height: auto; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; flex-wrap: wrap; flex-basis: 125px;">
             <ui:VisualElement name="Branding" style="flex-grow: 0; flex-direction: row; min-width: 200px; align-items: center; margin-top: 4px; align-self: center;">
@@ -19,7 +19,7 @@
                 <ui:Label text="Loading..." />
                 <ui:Label text="Loading..." name="ErrorLabel" class="error-text" />
             </ui:VisualElement>
-            <ui:VisualElement name="WelcomeBlock" style="flex-grow: 0; align-content: center; justify-content: center; align-items: center; flex-shrink: 10; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: stretch; display: none;">
+            <ui:VisualElement name="WelcomeBlock" style="flex-grow: 0; align-content: center; justify-content: center; align-items: center; flex-shrink: 10; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: stretch; display: flex;">
                 <ui:ScrollView vertical-scroller-visibility="Auto" name="ScrollView" horizontal-scroller-visibility="Hidden" style="flex-grow: 0; flex-shrink: 1; align-self: stretch;">
                     <ui:VisualElement name="WelcomeBlock" style="flex-grow: 0; align-content: stretch; justify-content: space-between; align-items: stretch; flex-shrink: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; align-self: stretch; display: flex;">
                         <ui:Label text="Welcome to Jahro" name="Title" class="h1" />
@@ -31,114 +31,123 @@
                                 <ui:Button text="Submit" name="ValidateKey" class="btn-primary" style="flex-shrink: 1; flex-grow: 0; width: 100px; height: 36px; margin-top: 5px; margin-bottom: 0; padding-top: 0; padding-bottom: 0; padding-right: 0; padding-left: 0; margin-right: 0; margin-left: 0; align-self: auto; align-content: auto; align-items: stretch; justify-content: center; -unity-font-style: bold;" />
                             </ui:VisualElement>
                             <ui:Label text="Error Message" name="KeyErrorLabel" class="text-subline error-text" style="padding-top: 6px;" />
-                            <ui:Label text="You can find the API key here in the &lt;a href=&quot;https://console.jahro.io&quot;&gt;Project API Keys&lt;/a&gt; page" enable-rich-text="true" class="text-subline" style="padding-top: 6px;" />
+                            <ui:VisualElement style="flex-basis: 20px; flex-direction: row; align-items: center;">
+                                <ui:Label text="You can find the API key here in the" enable-rich-text="true" class="text-subline" style="padding-top: 0; -unity-text-align: middle-left;" />
+                                <ui:Button text="Project API Keys page" display-tooltip-when-elided="true" name="ProjectPageLink" class="footer-button" style="-unity-text-align: middle-left; align-items: flex-start; margin-left: 0; padding-left: 2px; padding-right: 2px;" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:ScrollView>
             </ui:VisualElement>
-            <ui:VisualElement name="SettingsBlock" style="flex-grow: 1; align-content: center; justify-content: flex-start; align-items: center; flex-shrink: 0; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: auto; display: flex; flex-basis: 100%;">
-                <ui:TabView class="tab-view" style="flex-grow: 1; flex-shrink: 0; align-self: stretch; flex-basis: 100%;">
-                    <ui:Tab label="Account" name="AccountTab">
-                        <ui:ScrollView>
-                            <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-shrink: 0; justify-content: space-between; align-self: stretch; align-content: stretch; height: 100%; flex-basis: auto;">
-                                <ui:VisualElement name="InfoContainer" style="flex-grow: 1; flex-shrink: 0; flex-direction: row; justify-content: space-evenly; flex-wrap: wrap; align-self: auto; align-content: auto;">
-                                    <ui:VisualElement style="flex-grow: 1; width: auto;">
-                                        <ui:VisualElement name="ProjectContainer" style="flex-grow: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 16px; margin-bottom: 8px;">
-                                            <ui:Label text="Project" class="text-category" style="-unity-text-align: upper-left;" />
-                                            <ui:Label text="Some Project Name" name="ProjectName" class="text-category-header" style="-unity-text-align: upper-left; margin-top: 4px; margin-bottom: 4px;" />
-                                        </ui:VisualElement>
-                                        <ui:VisualElement name="TeamContainer" style="flex-grow: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 16px; margin-bottom: 8px;">
-                                            <ui:Label text="Team" class="text-category" style="-unity-text-align: upper-left;" />
-                                            <ui:Label text="Awesome Team" name="TeamName" class="text-category-header" style="-unity-text-align: upper-left; margin-top: 4px; margin-bottom: 4px;" />
-                                        </ui:VisualElement>
-                                        <ui:VisualElement name="APIKeyContainer" style="flex-grow: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 16px; margin-bottom: 8px; flex-direction: row;">
-                                            <ui:VisualElement style="flex-grow: 1;">
-                                                <ui:Label text="API Key" name="Label" class="text-category" style="-unity-text-align: upper-left;" />
-                                                <ui:Label text="J-****34" name="TeamName" class="text-category-header" style="-unity-text-align: upper-left; margin-top: 4px; margin-bottom: 4px; text-overflow: ellipsis;" />
+            <ui:VisualElement name="SettingsBlock" style="flex-grow: 1; align-content: center; justify-content: flex-start; align-items: stretch; flex-shrink: 0; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: auto; display: none; flex-basis: 100%;">
+                <ui:VisualElement name="TabView" style="flex-grow: 1; max-width: none; flex-basis: 100%;">
+                    <ui:VisualElement name="TabsControl" class="tab-header" style="height: 40px; flex-direction: row; justify-content: center; flex-shrink: 0; flex-basis: 40px; margin-bottom: 16px;">
+                        <ui:Button text="Account" display-tooltip-when-elided="true" name="AccountTab" class="tab-button" />
+                        <ui:Button text="Settings" display-tooltip-when-elided="true" name="SettingTab" class="tab-button" />
+                    </ui:VisualElement>
+                    <ui:VisualElement style="flex-grow: 1;">
+                        <ui:VisualElement name="AccountContainer" style="flex-grow: 1; display: none;">
+                            <ui:ScrollView>
+                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-shrink: 0; justify-content: space-between; align-self: stretch; align-content: stretch; height: 100%; flex-basis: auto;">
+                                    <ui:VisualElement name="InfoContainer" style="flex-grow: 1; flex-shrink: 0; flex-direction: row; justify-content: space-evenly; flex-wrap: wrap; align-self: auto; align-content: auto;">
+                                        <ui:VisualElement style="flex-grow: 1; width: auto;">
+                                            <ui:VisualElement name="ProjectContainer" style="flex-grow: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 16px; margin-bottom: 8px;">
+                                                <ui:Label text="Project" class="text-category" style="-unity-text-align: upper-left;" />
+                                                <ui:Label text="Some Project Name" name="ProjectName" class="text-category-header" style="-unity-text-align: upper-left; margin-top: 4px; margin-bottom: 4px;" />
                                             </ui:VisualElement>
-                                            <ui:VisualElement style="flex-grow: 0;">
-                                                <ui:Button text="Reset" name="ResetApiKey" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
+                                            <ui:VisualElement name="TeamContainer" style="flex-grow: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 16px; margin-bottom: 8px;">
+                                                <ui:Label text="Team" class="text-category" style="-unity-text-align: upper-left;" />
+                                                <ui:Label text="Awesome Team" name="TeamName" class="text-category-header" style="-unity-text-align: upper-left; margin-top: 4px; margin-bottom: 4px;" />
+                                            </ui:VisualElement>
+                                            <ui:VisualElement name="APIKeyContainer" style="flex-grow: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 16px; margin-bottom: 8px; flex-direction: row;">
+                                                <ui:VisualElement style="flex-grow: 1;">
+                                                    <ui:Label text="API Key" name="Label" class="text-category" style="-unity-text-align: upper-left;" />
+                                                    <ui:Label text="J-****34" name="TeamName" class="text-category-header" style="-unity-text-align: upper-left; margin-top: 4px; margin-bottom: 4px; text-overflow: ellipsis;" />
+                                                </ui:VisualElement>
+                                                <ui:VisualElement style="flex-grow: 0;">
+                                                    <ui:Button text="Reset" name="ResetApiKey" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
+                                                </ui:VisualElement>
                                             </ui:VisualElement>
                                         </ui:VisualElement>
                                     </ui:VisualElement>
-                                </ui:VisualElement>
-                                <ui:VisualElement name="LinksContainer" style="flex-grow: 1; flex-shrink: 0; flex-basis: auto;">
-                                    <ui:Label text="Web Console" class="text-category" style="-unity-text-align: upper-left; margin-top: 16px; margin-bottom: 8px;" />
-                                    <ui:VisualElement style="flex-grow: 1; flex-direction: row; flex-shrink: 0; justify-content: space-between; flex-wrap: wrap;">
-                                        <ui:Button text="Project Overview" icon-image="project://database/Assets/JahroPackage/Resources/Sprites/ext-link.png?fileID=21300000&amp;guid=32b93bf6c118441a0a592fa7e9604e59&amp;type=3#ext-link" name="ProjectOverviewButton" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
-                                        <ui:Button text="Team Overview" icon-image="project://database/Assets/JahroPackage/Resources/Sprites/ext-link.png?fileID=21300000&amp;guid=32b93bf6c118441a0a592fa7e9604e59&amp;type=3#ext-link" name="TeamOverviewButton" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
-                                        <ui:Button text="Account Settings" icon-image="project://database/Assets/JahroPackage/Resources/Sprites/ext-link.png?fileID=21300000&amp;guid=32b93bf6c118441a0a592fa7e9604e59&amp;type=3#ext-link" name="AccountSettingsButton" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
+                                    <ui:VisualElement name="LinksContainer" style="flex-grow: 1; flex-shrink: 0; flex-basis: auto;">
+                                        <ui:Label text="Web Console" class="text-category" style="-unity-text-align: upper-left; margin-top: 16px; margin-bottom: 8px;" />
+                                        <ui:VisualElement style="flex-grow: 1; flex-direction: row; flex-shrink: 0; justify-content: space-between; flex-wrap: wrap;">
+                                            <ui:Button text="Project Overview" icon-image="project://database/Assets/JahroPackage/Resources/Sprites/ext-link.png?fileID=21300000&amp;guid=32b93bf6c118441a0a592fa7e9604e59&amp;type=3#ext-link" name="ProjectOverviewButton" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
+                                            <ui:Button text="Team Overview" icon-image="project://database/Assets/JahroPackage/Resources/Sprites/ext-link.png?fileID=21300000&amp;guid=32b93bf6c118441a0a592fa7e9604e59&amp;type=3#ext-link" name="TeamOverviewButton" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
+                                            <ui:Button text="Account Settings" icon-image="project://database/Assets/JahroPackage/Resources/Sprites/ext-link.png?fileID=21300000&amp;guid=32b93bf6c118441a0a592fa7e9604e59&amp;type=3#ext-link" name="AccountSettingsButton" class="menu-button" style="flex-direction: row-reverse; flex-grow: 1; min-width: 120px;" />
+                                        </ui:VisualElement>
                                     </ui:VisualElement>
                                 </ui:VisualElement>
-                            </ui:VisualElement>
-                        </ui:ScrollView>
-                    </ui:Tab>
-                    <ui:Tab label="Settings" name="SettingsTab" style="flex-grow: 0; flex-shrink: 1;">
-                        <ui:ScrollView horizontal-scroller-visibility="Hidden" name="ScrollView" style="margin-top: 8px; margin-bottom: 8px;">
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Enable Jahro" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Enable or disable Jahro in the build." name="Description" class="settings-item-description" />
+                            </ui:ScrollView>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="SettingsContainer" style="display: flex; flex-grow: 1;">
+                            <ui:ScrollView horizontal-scroller-visibility="Hidden" name="ScrollView" style="margin-top: 8px; margin-bottom: 8px;">
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Enable Jahro" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Enable or disable Jahro in the build." name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <ui:Toggle name="JahroEnableToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
                                 </ui:VisualElement>
-                                <ui:Toggle name="JahroEnableToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
-                            </ui:VisualElement>
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Auto-disable in Release Builds" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Jahro turns off automatically in non-development builds." name="Description" class="settings-item-description" />
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Auto-disable in Release Builds" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Jahro turns off automatically in non-development builds." name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <ui:Toggle name="AutoDisableToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
                                 </ui:VisualElement>
-                                <ui:Toggle name="AutoDisableToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
-                            </ui:VisualElement>
-                            <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Launch Key" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Set the key to open the Jahro window during play mode." name="Description" class="settings-item-description" />
+                                <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Launch Key" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Set the key to open the Jahro window during play mode." name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <uie:EnumField value="Center" name="LaunchKeyPicker" />
                                 </ui:VisualElement>
-                                <ui:EnumField value="Center" type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" name="LaunchKeyPicker" style="height: 24px; align-self: center; padding-left: 4px;" />
-                            </ui:VisualElement>
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Enable Keyboard Shortcuts" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Use hotkeys to switch tabs inside the Jahro window.&#10;(e.g. Console: Alt+1, Visual Commands: Alt+2, Watcher: Alt+3)" name="Description" class="settings-item-description" />
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Enable Keyboard Shortcuts" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Use hotkeys to switch tabs inside the Jahro window.&#10;(e.g. Console: Alt+1, Visual Commands: Alt+2, Watcher: Alt+3)" name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <ui:Toggle name="KeyboardShortcutsToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
                                 </ui:VisualElement>
-                                <ui:Toggle name="KeyboardShortcutsToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
-                            </ui:VisualElement>
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Mobile Tap Activation" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Tap 3 times at the top of the screen to open Jahro (on mobile)." name="Description" class="settings-item-description" />
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Mobile Tap Activation" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Tap 3 times at the top of the screen to open Jahro (on mobile)." name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <ui:Toggle name="MobileTapAreaToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
                                 </ui:VisualElement>
-                                <ui:Toggle name="MobileTapAreaToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
-                            </ui:VisualElement>
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Duplicate Jahro.Log to Console" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Show Jahro.Log() messages in Unity Console too." name="Description" class="settings-item-description" />
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Duplicate Jahro.Log to Console" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Show Jahro.Log() messages in Unity Console too." name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <ui:Toggle name="DublicateLogsToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
                                 </ui:VisualElement>
-                                <ui:Toggle name="DublicateLogsToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
-                            </ui:VisualElement>
-                            <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
-                            <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                    <ui:Label text="Assemblies" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                    <ui:Label text="Select assemblies where Jahro looks for Commands and Watchers." name="Description" class="settings-item-description" />
+                                <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Assemblies" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
+                                        <ui:Label text="Select assemblies where Jahro looks for Commands and Watchers." name="Description" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <uie:MaskField name="AssembliesPicker" />
                                 </ui:VisualElement>
-                                <uie:MaskField name="AssembliesPicker" style="height: 24px; align-self: center;" />
-                            </ui:VisualElement>
-                        </ui:ScrollView>
-                    </ui:Tab>
-                </ui:TabView>
+                            </ui:ScrollView>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="Footer" class="footer" style="flex-grow: 1; flex-shrink: 0; height: auto; flex-direction: row; flex-wrap: wrap-reverse; justify-content: space-between; align-items: stretch; padding-left: 32px; padding-right: 32px; align-self: stretch; align-content: stretch; padding-top: 8px; padding-bottom: 8px; flex-basis: auto;">
             <ui:Label text="© 2025 Jahro" class="footer-copyright" style="align-self: center;" />
             <ui:VisualElement name="LinksHolder" style="flex-grow: 0; align-self: center; flex-direction: row; justify-content: flex-end; align-items: center; flex-wrap: wrap; min-width: auto; margin-top: 0;">
-                <ui:Label text="&lt;a href=&quot;https://jahro.io?utm_source=unity-client&amp;utm_medium=settings&amp;utm_content=footer&quot;&gt;Home&lt;/a&gt;" class="footer-link" />
-                <ui:Label text="&lt;a href=&quot;https://docs.jahro.io/?utm_source=unity-client&amp;utm_medium=settings&amp;utm_content=footer&quot;&gt;Docs&lt;/a&gt;" enable-rich-text="true" class="footer-link" />
-                <ui:Label text="&lt;a href=&quot;https://discord.gg/txcHFRDeV4&quot;&gt;Discord&lt;/a&gt;" class="footer-link" />
-                <ui:Label text="&lt;a href=&quot;https://github.com/jahro-console/unity-package&quot;&gt;GitHub&lt;/a&gt;" class="footer-link" />
-                <ui:Label text="&lt;a href=&quot;https://github.com/jahro-console/unity-package/issues&quot;&gt;Report Issue&lt;/a&gt;" class="footer-link" />
+                <ui:Button text="Home" name="HomeLink" class="footer-link-button footer-button" />
+                <ui:Button text="Docs" name="DocsLink" class="footer-link-button footer-button" />
+                <ui:Button text="Discord" name="DiscordLink" class="footer-link-button footer-button" />
+                <ui:Button text="GitHub" name="GitHubLink" class="footer-link-button footer-button" />
+                <ui:Button text="Report Issue" name="ReportIssueLink" class="footer-link-button footer-button" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

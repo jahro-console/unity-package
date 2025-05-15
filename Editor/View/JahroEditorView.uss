@@ -268,12 +268,6 @@
     -unity-font-style: bold;
 }
 
-.tab-view > .unity-tab-view-item {
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 300px;
-}
-
 .settings-item-title {
     color: var(--foreground);
     font-size: 16px;
@@ -290,4 +284,53 @@
 
 .error-text {
     color: var(--error);
+}
+
+.tab-view {
+    flex-grow: 1;
+}
+
+.tab-header {
+    background-color: var(--background-muted);
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.tab-button {
+    background-color: transparent;
+    border-width: 0;
+    padding: 8px 16px;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--foreground);
+    -unity-font-style: bold;
+    transition: background-color 0.2s;
+}
+
+.tab-button:hover {
+    background-color: var(--background-hover);
+}
+
+.tab-button-active {
+    background-color: var(--primary);
+    color: var(--foreground);
+}
+
+.footer-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.footer-button:hover {
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    color: rgb(159, 159, 159);
 }
