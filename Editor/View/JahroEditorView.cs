@@ -62,9 +62,26 @@ namespace JahroConsole.Editor
 
             _projectSettings = JahroProjectSettings.LoadOrCreate();
 
+            _projectSettings.OnSettingsChanged += SaveProjectSettings;
+
             SetWindowMode(WindowMode.LOADING);
 
             CheckVersion();
+        }
+
+        private void OnDestroy()
+        {
+            _projectSettings.OnSettingsChanged -= SaveProjectSettings;
+        }
+
+        private void SaveProjectSettings()
+        {
+            if (_projectSettings != null)
+            {
+                EditorUtility.SetDirty(_projectSettings);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
         }
 
         private async void CheckVersion()
