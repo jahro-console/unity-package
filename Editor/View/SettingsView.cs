@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UIElements;
-using JahroConsole.Core.Network;
 using JahroConsole.Core.Data;
 using System;
 using UnityEditor.UIElements;
@@ -25,7 +24,6 @@ namespace JahroConsole.Editor
         private Button _projectOverviewButton;
         private Button _teamOverviewButton;
         private Button _accountSettingsButton;
-
         private Toggle _jahroEnableToggle;
         private Toggle _autoDisableToggle;
         private EnumField _launchKeyField;
@@ -33,10 +31,8 @@ namespace JahroConsole.Editor
         private Toggle _mobileTapAreaToggle;
         private Toggle _dublicateLogsToggle;
         private MaskField _assembliesField;
-
         private List<string> _assembliesNames = new List<string>();
         private int _assembliesFlag;
-
         public event Action OnResetApiKey;
 
         public SettingsView(VisualElement root)
@@ -164,20 +160,18 @@ namespace JahroConsole.Editor
             if (_projectSettings.ActiveAssemblies == null)
             {
                 _projectSettings.ActiveAssemblies = new List<string>();
-            }
-
-            if (_projectSettings.ActiveAssemblies.Count == 0 && _assembliesNames != null && _assembliesNames.Count > 0)
-            {
-                _projectSettings.ActiveAssemblies.AddRange(_assembliesNames);
-                EditorUtility.SetDirty(_projectSettings);
+                if (_assembliesNames != null && _assembliesNames.Count > 0)
+                {
+                    _projectSettings.ActiveAssemblies = new List<string>(_assembliesNames);
+                }
             }
 
             UpdateAssemblySelection();
 
-            SetupDataBinding();
+            SetupManualBinding();
         }
 
-        private void SetupDataBinding()
+        private void SetupManualBinding()
         {
             if (_projectSettings == null) return;
 
@@ -187,7 +181,6 @@ namespace JahroConsole.Editor
                 _jahroEnableToggle.RegisterValueChangedCallback(evt =>
                 {
                     _projectSettings.JahroEnabled = evt.newValue;
-                    SaveProjectSettings();
                 });
             }
 
@@ -197,7 +190,6 @@ namespace JahroConsole.Editor
                 _autoDisableToggle.RegisterValueChangedCallback(evt =>
                 {
                     _projectSettings.AutoDisableInRelease = evt.newValue;
-                    SaveProjectSettings();
                 });
             }
 
@@ -207,7 +199,6 @@ namespace JahroConsole.Editor
                 _keyboardShortcutsToggle.RegisterValueChangedCallback(evt =>
                 {
                     _projectSettings.UseLaunchKeyboardShortcut = evt.newValue;
-                    SaveProjectSettings();
                 });
             }
 
@@ -217,7 +208,6 @@ namespace JahroConsole.Editor
                 _mobileTapAreaToggle.RegisterValueChangedCallback(evt =>
                 {
                     _projectSettings.UseLaunchTapArea = evt.newValue;
-                    SaveProjectSettings();
                 });
             }
 
@@ -227,7 +217,6 @@ namespace JahroConsole.Editor
                 _dublicateLogsToggle.RegisterValueChangedCallback(evt =>
                 {
                     _projectSettings.DuplicateToUnityConsole = evt.newValue;
-                    SaveProjectSettings();
                 });
             }
 
@@ -237,7 +226,6 @@ namespace JahroConsole.Editor
                 _launchKeyField.RegisterValueChangedCallback(evt =>
                 {
                     _projectSettings.LaunchKey = (KeyCode)evt.newValue;
-                    SaveProjectSettings();
                 });
             }
 
@@ -245,24 +233,30 @@ namespace JahroConsole.Editor
             {
                 _assembliesField.RegisterValueChangedCallback(evt =>
                 {
-                    if (_assembliesNames != null && _assembliesNames.Count > 0)
+                    if (_projectSettings != null && _assembliesNames != null && _assembliesNames.Count > 0)
                     {
                         _assembliesFlag = (int)evt.newValue;
 
-                        _projectSettings.ActiveAssemblies.Clear();
+                        var newActiveAssemblies = new List<string>(_projectSettings.ActiveAssemblies);
 
                         for (int i = 0; i < _assembliesNames.Count; i++)
                         {
+                            string name = _assembliesNames[i];
+                            bool active = newActiveAssemblies.Contains(name);
                             int layer = 1 << i;
                             bool selected = (_assembliesFlag & layer) != 0;
 
-                            if (selected)
+                            if (!active && selected)
                             {
-                                _projectSettings.ActiveAssemblies.Add(_assembliesNames[i]);
+                                newActiveAssemblies.Add(name);
+                            }
+                            else if (active && !selected)
+                            {
+                                newActiveAssemblies.Remove(name);
                             }
                         }
 
-                        SaveProjectSettings();
+                        _projectSettings.ActiveAssemblies = newActiveAssemblies;
                     }
                 });
             }
@@ -301,13 +295,6 @@ namespace JahroConsole.Editor
             _container.style.display = DisplayStyle.None;
         }
 
-        private void SaveProjectSettings()
-        {
-            if (_projectSettings != null)
-            {
-                EditorUtility.SetDirty(_projectSettings);
-                AssetDatabase.SaveAssets();
-            }
-        }
+
     }
 }

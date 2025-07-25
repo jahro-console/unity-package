@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 namespace JahroConsole.Core.Data
 {
-
     public class JahroProjectSettings : ScriptableObject, IProjectSettings
     {
         [SerializeField]
@@ -31,21 +31,116 @@ namespace JahroConsole.Core.Data
         [SerializeField]
         private bool _autoDisableInRelease;
 
-        public bool JahroEnabled { get => _jahroEnabled; set => _jahroEnabled = value; }
+        public event Action OnSettingsChanged;
 
-        public bool UseLaunchKeyboardShortcut { get => _useLaunchKeyboardShortcut; set => _useLaunchKeyboardShortcut = value; }
+        public bool JahroEnabled
+        {
+            get => _jahroEnabled;
+            set
+            {
+                if (_jahroEnabled != value)
+                {
+                    _jahroEnabled = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
 
-        public bool UseLaunchTapArea { get => _useLaunchTapArea; set => _useLaunchTapArea = value; }
+        public bool UseLaunchKeyboardShortcut
+        {
+            get => _useLaunchKeyboardShortcut;
+            set
+            {
+                if (_useLaunchKeyboardShortcut != value)
+                {
+                    _useLaunchKeyboardShortcut = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
 
-        public KeyCode LaunchKey { get => _launchKey; set => _launchKey = value; }
+        public bool UseLaunchTapArea
+        {
+            get => _useLaunchTapArea;
+            set
+            {
+                if (_useLaunchTapArea != value)
+                {
+                    _useLaunchTapArea = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
 
-        public List<string> ActiveAssemblies { get => _activeAssemblies; set => _activeAssemblies = value; }
+        public KeyCode LaunchKey
+        {
+            get => _launchKey;
+            set
+            {
+                if (_launchKey != value)
+                {
+                    _launchKey = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
 
-        public bool DuplicateToUnityConsole { get => _duplicateToUnityConsole; set => _duplicateToUnityConsole = value; }
+        public List<string> ActiveAssemblies
+        {
+            get => _activeAssemblies;
+            set
+            {
+                if (_activeAssemblies != value)
+                {
+                    _activeAssemblies = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
 
-        public string APIKey { get => _APIKey; set => _APIKey = value; }
+        public bool DuplicateToUnityConsole
+        {
+            get => _duplicateToUnityConsole;
+            set
+            {
+                if (_duplicateToUnityConsole != value)
+                {
+                    _duplicateToUnityConsole = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
 
-        public bool AutoDisableInRelease { get => _autoDisableInRelease; set => _autoDisableInRelease = value; }
+        public string APIKey
+        {
+            get => _APIKey;
+            set
+            {
+                if (_APIKey != value)
+                {
+                    _APIKey = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
+
+        public bool AutoDisableInRelease
+        {
+            get => _autoDisableInRelease;
+            set
+            {
+                if (_autoDisableInRelease != value)
+                {
+                    _autoDisableInRelease = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
+
+        private void NotifySettingsChanged()
+        {
+            OnSettingsChanged?.Invoke();
+        }
 
         public static bool isSettingsFileExists()
         {
@@ -67,14 +162,13 @@ namespace JahroConsole.Core.Data
         {
             var settings = ScriptableObject.CreateInstance<JahroProjectSettings>();
             settings._APIKey = "";
-            settings.JahroEnabled = true;
+            settings._jahroEnabled = true;
             settings._useLaunchKeyboardShortcut = true;
             settings._useLaunchTapArea = true;
             settings._activeAssemblies = new List<string>();
             settings._duplicateToUnityConsole = false;
             settings._launchKey = KeyCode.BackQuote;
             settings._autoDisableInRelease = false;
-
 
 #if UNITY_EDITOR
             var assemblies = UnityEditor.Compilation.CompilationPipeline.GetAssemblies(UnityEditor.Compilation.AssembliesType.Player)
@@ -92,6 +186,5 @@ namespace JahroConsole.Core.Data
 #endif
             return settings;
         }
-
     }
 }
