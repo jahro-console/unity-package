@@ -103,4 +103,4 @@ We’re very open to feedback! Let us know how we can improve and help us make J
 ## License
 
 - This plugin is distributed under a **[custom license](https://github.com/jahro-console/unity-package/blob/main/LICENSE.md)**. Please review the license before using the plugin.
-- ©️ Copyright 2024 Oleksii Bulat. All rights reserved.
+- ©️ Copyright 2025 Oleksii Bulat. All rights reserved.
