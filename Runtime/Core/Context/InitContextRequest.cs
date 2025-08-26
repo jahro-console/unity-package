@@ -20,7 +20,7 @@ namespace JahroConsole.Core.Context
             [SerializeField]
             internal UserInfo[] users;
             [SerializeField]
-            internal VersionChecker.VersionResponse versionInfo;
+            internal VersionInfo versionInfo;
         }
 
         internal Action<InitContextResponse> OnComplete;

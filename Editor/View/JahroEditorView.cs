@@ -189,7 +189,7 @@ namespace JahroConsole.Editor
             }
         }
 
-        private void UpdateUI(VersionChecker.VersionResponse response)
+        private void UpdateUI(VersionInfo response)
         {
             if (response.updateRequired)
             {

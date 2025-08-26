@@ -16,7 +16,7 @@ namespace JahroConsole.View
         [SerializeField]
         private Text VersionText;
 
-        private VersionChecker.VersionResponse _versionInfo;
+        private VersionInfo _versionInfo;
 
         void Start()
         {
@@ -30,7 +30,7 @@ namespace JahroConsole.View
             Application.OpenURL(url != null ? url : "https://jahro.io/changelog");
         }
 
-        public void UpdateInfo(string currentVersion, VersionChecker.VersionResponse versionInfo)
+        public void UpdateInfo(string currentVersion, VersionInfo versionInfo)
         {
             _versionInfo = versionInfo;
             VersionText.text = "v" + currentVersion;

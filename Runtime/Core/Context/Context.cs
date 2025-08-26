@@ -23,7 +23,7 @@ namespace JahroConsole.Core.Context
 
         private TeamInfo _teamInfo;
 
-        private VersionChecker.VersionResponse _versionInfo;
+        private VersionInfo _versionInfo;
 
         private bool _apiKeyVerified;
 
@@ -35,7 +35,7 @@ namespace JahroConsole.Core.Context
 
         internal UserInfo[] TeamMembers { get { return _teamMembers; } }
 
-        internal VersionChecker.VersionResponse VersionInfo { get { return _versionInfo; } }
+        internal VersionInfo VersionInfo { get { return _versionInfo; } }
 
         internal bool ApiKeyVerified { get { return _apiKeyVerified; } }
 
@@ -50,7 +50,7 @@ namespace JahroConsole.Core.Context
             OnSelectedUserInfoChanged?.Invoke(userInfo);
         }
 
-        private void UpdateInfo(ProjectInfo projectInfo, TeamInfo teamInfo, UserInfo[] users, VersionChecker.VersionResponse versionInfo, ConsoleStorage storage)
+        private void UpdateInfo(ProjectInfo projectInfo, TeamInfo teamInfo, UserInfo[] users, VersionInfo versionInfo, ConsoleStorage storage)
         {
             storage.ProjectInfo = _projectInfo = projectInfo;
             storage.TeamInfo = _teamInfo = teamInfo;
@@ -81,7 +81,6 @@ namespace JahroConsole.Core.Context
             {
                 context._apiKeyVerified = true;
                 context.UpdateInfo(result.projectInfo, result.tenantInfo, result.users, result.versionInfo, storage);
-
                 if (context._selectedUserInfo == null || string.IsNullOrEmpty(context._selectedUserInfo.Id))
                 {
                     context._selectedUserInfo = context._teamMembers[0];

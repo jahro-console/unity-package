@@ -26,5 +26,7 @@ namespace JahroConsole.Core.Data
         internal bool filterCommands = true;
         [SerializeField]
         internal int scaleMode = 1;
+        [SerializeField]
+        internal bool keepInWindowBounds = true;
     }
 }

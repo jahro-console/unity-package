@@ -11,7 +11,7 @@ namespace JahroConsole.View
 {
     public class ConsoleOpenButton : MonoBehaviour
     {
-        private const float NOTIFICATION_LIFETIME_SECONDS = 5f;
+        private const float NOTIFICATION_LIFETIME_SECONDS = 3f;
 
         [SerializeField]
         private ConsoleMainWindow _mainWindow;
@@ -30,6 +30,8 @@ namespace JahroConsole.View
 
         private RectTransform _canvasTransform;
 
+        private CanvasGroup _canvasGroup;
+
         internal Action OnConsoleOpenClick;
 
         internal Action OnSnapshotTakeClick;
@@ -38,6 +40,7 @@ namespace JahroConsole.View
         {
             _holderTransform = GetComponent<RectTransform>();
             _canvasTransform = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+            _canvasGroup = GetComponent<CanvasGroup>();
         }
 
         void Start()
@@ -64,6 +67,21 @@ namespace JahroConsole.View
         public void OnSnapshotClick()
         {
             OnSnapshotTakeClick?.Invoke();
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 0f;
+            }
+            StartCoroutine(RestoreVisibility());
+        }
+
+        private IEnumerator RestoreVisibility()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 1f;
+            }
         }
 
         private void LateUpdate()

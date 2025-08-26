@@ -3,6 +3,7 @@ using System.Collections;
 using JahroConsole.Core.Context;
 using JahroConsole.Core.Data;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace JahroConsole.View
@@ -36,6 +37,8 @@ namespace JahroConsole.View
         internal CanvasScalingBehaviour ScalingBehaviour { get; private set; }
 
         internal bool Fullscreen { get; private set; }
+
+        public bool KeepInWindowBounds { get; set; }
 
         public bool IsMobileMode { get { return Application.isMobilePlatform; } }
 
@@ -72,6 +75,10 @@ namespace JahroConsole.View
         public Action OnWindowSizeChanged;
 
         public Action<bool> OnTightModeChanged;
+
+        private Vector2 _dragOffset;
+
+        private bool _dragging;
 
         public enum Mode
         {
@@ -111,6 +118,8 @@ namespace JahroConsole.View
             _activeView = PickView(defaultMode);
             ShowLoading();
             CurrentMode = defaultMode;
+
+            InitDrag();
         }
 
         private void Start()
@@ -139,6 +148,14 @@ namespace JahroConsole.View
                 HideLoading();
             else
                 _loadingView.EnterErrorState(true);
+        }
+
+        private void InitDrag()
+        {
+            var headerDragEventTrigger = gameObject.GetComponent<EventTrigger>();
+            headerDragEventTrigger.triggers[0].callback.AddListener(OnHeaderPointerDown);
+            headerDragEventTrigger.triggers[1].callback.AddListener(OnHeaderPointerDrag);
+            headerDragEventTrigger.triggers[2].callback.AddListener(OnHeaderPointerUp);
         }
 
         private void Update()
@@ -183,10 +200,9 @@ namespace JahroConsole.View
         private void OnScaleChanged(float scale)
         {
             AdaptToParentCanvas();
-            if (Fullscreen)
-            {
-                ResizeWindowToCanvas();
-            }
+            ResizeWindowToCanvas();
+            CheckScreenBounds();
+            WindowRectChanged(WindowTransform.rect);
         }
 
         private void SetTightMode(bool enabled)
@@ -297,6 +313,7 @@ namespace JahroConsole.View
             storage.GeneralSettings.Fullscreen = Fullscreen;
             storage.GeneralSettings.Mode = CurrentMode.ToString();
             storage.GeneralSettings.scaleMode = ScalingBehaviour.GetCurrentMode();
+            storage.GeneralSettings.keepInWindowBounds = KeepInWindowBounds;
             foreach (var view in _views)
             {
                 view.OnStateSave(storage);
@@ -328,6 +345,7 @@ namespace JahroConsole.View
             }
 
             ScalingBehaviour.SwitchToMode((CanvasScalingBehaviour.ScaleMode)storage.GeneralSettings.scaleMode);
+            KeepInWindowBounds = storage.GeneralSettings.keepInWindowBounds;
 
             foreach (var view in _views)
             {
@@ -417,6 +435,89 @@ namespace JahroConsole.View
                 }
             }
             return pickedView;
+        }
+
+
+        private void OnHeaderPointerDown(BaseEventData eventData)
+        {
+            PointerEventData pointerEventData = (PointerEventData)eventData;
+            Vector2 clickLocalPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(WindowTransform, pointerEventData.position, pointerEventData.pressEventCamera, out clickLocalPoint);
+
+            _dragOffset.x = clickLocalPoint.x;
+            _dragOffset.y = clickLocalPoint.y;
+
+            _dragging = true;
+        }
+
+        private void OnHeaderPointerDrag(BaseEventData eventData)
+        {
+            if (_dragging == false)
+            {
+                return;
+            }
+
+            PointerEventData pointerEventData = (PointerEventData)eventData;
+
+            if ((pointerEventData.pressPosition - pointerEventData.position).magnitude < EventSystem.current.pixelDragThreshold)
+            {
+                return;
+            }
+
+            Vector2 dragLocalPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasTransform, pointerEventData.position, pointerEventData.pressEventCamera, out dragLocalPoint);
+            dragLocalPoint.x += _canvasTransform.rect.width / 2f - _dragOffset.x;
+            dragLocalPoint.y -= _canvasTransform.rect.height / 2f + _dragOffset.y;
+            WindowTransform.anchoredPosition = dragLocalPoint;
+            WindowPositionChanged(WindowTransform.anchoredPosition);
+            CheckScreenBounds();
+        }
+
+        private void OnHeaderPointerUp(BaseEventData eventData)
+        {
+            _dragging = false;
+        }
+
+        private void CheckScreenBounds()
+        {
+            if (KeepInWindowBounds == false)
+            {
+                return;
+            }
+
+            Vector3[] corners = new Vector3[4];
+            WindowTransform.GetWorldCorners(corners);
+
+            float screenWidth = Screen.width;
+            float screenHeight = Screen.height;
+
+            Vector3 clampedPosition = WindowTransform.position;
+
+            // Check left boundary
+            if (corners[0].x < 0)
+            {
+                clampedPosition.x -= corners[0].x;
+            }
+
+            // Check right boundary
+            if (corners[2].x > screenWidth)
+            {
+                clampedPosition.x -= corners[2].x - screenWidth;
+            }
+
+            // Check bottom boundary
+            if (corners[0].y < 0)
+            {
+                clampedPosition.y -= corners[0].y;
+            }
+
+            // Check top boundary
+            if (corners[1].y > screenHeight)
+            {
+                clampedPosition.y -= corners[1].y - screenHeight;
+            }
+
+            WindowTransform.position = clampedPosition;
         }
     }
 }

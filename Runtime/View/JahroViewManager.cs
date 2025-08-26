@@ -37,6 +37,7 @@ namespace JahroConsole
             _launchButton = GetComponentInChildren<ConsoleOpenButton>(true);
             _launchButton.OnConsoleOpenClick += OnOpenButtonClick;
             _launchButton.OnSnapshotTakeClick += OnScreenshotButtonClick;
+            _launchButton.Hide();
             _mainWindow = GetComponentInChildren<ConsoleMainWindow>(true);
             _mainWindow.OnMainWindowOpen += OnMainWindowOpen;
             _mainWindow.OnMainWindowClose += OnMainWindowClose;
@@ -58,7 +59,7 @@ namespace JahroConsole
 
             InitKeyboard();
 
-            _launchButton.Show();
+            ShowLaunchButton();
 #if UNITY_WEBGL
 
             StartCoroutine(ContinuesSave());
@@ -93,6 +94,10 @@ namespace JahroConsole
 
         public void ShowLaunchButton()
         {
+            if (!Jahro.IsLaunchButtonEnabled)
+            {
+                return;
+            }
             _launchButton.Show();
         }
 
@@ -113,7 +118,7 @@ namespace JahroConsole
 
         private void OnMainWindowOpen()
         {
-            _launchButton.Hide();
+            HideLaunchButton();
             JahroSession.RefreshSession();
             if (OnStateChanged != null)
             {
@@ -123,7 +128,7 @@ namespace JahroConsole
 
         private void OnMainWindowClose()
         {
-            _launchButton.Show();
+            ShowLaunchButton();
             if (OnStateChanged != null)
             {
                 OnStateChanged(ConsoleViewStates.MainWindowHide);

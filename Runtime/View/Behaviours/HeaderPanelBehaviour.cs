@@ -1,6 +1,5 @@
 ﻿using JahroConsole.Core.Context;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace JahroConsole.View
@@ -52,11 +51,7 @@ namespace JahroConsole.View
 
         private UserAvatar _userAvatar;
 
-        private Vector2 _dragOffset;
-
         private JahroContext _context;
-
-        private bool _dragging;
 
         public void Init(ConsoleMainWindow mainWindow, MobileMenu mobileMenu)
         {
@@ -81,7 +76,6 @@ namespace JahroConsole.View
             }
             else
             {
-                InitDrag();
                 FullscreenButton.SetActive(true);
                 SettingsViewToggle.gameObject.SetActive(true);
                 MobileCloseButton.gameObject.SetActive(false);
@@ -162,14 +156,6 @@ namespace JahroConsole.View
             _mainWindow.OpenOptionsMenu();
         }
 
-        private void InitDrag()
-        {
-            var headerDragEventTrigger = gameObject.GetComponent<EventTrigger>();
-            headerDragEventTrigger.triggers[0].callback.AddListener(OnHeaderPointerDown);
-            headerDragEventTrigger.triggers[1].callback.AddListener(OnHeaderPointerDrag);
-            headerDragEventTrigger.triggers[2].callback.AddListener(OnHeaderPointerUp);
-        }
-
         private void OnConsoleTabValueChange(bool active)
         {
             if (active)
@@ -217,45 +203,5 @@ namespace JahroConsole.View
                 _mainWindow.SwitchToMode(ConsoleMainWindow.Mode.Settings);
             }
         }
-
-        private void OnHeaderPointerDown(BaseEventData eventData)
-        {
-            PointerEventData pointerEventData = (PointerEventData)eventData;
-            Vector2 clickLocalPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_windowTransform, pointerEventData.position, pointerEventData.pressEventCamera, out clickLocalPoint);
-
-            _dragOffset.x = clickLocalPoint.x;
-            _dragOffset.y = clickLocalPoint.y;
-
-            _dragging = true;
-        }
-
-        private void OnHeaderPointerDrag(BaseEventData eventData)
-        {
-            if (_dragging == false)
-            {
-                return;
-            }
-
-            PointerEventData pointerEventData = (PointerEventData)eventData;
-
-            if ((pointerEventData.pressPosition - pointerEventData.position).magnitude < EventSystem.current.pixelDragThreshold)
-            {
-                return;
-            }
-
-            Vector2 dragLocalPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasTransform, pointerEventData.position, pointerEventData.pressEventCamera, out dragLocalPoint);
-            dragLocalPoint.x += _canvasTransform.rect.width / 2f - _dragOffset.x;
-            dragLocalPoint.y -= _canvasTransform.rect.height / 2f + _dragOffset.y;
-            _windowTransform.anchoredPosition = dragLocalPoint;
-            _mainWindow.WindowPositionChanged(_windowTransform.anchoredPosition);
-        }
-
-        private void OnHeaderPointerUp(BaseEventData eventData)
-        {
-            _dragging = false;
-        }
-
     }
 }

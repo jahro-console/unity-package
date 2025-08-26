@@ -42,6 +42,8 @@ namespace JahroConsole.View
                     _uiScaleLargeToggle.SetIsOnWithoutNotify(true);
                     break;
             }
+
+            _keepInWindowBounds.SetIsOnWithoutNotify(storage.GeneralSettings.keepInWindowBounds);
         }
 
         protected override void OnActivate()
@@ -60,9 +62,9 @@ namespace JahroConsole.View
 
         }
 
-        private void OnKeepInWindowBoundsValueChanged(bool arg0)
+        private void OnKeepInWindowBoundsValueChanged(bool isOn)
         {
-
+            MainWindow.KeepInWindowBounds = isOn;
         }
 
         private void OnUiScaleLargeToggleValueChanged(bool isOn)

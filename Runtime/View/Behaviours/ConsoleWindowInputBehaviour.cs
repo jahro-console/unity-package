@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using JahroConsole.Core.Commands;
 using JahroConsole.Core.Data;
 using JahroConsole.Core.Registry;
@@ -143,7 +144,9 @@ namespace JahroConsole.View
 				CommandsInputField.MoveTextEnd(true);
 			}
 			_previousAutocomliteText = input;
-			var possibleEntries = ConsoleCommandsRegistry.Holder.GetPossibleCommandsNames(input);
+			var firstWord = input.Trim().Split(' ').First();
+			var possibleEntries = ConsoleCommandsRegistry.Holder.GetPossibleCommandsNames(firstWord);
+
 			autocompliteHolder.UpdateEntries(possibleEntries);
 			if (possibleEntries.Count > 0)
 			{

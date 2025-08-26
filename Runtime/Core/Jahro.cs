@@ -25,6 +25,12 @@ namespace JahroConsole
         public static bool Enabled { get; private set; }
 
         /// <summary>
+        /// Confirms if the Jahro Console's Launch button is currently enabled.
+        /// </summary>
+        /// <value></value>
+        public static bool IsLaunchButtonEnabled { get; private set; } = true;
+
+        /// <summary>
         /// Event triggered when the Jahro Console is displayed.
         /// </summary>
         public static UnityAction OnConsoleShow;
@@ -152,8 +158,26 @@ namespace JahroConsole
         }
 
         /// <summary>
-        /// Reveals the Jahro Console's Launch button.
+        /// Disables the Jahro Console's Launch button.
         /// </summary>
+        public static void DisableLaunchButton()
+        {
+            if (!Enabled)
+            {
+                Debug.LogWarning("Jahro Console disabled. Can't disable launch button");
+                return;
+            }
+            IsLaunchButtonEnabled = false;
+            if (_viewManager != null && _viewManager.IsOpenButtonVisible())
+            {
+                _viewManager.HideLaunchButton();
+            }
+        }
+
+        /// <summary>
+        /// Shows the Jahro Console's Launch button.
+        /// </summary>
+        [System.Obsolete("This method is deprecated. Use DisableLaunchButton() instead.")]
         public static void ShowLaunchButton()
         {
             if (!Enabled)
@@ -165,8 +189,9 @@ namespace JahroConsole
         }
 
         /// <summary>
-        /// Conceals the Jahro Console's Launch button.
+        /// Hides the Jahro Console's Launch button.
         /// </summary>
+        [System.Obsolete("This method is deprecated. Use DisableLaunchButton() instead.")]
         public static void HideLaunchButton()
         {
             if (!Enabled)
@@ -181,6 +206,7 @@ namespace JahroConsole
         /// Checks if the Jahro Console's Launch button is visible.
         /// </summary>
         /// <returns></returns>
+        [System.Obsolete("This method is deprecated. Use IsLaunchButtonEnabled property instead.")]
         public static bool IsStatusButtonEnabled()
         {
             if (!Enabled)

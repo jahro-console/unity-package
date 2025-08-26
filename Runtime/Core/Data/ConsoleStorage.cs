@@ -24,7 +24,7 @@ namespace JahroConsole.Core.Data
 
         [SerializeField] internal UserInfo[] TeamMembers;
 
-        [SerializeField] internal VersionChecker.VersionResponse VersionInfo;
+        [SerializeField] internal VersionInfo VersionInfo;
 
         [SerializeField] internal UserInfo SelectedUserInfo;
 

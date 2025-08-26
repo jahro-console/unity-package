@@ -1,7 +1,8 @@
 # Jahro Unity Plugin
 
-**Debug, control, and fine-tune your game directly inside the game view.**  
-Jahro provides powerful tools for Unity Game Creators for debugging, testing, and collaboration.
+**One-click snapshots: logs + screenshot from your Unity game.**<br/>
+From any device → instantly shareable web link.<br/>
+No cables. No Logcat or xcode<br/>
 
 ![Jahro Screenshot](https://vdepoiw1jnimcohf.public.blob.vercel-storage.com/Jahro_3%201-f2rMPbdeHAvaTZaFEGHbfxIQ8hqFM0.png)
 
@@ -9,98 +10,82 @@ Jahro provides powerful tools for Unity Game Creators for debugging, testing, an
 
 | [Website](https://jahro.io) |
 [Web Console](https://console.jahro.io) |
-[Documentation](https://docs.jahro.io) |
-[Getting Started](https://docs.jahro.io/start-here/installation) |
+[Documentation](https://go.jahro.io/docs) |
+[Getting Started](https://go.jahro.io/installation) |
 [Discord](https://discord.gg/txcHFRDeV4) |
 [UnityForum](https://discussions.unity.com/t/free-debugging-tool-jahro-logs-sync-cheat-console-variables-monitoring-in-game-view/1623617) |
 
 ---
 
-## Features
+## Core Features
 
-- **Run Commands/Cheats Console:** <br/>
-  Execute static/non-static methods inside your game on a target device.
+### **Snapshots** <br/>
 
-  ![Commands](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-visual-full.png)
+Capture full device logs + screenshots with one click. <br/>
+Share link with your team instantly.
 
-- **Logs Infrastructure:** <br/>
-  Collaborate on logs and screenshots with your team for better debugging and session analysis.
+![Logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/web-logs-all.png)
+<br/>
 
-  ![Logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/web-logs-all.png)
+### **Commands/Cheats** <br/>
 
-- **Watch over Variables:** <br/>
-  Track any variable in your game with the Watcher. From simple primitives to complex objects and game states.
+Expose C# methods with **[JahroCommand]** and run them in-game.<br/>
+Skip levels, grant items, trigger events — without rebuilds.
 
-  ![Watcher](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-watcher-full.png)
+![Commands](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-visual-full.png)
+<br/>
 
-- **Logs In Game View:** <br/>
-  See logs directly inside the game.
+### **Watcher** <br/>
 
-  ![Logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-logs-full.png)
+Track any variable in your game with the Watcher. <br/>
+From simple primitives to complex objects and game states.
 
-- **Mobile and UX Friendly:** <br/>
-  Jahro designed for mobile games with especial attention to UX.
+![Watcher](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-watcher-full.png)
+<br/>
 
 ---
 
 ## Installation
 
-1. Open **Unity Package Manager**.
-2. Click **Add package from Git URL**.
-3. Paste the following link: https://github.com/jahro-console/unity-package.git
-4. Click **Add** to install the Jahro Unity plugin.
-5. Grab your API key from **[Jahro Console](https://console.jahro.io/auth/signup)**.
+1. Open **Unity Package Manager**
+2. Click **Add package from Git URL**
+3. **Paste**: https://github.com/jahro-console/unity-package.git
+4. Click **Add** to install
+5. Get your API key from **[Jahro](https://jahro.io)**
 
 ---
 
 ## Getting Your API Key
 
-1. Register a free account at **[Jahro Console](https://console.jahro.io/auth/signup)**.
-2. Create a project and navigate to the **API Keys** section.
-3. Copy the generated API key.
-4. In Unity, go to **Tools > Jahro Settings** and paste the API key.
+1. Register a free account at **[Jahro](https://jahro.io)**
+2. Create a project and go to **API Keys**
+3. Copy the key and paste it in **Tools > Jahro Settings**
 
 ---
 
 ## Docs Section
 
-Read the docs to learn how to use Jahro in your Unity project.
+Learn how to use Jahro in your Unity project:
 
-- **[Commands](https://docs.jahro.io/start-here/commands)**
-- **[Logs](https://docs.jahro.io/start-here/logs)**
-- **[Watcher](https://docs.jahro.io/start-here/watcher)**
-- **[Snapshots: Logs & Screenshots](https://docs.jahro.io/start-here/snapshots)**
+- **[Snapshots](https://go.jahro.io/snapshots)**
+- **[Commands](https://go.jahro.io/commands)**
+- **[Watcher](https://go.jahro.io/watcher)**
+- **[Logs](https://go.jahro.io/logs)**
 
 ---
 
 ## Useful Links
 
-- **Documentation:** [Read Docs](https://docs.jahro.io)
+- **Documentation:** [Read Docs](https://go.jahro.io/docs)
+- **Roadmap:** [Roadmap](https://jahro.io/roadmap)
 - **Community Discord:** [Join Here](https://discord.gg/txcHFRDeV4)
 - **Home Website:** [https://jahro.io](https://jahro.io)
 - **Report an Issue:** [GitHub Issues](https://github.com/jahro-console/unity-package/issues)
-
----
-
-## How to Support Jahro
-
-We just started and working hard to make Jahro the best debugging tool for Unity.
-You could help us with feedback, feature requests, or sharing to your friends.
-
----
-
-## Feedback
-
-We’re very open to feedback! Let us know how we can improve and help us make Jahro even better. Reach out via:
-
-- **Feedback:** [Feedback Form](https://tally.so/r/wLaVRO)
-- **Discord:** [Join our Community](https://discord.gg/txcHFRDeV4)
-- **GitHub Issues:** [Report an Issue](https://github.com/jahro-console/unity-package/issues)
 - **Email Support:** [support@jahro.com](mailto:support@jahro.com)
 
 ---
 
 ## License
 
-- This plugin is distributed under a **[custom license](https://github.com/jahro-console/unity-package/blob/main/LICENSE.md)**. Please review the license before using the plugin.
-- ©️ Copyright 2025 Oleksii Bulat. All rights reserved.
+This plugin is distributed under a **[custom license](https://github.com/jahro-console/unity-package/blob/main/LICENSE.md)** <br/>
+© 2025 Oleksii Bulat. All rights reserved.
