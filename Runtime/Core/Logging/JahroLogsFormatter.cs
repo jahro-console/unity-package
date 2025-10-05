@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace JahroConsole.Core.Logging
@@ -19,12 +20,14 @@ namespace JahroConsole.Core.Logging
 
         internal static string FormatToConsoleMessage(JahroLogEntity entity, string filter)
         {
+            // string timestamp = $"[{DateTime.Now.ToString("HH:mm:ss")}] ";
             var prefix = GetPrefix(entity);
 
             var filteredMessage = GetFilteredString(entity.Message, filter);
             var color = string.IsNullOrEmpty(filter) ? TEXT_COLOR_WITHOUT_FILTER : TEXT_COLOR_WITH_FILTER;
 
             return $"{prefix} <color={color}>{filteredMessage}</color>";
+            // return $"{timestamp}{prefix} {filteredMessage}";
         }
 
         internal static string FormatCommand(string command, object[] parameters)

@@ -19,11 +19,19 @@ namespace JahroConsole.View
         [SerializeField]
         private BlinkIndicator commandsIndicator;
 
+        private GameObject _debugIndicatorGroup;
+        private GameObject _warningIndicatorGroup;
+        private GameObject _errorsIndicatorGroup;
+        private GameObject _commandsIndicatorGroup;
+
         public JahroCommandsDataSourceCounter DataSourceCounter { get; set; }
 
-        private void Start()
+        private void Awake()
         {
-
+            _debugIndicatorGroup = debugIndicator.gameObject.transform.parent.gameObject;
+            _warningIndicatorGroup = warningIndicator.gameObject.transform.parent.gameObject;
+            _errorsIndicatorGroup = errorsIndicator.gameObject.transform.parent.gameObject;
+            _commandsIndicatorGroup = commandsIndicator.gameObject.transform.parent.gameObject;
         }
 
         private void OnEnable()
@@ -45,10 +53,13 @@ namespace JahroConsole.View
             {
                 return;
             }
-
+            _debugIndicatorGroup.SetActive(DataSourceCounter.Debug > 0);
             debugIndicator?.SetCount(DataSourceCounter.Debug);
+            _warningIndicatorGroup.SetActive(DataSourceCounter.Warning > 0);
             warningIndicator?.SetCount(DataSourceCounter.Warning);
+            _errorsIndicatorGroup.SetActive(DataSourceCounter.Error > 0);
             errorsIndicator?.SetCount(DataSourceCounter.Error);
+            _commandsIndicatorGroup.SetActive(DataSourceCounter.Commands > 0);
             commandsIndicator?.SetCount(DataSourceCounter.Commands);
         }
 

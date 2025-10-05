@@ -8,6 +8,8 @@ namespace JahroConsole.View
     {
         private readonly Color32 DEFAULT_COLOR = new Color32(131, 130, 144, 255);
 
+        private const int MAX_COUNT = 9999;
+
         private const float BLINK_DURATION = 0.2f;
 
         [SerializeField]
@@ -38,14 +40,11 @@ namespace JahroConsole.View
             StartCoroutine(BlinkColor());
         }
 
-        public void SetCount(int count, bool limit = true)
+        public void SetCount(int count)
         {
             if (TargetText != null)
             {
-                if (limit)
-                    TargetText.text = Mathf.Clamp(count, 0, 99).ToString();
-                else
-                    TargetText.text = count.ToString();
+                TargetText.text = Mathf.Clamp(count, 0, MAX_COUNT).ToString();
             }
 
         }

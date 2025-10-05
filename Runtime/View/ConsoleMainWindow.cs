@@ -136,6 +136,11 @@ namespace JahroConsole.View
             if (IsMobileMode) SetFullscreenMode();
         }
 
+        private void OnDestroy()
+        {
+            ConsoleStorageController.Instance.OnStorageSave -= OnStateSave;
+        }
+
         internal void InitContext(JahroContext context)
         {
             HeaderPanelBehaviour.InitContext(context);
@@ -225,6 +230,23 @@ namespace JahroConsole.View
             {
                 view.OnWindowRectChanged(rect);
             }
+
+            ForceHeightRecalculationForAllViews();
+        }
+
+        private void ForceHeightRecalculationForAllViews()
+        {
+            if (_activeView != null)
+            {
+                var scrollView = _activeView.GetComponentInChildren<JahroScrollView>();
+                scrollView?.ForceHeightRecalculation();
+            }
+        }
+
+        internal void TriggerHeightRecalculation()
+        {
+            // Trigger height recalculation for all views
+            ForceHeightRecalculationForAllViews();
         }
 
         internal void WindowPositionChanged(Vector2 anchoredPosition)

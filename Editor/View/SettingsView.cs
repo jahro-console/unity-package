@@ -29,10 +29,11 @@ namespace JahroConsole.Editor
         private EnumField _launchKeyField;
         private Toggle _keyboardShortcutsToggle;
         private Toggle _mobileTapAreaToggle;
-        private Toggle _dublicateLogsToggle;
         private MaskField _assembliesField;
         private List<string> _assembliesNames = new List<string>();
         private int _assembliesFlag;
+        private EnumField _snapshotsModeField;
+
         public event Action OnResetApiKey;
 
         public SettingsView(VisualElement root)
@@ -58,10 +59,12 @@ namespace JahroConsole.Editor
             _autoDisableToggle = scrollView.Q<Toggle>("AutoDisableToggle");
             _keyboardShortcutsToggle = scrollView.Q<Toggle>("KeyboardShortcutsToggle");
             _mobileTapAreaToggle = scrollView.Q<Toggle>("MobileTapAreaToggle");
-            _dublicateLogsToggle = scrollView.Q<Toggle>("DublicateLogsToggle");
             _launchKeyField = scrollView.Q<EnumField>("LaunchKeyPicker");
 
-            _assembliesField = scrollView.Q<MaskField>("AssembliesPicker");
+            _assembliesField = tabViewContainer.Q<MaskField>("AssembliesPicker");
+
+            var snapshotsSettingsTab = tabViewContainer.Q<VisualElement>("SnapshotsContainer");
+            _snapshotsModeField = snapshotsSettingsTab.Q<EnumField>("SnapshotsModePicker");
 
             InitializeEnumFields();
 
@@ -125,6 +128,12 @@ namespace JahroConsole.Editor
             {
                 _launchKeyField.Init(KeyCode.Tilde);
                 _launchKeyField.tooltip = "Key to press to open Jahro window during play mode";
+            }
+
+            if (_snapshotsModeField != null)
+            {
+                _snapshotsModeField.Init(IProjectSettings.SnapshotMode.StreamingExceptEditor);
+                _snapshotsModeField.tooltip = "Mode of snapshots uploading";
             }
 
             LoadAssemblies();
@@ -211,15 +220,6 @@ namespace JahroConsole.Editor
                 });
             }
 
-            if (_dublicateLogsToggle != null)
-            {
-                _dublicateLogsToggle.value = _projectSettings.DuplicateToUnityConsole;
-                _dublicateLogsToggle.RegisterValueChangedCallback(evt =>
-                {
-                    _projectSettings.DuplicateToUnityConsole = evt.newValue;
-                });
-            }
-
             if (_launchKeyField != null)
             {
                 _launchKeyField.value = _projectSettings.LaunchKey;
@@ -258,6 +258,15 @@ namespace JahroConsole.Editor
 
                         _projectSettings.ActiveAssemblies = newActiveAssemblies;
                     }
+                });
+            }
+
+            if (_snapshotsModeField != null)
+            {
+                _snapshotsModeField.value = _projectSettings.SnapshotingMode;
+                _snapshotsModeField.RegisterValueChangedCallback(evt =>
+                {
+                    _projectSettings.SnapshotingMode = (IProjectSettings.SnapshotMode)evt.newValue;
                 });
             }
         }

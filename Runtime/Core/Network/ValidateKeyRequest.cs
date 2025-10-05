@@ -8,7 +8,7 @@ namespace JahroConsole.Core.Network
     {
         public Action<string> OnComplete;
 
-        public Action<string> OnFail;
+        public Action<NetworkError> OnFail;
 
         private string _key;
 
@@ -39,10 +39,10 @@ namespace JahroConsole.Core.Network
             OnComplete?.Invoke(result);
         }
 
-        protected override void OnRequestFail(string error, long responseCode)
+        protected override void OnRequestFail(NetworkError error)
         {
-            base.OnRequestFail(error, responseCode);
-            OnFail(error);
+            base.OnRequestFail(error);
+            OnFail?.Invoke(error);
         }
     }
 }

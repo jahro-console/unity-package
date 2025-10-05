@@ -15,6 +15,8 @@ namespace JahroConsole.Core.Data
 
         internal ConsoleStorage ConsoleStorage { get { return _storage; } }
 
+        internal bool IsReleased { get; private set; }
+
         internal static ConsoleStorageController Instance
         {
             private set
@@ -44,11 +46,13 @@ namespace JahroConsole.Core.Data
 
         private void ReadLocalSaves()
         {
-#if JAHRO_DEBUG
-            Debug.Log("Start reading local saves");
-#endif
+            if (Instance.IsReleased)
+            {
+                return;
+            }
+
             bool dataLoaded;
-            var json = FileManager.ReadLocalSaveFromFile(out dataLoaded);
+            var json = SavesFileManager.ReadLocalSaveFromFile(out dataLoaded);
             if (dataLoaded)
             {
                 try
@@ -73,10 +77,15 @@ namespace JahroConsole.Core.Data
 
         private void WriteLocalSaves()
         {
+            if (Instance.IsReleased)
+            {
+                return;
+            }
+
             OnStorageSave(_storage);
 
             string json = JsonUtility.ToJson(_storage, true);
-            FileManager.SaveToLocalSavesFile(json);
+            SavesFileManager.SaveToLocalSavesFile(json);
         }
 
         internal static void LoadState()
@@ -91,7 +100,7 @@ namespace JahroConsole.Core.Data
 
         internal static void Release()
         {
-            Instance = null;
+            Instance.IsReleased = true;
         }
 
     }

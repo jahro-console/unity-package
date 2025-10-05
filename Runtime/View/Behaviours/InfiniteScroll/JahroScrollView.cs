@@ -27,6 +27,8 @@ namespace JahroConsole.View
 
         private Dictionary<int, int> heightValuesCache;
         private Dictionary<int, float> positionValuesCache;
+        private float lastContentWidth = -1f;
+        private bool needsHeightRecalculation = false;
 
         public delegate int HeightItem(int index);
 
@@ -78,6 +80,8 @@ namespace JahroConsole.View
 
         private void PerformUpdate()
         {
+            CheckForContentWidthChange();
+
             var anchoredPosition = content.anchoredPosition;
             var currentTopPosition = anchoredPosition.y - ItemSpacing;
             var difference = Mathf.Abs(currentTopPosition - previousTopPosition);
@@ -86,6 +90,20 @@ namespace JahroConsole.View
             for (int i = 0; i < updatesCount; i++)
             {
                 UpdateScroller();
+            }
+        }
+
+        private void CheckForContentWidthChange()
+        {
+            float currentWidth = content.rect.width;
+            if (lastContentWidth > 0f && Mathf.Abs(currentWidth - lastContentWidth) > 1f)
+            {
+                needsHeightRecalculation = true;
+                lastContentWidth = currentWidth;
+            }
+            else if (lastContentWidth <= 0f)
+            {
+                lastContentWidth = currentWidth;
             }
         }
 
@@ -235,6 +253,7 @@ namespace JahroConsole.View
 
         private void OnItemExpand(JahroScrollItem item, bool expanded)
         {
+            needsHeightRecalculation = true;
             UpdateScroller(forced: true);
             OnItemExpanded?.Invoke(item);
             IsAutoscrollEnabled = false;
@@ -252,6 +271,14 @@ namespace JahroConsole.View
             {
                 return;
             }
+
+            // Force height recalculation if needed
+            if (needsHeightRecalculation)
+            {
+                ForceRecalculateHeights();
+                needsHeightRecalculation = false;
+            }
+
             var height = CalculateSizesAndPositions(itemsCount);
             CreateViews();
             previousPosition = 0;
@@ -298,13 +325,27 @@ namespace JahroConsole.View
 
         private float CalculateSizesAndPositions(int count)
         {
-            heightValuesCache.Clear();
-            positionValuesCache.Clear();
+            // Only clear caches if we're recalculating everything
+            if (needsHeightRecalculation)
+            {
+                heightValuesCache.Clear();
+                positionValuesCache.Clear();
+            }
+
             float result = 0f;
             for (int i = 0; i < count; i++)
             {
-                heightValuesCache[i] = OnGetHeightForIndexPath(i);
-                positionValuesCache[i] = -(TopPadding + i * ItemSpacing + result);
+                // Only calculate if not already cached
+                if (!heightValuesCache.ContainsKey(i))
+                {
+                    heightValuesCache[i] = OnGetHeightForIndexPath(i);
+                }
+
+                if (!positionValuesCache.ContainsKey(i))
+                {
+                    positionValuesCache[i] = -(TopPadding + i * ItemSpacing + result);
+                }
+
                 result += heightValuesCache[i];
             }
 
@@ -357,5 +398,28 @@ namespace JahroConsole.View
         }
 
         private bool IsInAutoscrollDistance(Vector2 contentPosition) => Mathf.Abs((content.rect.height - contentPosition.y) - scrollRect.viewport.rect.height) < Screen.height * 0.1f;
+
+        private void ForceRecalculateHeights()
+        {
+            if (OnGetHeightForIndexPath == null) return;
+
+            heightValuesCache.Clear();
+            positionValuesCache.Clear();
+
+            var textHeightCalculator = TextHeightCaluculator.Instance;
+            if (textHeightCalculator.ShouldInvalidateCache(content.rect.width))
+            {
+                textHeightCalculator.UpdateReferenceSize(content.rect.width);
+            }
+        }
+
+        public void ForceHeightRecalculation()
+        {
+            needsHeightRecalculation = true;
+            if (count > 0)
+            {
+                UpdateData(count);
+            }
+        }
     }
 }

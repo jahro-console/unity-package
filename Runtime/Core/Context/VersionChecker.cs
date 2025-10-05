@@ -17,7 +17,7 @@ namespace JahroConsole.Core.Data
             };
             request.OnFail += (error) =>
             {
-                onError?.Invoke(new VersionInfo() { message = error });
+                onError?.Invoke(new VersionInfo() { message = error.message });
             };
             await NetworkManager.Instance.SendRequestAsync(request);
         }

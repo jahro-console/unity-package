@@ -73,12 +73,14 @@ namespace JahroConsole.View
                 CloseButton.SetActive(false);
                 SettingsViewToggle.gameObject.SetActive(false);
                 MobileCloseButton.gameObject.SetActive(true);
+                MenuButton.SetActive(true);
             }
             else
             {
                 FullscreenButton.SetActive(true);
                 SettingsViewToggle.gameObject.SetActive(true);
                 MobileCloseButton.gameObject.SetActive(false);
+                MenuButton.SetActive(mainWindow.IsTightMode);
             }
 
             _mainWindow.OnTightModeChanged += OnTightModeChanged;
@@ -106,9 +108,17 @@ namespace JahroConsole.View
             _userAvatar?.SetInitials(info);
         }
 
-        private void OnTightModeChanged(bool obj)
+        private void OnTightModeChanged(bool tightMode)
         {
-            MenuButton.SetActive(obj);
+            if (_mainWindow.IsMobileMode)
+            {
+                MenuButton.SetActive(true);
+            }
+            else
+            {
+                MenuButton.SetActive(tightMode);
+            }
+            SettingsViewToggle.gameObject.SetActive(!tightMode);
         }
 
         public void OnCloseButtonClick()

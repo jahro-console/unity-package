@@ -105,9 +105,7 @@ namespace JahroConsole.View
                 ConsoleCommandTextComponent.resizeTextForBestFit = false;
             }
 
-            MainAreaTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, TextHeightCaluculator.Instance.GetMainTextHeight(ConsoleCommandTextComponent.text));
-            float detailsHeight = entity.HasDetails ? TextHeightCaluculator.Instance.GetDetailsTextHeight(entity.StackTrace) : 0;
-            DetailsTextTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, detailsHeight);
+            RecalculateItemHeights();
 
             ExpandToggle.SetActive(AssignedEntity.HasDetails);
             ExpandMode(AssignedEntity.Expanded);
@@ -210,15 +208,36 @@ namespace JahroConsole.View
                 ConsoleDetailsTextComponent.text = AssignedEntity.StackTrace;
             }
 
-            MainAreaTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, TextHeightCaluculator.Instance.GetMainTextHeight(ConsoleCommandTextComponent.text));
-            DetailsTextTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, TextHeightCaluculator.Instance.GetDetailsTextHeight(ConsoleDetailsTextComponent.text));
-            DetailsTextTransform.anchoredPosition = Vector2.down * MainAreaTransform.rect.height;
+            RecalculateItemHeights();
 
             _mainAreaBackground.color = enabled ? HoverMainAreaColor : Color.clear;
             _detailsAreaBackground.color = enabled ? HoverDetailsAreaColor : Color.clear;
             DetailsAreaObject.SetActive(enabled);
             ExpandToggle.transform.GetChild(0).gameObject.SetActive(!enabled);
             ExpandToggle.transform.GetChild(1).gameObject.SetActive(enabled);
+        }
+
+        public void RecalculateItemHeights()
+        {
+            if (ParentScrollView == null) return;
+
+            float contentWidth = ParentScrollView.ContentRect.rect.width;
+
+            TextHeightCaluculator.Instance.UpdateReferenceSize(contentWidth);
+
+            float mainHeight = TextHeightCaluculator.Instance.GetMainTextHeight(ConsoleCommandTextComponent.text);
+            MainAreaTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, mainHeight);
+
+            if (Expanded && AssignedEntity != null && AssignedEntity.HasDetails)
+            {
+                float detailsHeight = TextHeightCaluculator.Instance.GetDetailsTextHeight(ConsoleDetailsTextComponent.text);
+                DetailsTextTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, detailsHeight);
+                DetailsTextTransform.anchoredPosition = Vector2.down * MainAreaTransform.rect.height;
+            }
+            else
+            {
+                DetailsTextTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0);
+            }
         }
 
         public void SelectMode(bool enabled)

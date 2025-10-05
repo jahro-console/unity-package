@@ -9,16 +9,16 @@ namespace JahroConsole.View
     {
         internal enum ScaleMode
         {
-            Small = 0,
-            Default = 1,
-            Large = 2
+            Small,
+            Default,
+            Large
         }
 
         private ScaleMode _currentMode = ScaleMode.Default;
 
-        internal const float SMALL_SCALE = 0f;
+        internal const float SMALL_SCALE = 0.2f;
 
-        internal const float DEFAULT_SCALE = 0.75f;
+        internal const float DEFAULT_SCALE = 1f;
 
         internal const float LARGE_SCALE = 1.2f;
 

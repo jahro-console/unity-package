@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Text;
-using UnityEngine;
+using JahroConsole.Core.Context;
 
 namespace JahroConsole.Core.Logging
 {
@@ -9,16 +9,16 @@ namespace JahroConsole.Core.Logging
 
         internal static void Clear()
         {
-            if (File.Exists(GetLocalSavesForDetails()))
+            if (File.Exists(JahroConfig.LogDetailsFilePath))
             {
-                File.Delete(GetLocalSavesForDetails());
+                File.Delete(JahroConfig.LogDetailsFilePath);
             }
         }
 
         internal static long SaveDetailsMessage(string message)
         {
             long position;
-            using (StreamWriter writer = new StreamWriter(GetLocalSavesForDetails(), true))
+            using (StreamWriter writer = new StreamWriter(JahroConfig.LogDetailsFilePath, true))
             {
                 position = writer.BaseStream.Position;
                 writer.WriteLine(message);
@@ -29,7 +29,7 @@ namespace JahroConsole.Core.Logging
 
         internal static string ReadDetailsMessage(long position)
         {
-            using (StreamReader reader = new StreamReader(GetLocalSavesForDetails()))
+            using (StreamReader reader = new StreamReader(JahroConfig.LogDetailsFilePath))
             {
                 reader.BaseStream.Seek(position, SeekOrigin.Begin);
                 StringBuilder logEntry = new StringBuilder();
@@ -40,13 +40,6 @@ namespace JahroConsole.Core.Logging
                 }
                 return logEntry.ToString();
             }
-        }
-
-        private static string GetLocalSavesForDetails()
-        {
-            string folderPath = Application.persistentDataPath;
-            string filename = "jahro-log-details.dat";
-            return folderPath + Path.DirectorySeparatorChar + filename;
         }
     }
 }

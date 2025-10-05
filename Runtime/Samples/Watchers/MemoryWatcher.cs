@@ -49,15 +49,12 @@ namespace JahroConsole.Samples
             isWarning = totalMemory > systemMemory * WARNING_THRESHOLD;
 #endif
 
-            var color = isWarning ? "red" : "#17E96B";
-            var deltaColor = totalDelta > 0 ? "yellow" : "#17E96B";
-
             var managedPercent = totalMemory > 0 ? (managedMemory * 100f / totalMemory) : 0f;
             var nativePercent = totalMemory > 0 ? (nativeMemory * 100f / totalMemory) : 0f;
 
             _cachedManagedValue = $"Managed: {managedMemory / MB:F1} MB ({managedPercent:F0}%)";
             _cachedNativeValue = $"Native: {nativeMemory / MB:F1} MB ({nativePercent:F0}%)";
-            _cachedDeltaValue = $"<color={deltaColor}>Δ {(totalDelta > 0 ? "+" : "")}{totalDelta / MB:F1} MB</color>";
+            _cachedDeltaValue = $"Δ {(totalDelta > 0 ? "+" : "")}{totalDelta / MB:F1} MB";
         }
 
         [JahroWatch(name: "memory-managed", group: "Samples", description: "Managed heap memory usage")]

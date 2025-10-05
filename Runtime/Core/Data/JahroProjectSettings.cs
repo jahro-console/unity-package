@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using JahroConsole.Core.Context;
 
 namespace JahroConsole.Core.Data
 {
     public class JahroProjectSettings : ScriptableObject, IProjectSettings
     {
+
         [SerializeField]
         private string _APIKey;
 
@@ -26,10 +28,10 @@ namespace JahroConsole.Core.Data
         private List<string> _activeAssemblies;
 
         [SerializeField]
-        private bool _duplicateToUnityConsole;
+        private bool _autoDisableInRelease;
 
         [SerializeField]
-        private bool _autoDisableInRelease;
+        private IProjectSettings.SnapshotMode _snapshotMode;
 
         public event Action OnSettingsChanged;
 
@@ -98,19 +100,6 @@ namespace JahroConsole.Core.Data
             }
         }
 
-        public bool DuplicateToUnityConsole
-        {
-            get => _duplicateToUnityConsole;
-            set
-            {
-                if (_duplicateToUnityConsole != value)
-                {
-                    _duplicateToUnityConsole = value;
-                    NotifySettingsChanged();
-                }
-            }
-        }
-
         public string APIKey
         {
             get => _APIKey;
@@ -137,6 +126,19 @@ namespace JahroConsole.Core.Data
             }
         }
 
+        public IProjectSettings.SnapshotMode SnapshotingMode
+        {
+            get => _snapshotMode;
+            set
+            {
+                if (_snapshotMode != value)
+                {
+                    _snapshotMode = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
+
         private void NotifySettingsChanged()
         {
             OnSettingsChanged?.Invoke();
@@ -144,18 +146,21 @@ namespace JahroConsole.Core.Data
 
         public static bool isSettingsFileExists()
         {
-            return Resources.Load<JahroProjectSettings>(FileManager.ProjectSettingFile) != null;
+            return Resources.Load<JahroProjectSettings>(JahroConfig.ProjectSettingFile) != null;
         }
 
-        public static JahroProjectSettings LoadOrCreate()
+        public static JahroProjectSettings Load()
         {
-            var settings = Resources.Load<JahroProjectSettings>(FileManager.ProjectSettingFile);
-
-            if (settings == null)
+#if UNITY_EDITOR
+            string assetPath = $"{JahroConfig.ProjectResourcesFolder}/{JahroConfig.ProjectSettingFile}.asset";
+            var assetDbSettings = UnityEditor.AssetDatabase.LoadAssetAtPath<JahroProjectSettings>(assetPath);
+            if (assetDbSettings != null)
             {
-                settings = CreateDefault();
+                return assetDbSettings;
             }
-            return settings;
+#endif
+
+            return Resources.Load<JahroProjectSettings>(JahroConfig.ProjectSettingFile);
         }
 
         public static JahroProjectSettings CreateDefault()
@@ -166,9 +171,9 @@ namespace JahroConsole.Core.Data
             settings._useLaunchKeyboardShortcut = true;
             settings._useLaunchTapArea = true;
             settings._activeAssemblies = new List<string>();
-            settings._duplicateToUnityConsole = false;
             settings._launchKey = KeyCode.BackQuote;
             settings._autoDisableInRelease = false;
+            settings._snapshotMode = IProjectSettings.SnapshotMode.StreamingExceptEditor;
 
 #if UNITY_EDITOR
             var assemblies = UnityEditor.Compilation.CompilationPipeline.GetAssemblies(UnityEditor.Compilation.AssembliesType.Player)

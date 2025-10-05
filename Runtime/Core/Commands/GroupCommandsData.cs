@@ -31,6 +31,22 @@ namespace JahroConsole.Core.Commands
             return groupData;
         }
 
+        internal static GroupCommandsData ExtractRecentGroup(RecentGroup group)
+        {
+            var groupData = new GroupCommandsData();
+            groupData.Name = group.Name;
+            groupData.Foldout = group.Foldout;
+            var entries = new List<CommandEntryData>();
+            entries.Sort((a, b) => b.LastUsed.CompareTo(a.LastUsed));
+            foreach (var entry in group.Entries.Take(RecentGroup.RECENT_LIMIT))
+            {
+                var dataEntry = CommandEntryData.ExtractData(entry);
+                entries.Add(dataEntry);
+            }
+            groupData.CommandEntries = entries;
+            return groupData;
+        }
+
         internal static GroupCommandsData ExtractFavoritesGroup(FavoritesGroup<ConsoleCommandEntry> group)
         {
             var groupData = new GroupCommandsData();

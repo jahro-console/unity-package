@@ -15,6 +15,7 @@ namespace JahroConsole.View
         private RectTransform _windowTransform;
 
         public event Action<Rect> OnWindowRectChanged;
+        public event Action OnDragFinished;
 
         void Awake()
         {
@@ -68,6 +69,7 @@ namespace JahroConsole.View
         private void OnSizePointerUp(BaseEventData eventData)
         {
             _dragging = false;
+            OnDragFinished?.Invoke();
         }
     }
 }

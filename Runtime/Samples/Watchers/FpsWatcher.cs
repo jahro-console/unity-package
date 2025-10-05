@@ -27,6 +27,9 @@ namespace JahroConsole.Samples
             if (!Application.isPlaying || Time.unscaledDeltaTime <= 0)
                 return;
 
+            if (Time.timeSinceLevelLoad < 2)
+                return;
+
             var currentTime = Time.unscaledTime;
             var currentFps = 1f / Time.unscaledDeltaTime;
 
@@ -55,8 +58,7 @@ namespace JahroConsole.Samples
         {
             _cachedRangeValue = $"Range (60s): {_minFps:F0}-{_maxFps:F0} FPS";
 
-            var color = _emaFps >= 60f ? "#17E96B" : (_emaFps >= 30f ? "yellow" : "red");
-            _cachedHealthValue = $"<color={color}>{_emaFps:F1} FPS</color>";
+            _cachedHealthValue = $"{_emaFps:F1} FPS";
         }
 
         [JahroWatch(name: "fps-range", group: "Samples", description: "FPS range (min/max) over 60 seconds")]

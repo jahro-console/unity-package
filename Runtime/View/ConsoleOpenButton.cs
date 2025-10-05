@@ -13,40 +13,59 @@ namespace JahroConsole.View
     {
         private const float NOTIFICATION_LIFETIME_SECONDS = 3f;
 
-        [SerializeField]
-        private ConsoleMainWindow _mainWindow;
-
-        [SerializeField]
-        private GameObject _notificationPrefab;
-
-        [SerializeField]
-        private GameObject _notificationHolder;
-
+        [SerializeField] private ConsoleMainWindow _mainWindow;
+        [SerializeField] private GameObject _notificationPrefab;
+        [SerializeField] private GameObject _notificationHolder;
         private List<Notification> _notifications = new List<Notification>();
-
         private Vector2 _dragOffset;
-
         private RectTransform _holderTransform;
-
         private RectTransform _canvasTransform;
-
         private CanvasGroup _canvasGroup;
-
+        private Vector2 _positionPercentage;
+        private bool _isInitialized = false;
         internal Action OnConsoleOpenClick;
-
         internal Action OnSnapshotTakeClick;
 
         void Awake()
         {
-            _holderTransform = GetComponent<RectTransform>();
-            _canvasTransform = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
-            _canvasGroup = GetComponent<CanvasGroup>();
+            InitializeComponents();
         }
 
         void Start()
         {
-            ConsoleStorageController.Instance.OnStorageSave += OnStateSave;
-            LoadState(ConsoleStorageController.Instance.ConsoleStorage);
+            SetupEventHandlers();
+            LoadPosition();
+        }
+
+        void LateUpdate()
+        {
+            CheckScreenBounds();
+        }
+
+        void OnEnable()
+        {
+            NotificationService.Instance.OnNoficationAdded += OnNoficationAdded;
+            _notificationHolder.gameObject.SetActive(false);
+        }
+
+        void OnDisable()
+        {
+            NotificationService.Instance.OnNoficationAdded -= OnNoficationAdded;
+            ClearNotifications();
+        }
+
+        void OnDestroy()
+        {
+            CleanupEventHandlers();
+        }
+
+        void OnRectTransformDimensionsChange()
+        {
+            if (gameObject.activeInHierarchy == false || !_isInitialized)
+            {
+                return;
+            }
+            StartCoroutine(UpdatePositionNextFrame());
         }
 
         public void Show()
@@ -74,38 +93,175 @@ namespace JahroConsole.View
             StartCoroutine(RestoreVisibility());
         }
 
-        private IEnumerator RestoreVisibility()
+        public void OnButtonPointerDown(BaseEventData eventData)
         {
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            if (_canvasGroup != null)
+            PointerEventData pointerEventData = (PointerEventData)eventData;
+            Vector2 currentScreenPosition = new Vector2(
+                _holderTransform.position.x,
+                _holderTransform.position.y
+            );
+            _dragOffset = pointerEventData.position - currentScreenPosition;
+        }
+
+        public void OnButtonPointerDrag(BaseEventData eventData)
+        {
+            PointerEventData pointerEventData = (PointerEventData)eventData;
+
+            if ((pointerEventData.pressPosition - pointerEventData.position).magnitude < EventSystem.current.pixelDragThreshold)
             {
-                _canvasGroup.alpha = 1f;
+                return;
+            }
+
+            Vector2 newScreenPosition = pointerEventData.position;
+            newScreenPosition.x -= _dragOffset.x;
+            newScreenPosition.y -= _dragOffset.y;
+
+            _positionPercentage = new Vector2(
+                newScreenPosition.x / Screen.width,
+                newScreenPosition.y / Screen.height
+            );
+
+            UpdatePositionFromPercentage();
+        }
+
+        private void InitializeComponents()
+        {
+            _holderTransform = GetComponent<RectTransform>();
+            _canvasTransform = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
+
+        private void SetupEventHandlers()
+        {
+            ConsoleStorageController.Instance.OnStorageSave += SavePosition;
+            ConsoleStorageController.Instance.OnStorageLoad += LoadPosition;
+            if (_mainWindow != null && _mainWindow.ScalingBehaviour != null)
+            {
+                _mainWindow.ScalingBehaviour.OnScaleChanged += OnScaleChanged;
             }
         }
 
-        private void LateUpdate()
+        private void CleanupEventHandlers()
         {
+            ConsoleStorageController.Instance.OnStorageSave -= SavePosition;
+            ConsoleStorageController.Instance.OnStorageLoad -= LoadPosition;
+            if (_mainWindow != null && _mainWindow.ScalingBehaviour != null)
+            {
+                _mainWindow.ScalingBehaviour.OnScaleChanged -= OnScaleChanged;
+            }
+        }
+
+        private void UpdatePositionFromPercentage()
+        {
+            if (_canvasTransform == null) return;
+
+            Vector2 screenPosition = new Vector2(
+                _positionPercentage.x * Screen.width,
+                _positionPercentage.y * Screen.height
+            );
+
+            Vector2 canvasPosition;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                _canvasTransform,
+                screenPosition,
+                null,
+                out canvasPosition
+            );
+
+            _holderTransform.anchoredPosition = canvasPosition;
+        }
+
+        private void CheckScreenBounds()
+        {
+            if (!_isInitialized) return;
+
+            Vector3[] corners = new Vector3[4];
+            _holderTransform.GetWorldCorners(corners);
+            Rect safeArea = Screen.safeArea;
+
+            Vector2 clampedPercentage = _positionPercentage;
+            bool needsUpdate = false;
+
+            if (corners[0].x < safeArea.x)
+            {
+                clampedPercentage.x = (safeArea.x + (corners[2].x - corners[0].x) * 0.5f) / Screen.width;
+                needsUpdate = true;
+            }
+            else if (corners[2].x > safeArea.x + safeArea.width)
+            {
+                clampedPercentage.x = (safeArea.x + safeArea.width - (corners[2].x - corners[0].x) * 0.5f) / Screen.width;
+                needsUpdate = true;
+            }
+
+            if (corners[0].y < safeArea.y)
+            {
+                clampedPercentage.y = (safeArea.y + (corners[2].y - corners[0].y) * 0.5f) / Screen.height;
+                needsUpdate = true;
+            }
+            else if (corners[2].y > safeArea.y + safeArea.height)
+            {
+                clampedPercentage.y = (safeArea.y + safeArea.height - (corners[2].y - corners[0].y) * 0.5f) / Screen.height;
+                needsUpdate = true;
+            }
+
+            if (needsUpdate)
+            {
+                _positionPercentage = clampedPercentage;
+                UpdatePositionFromPercentage();
+            }
+        }
+
+        private IEnumerator UpdatePositionNextFrame()
+        {
+            yield return null;
+            UpdatePositionFromPercentage();
             CheckScreenBounds();
         }
 
-        private void OnEnable()
+        private void SavePosition(ConsoleStorage storage)
         {
-            NotificationService.Instance.OnNoficationAdded += OnNoficationAdded;
-            _notificationHolder.gameObject.SetActive(false);
+            storage.GeneralSettings.OpenButtonPosition = _positionPercentage;
         }
 
-        private void OnDisable()
+        private void LoadPosition(ConsoleStorage storage = null)
         {
-            NotificationService.Instance.OnNoficationAdded -= OnNoficationAdded;
-            ClearNotifications();
+            var storageToUse = storage ?? ConsoleStorageController.Instance.ConsoleStorage;
+            if (storageToUse?.GeneralSettings == null) return;
+
+            var savedPosition = storageToUse.GeneralSettings.OpenButtonPosition;
+
+            if (savedPosition == Vector2.zero)
+            {
+                SetDefaultPosition();
+            }
+            else
+            {
+                _positionPercentage = savedPosition;
+                UpdatePositionFromPercentage();
+            }
+
+            _isInitialized = true;
+        }
+
+        private void SetDefaultPosition()
+        {
+            Rect safeArea = Screen.safeArea;
+            float safeAreaLeft = safeArea.x / Screen.width;
+            float safeAreaBottom = safeArea.y / Screen.height;
+
+            _positionPercentage = new Vector2(safeAreaLeft + 0.05f, safeAreaBottom + 0.8f * (safeArea.height / Screen.height));
+            UpdatePositionFromPercentage();
+        }
+
+        private void OnScaleChanged(float scale)
+        {
+            UpdatePositionFromPercentage();
         }
 
         private void OnNoficationAdded(Notification notification)
         {
             _notificationHolder.gameObject.SetActive(true);
             _notifications.Add(notification);
-
             StartCoroutine(CreateNotificationText(notification));
         }
 
@@ -116,7 +272,6 @@ namespace JahroConsole.View
             obj.transform.SetAsFirstSibling();
             var text = obj.GetComponentInChildren<Text>(true);
             text.text = notification.Message;
-            // LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)_notificationsRoot.transform);
 
             yield return new WaitForSeconds(NOTIFICATION_LIFETIME_SECONDS);
             _notifications.Remove(notification);
@@ -139,86 +294,14 @@ namespace JahroConsole.View
             }
         }
 
-        private void OnStateSave(ConsoleStorage storage)
+        private IEnumerator RestoreVisibility()
         {
-            storage.GeneralSettings.OpenButtonPosition = _holderTransform.anchoredPosition;
-        }
-
-        private void LoadState(ConsoleStorage storage)
-        {
-            var loadedPosition = storage.GeneralSettings.OpenButtonPosition;
-            if (loadedPosition == Vector2.zero)
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            if (_canvasGroup != null)
             {
-                loadedPosition.x = Screen.width / 2f;
-                loadedPosition.y = Screen.height / 2f;
+                _canvasGroup.alpha = 1f;
             }
-            _holderTransform.anchoredPosition = loadedPosition;
-            CheckScreenBounds();
-        }
-
-        public void OnButtonPointerDown(BaseEventData eventData)
-        {
-            PointerEventData pointerEventData = (PointerEventData)eventData;
-            Vector2 clickLocalPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_holderTransform, pointerEventData.position, pointerEventData.pressEventCamera, out clickLocalPoint);
-
-            _dragOffset.x = clickLocalPoint.x;
-            _dragOffset.y = clickLocalPoint.y;
-        }
-
-        public void OnButtonPointerDrag(BaseEventData eventData)
-        {
-            PointerEventData pointerEventData = (PointerEventData)eventData;
-
-            if ((pointerEventData.pressPosition - pointerEventData.position).magnitude < EventSystem.current.pixelDragThreshold)
-            {
-                return;
-            }
-
-            Vector2 dragLocalPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasTransform, pointerEventData.position, pointerEventData.pressEventCamera, out dragLocalPoint);
-
-            dragLocalPoint.x -= _dragOffset.x;
-            dragLocalPoint.y -= _dragOffset.y;
-
-            _holderTransform.anchoredPosition = dragLocalPoint;
-        }
-
-        private void CheckScreenBounds()
-        {
-            Vector3[] corners = new Vector3[4];
-            _holderTransform.GetWorldCorners(corners);
-
-            float screenWidth = Screen.width;
-            float screenHeight = Screen.height;
-
-            Vector3 clampedPosition = _holderTransform.position;
-
-            // Check left boundary
-            if (corners[0].x < 0)
-            {
-                clampedPosition.x -= corners[0].x;
-            }
-
-            // Check right boundary
-            if (corners[2].x > screenWidth)
-            {
-                clampedPosition.x -= corners[2].x - screenWidth;
-            }
-
-            // Check bottom boundary
-            if (corners[0].y < 0)
-            {
-                clampedPosition.y -= corners[0].y;
-            }
-
-            // Check top boundary
-            if (corners[1].y > screenHeight)
-            {
-                clampedPosition.y -= corners[1].y - screenHeight;
-            }
-
-            _holderTransform.position = clampedPosition;
         }
     }
 }

@@ -8,9 +8,25 @@ namespace JahroConsole.Core.Network
 {
     internal class VersionCheckRequest : RequestBase
     {
+
+        [Serializable]
+        internal class VersionCheckPayload
+        {
+            [SerializeField]
+            internal string currentVersion;
+            [SerializeField]
+            internal string unityVersion;
+            [SerializeField]
+            internal string deviceName;
+            [SerializeField]
+            internal string isFreshInstall;
+            [SerializeField]
+            internal string platform;
+        }
+
         public Action<string> OnComplete;
 
-        public Action<string> OnFail;
+        public Action<NetworkError> OnFail;
 
         private bool _isFreshInstall;
 
@@ -29,15 +45,17 @@ namespace JahroConsole.Core.Network
             return JahroConfig.HostUrl + "/client/version-check";
         }
 
-        internal override WWWForm FormDataWWW()
+        internal override string GetBodyData()
         {
-            var form = new WWWForm();
-            form.AddField("currentVersion", JahroConfig.CurrentVersion);
-            form.AddField("unityVersion", Application.unityVersion);
-            form.AddField("deviceName", SystemInfo.deviceName);
-            form.AddField("isFreshInstall", _isFreshInstall.ToString());
-            form.AddField("platform", Application.platform.ToString());
-            return form;
+            var payload = new VersionCheckPayload
+            {
+                currentVersion = JahroConfig.CurrentVersion,
+                unityVersion = Application.unityVersion,
+                deviceName = SystemInfo.deviceName,
+                isFreshInstall = _isFreshInstall.ToString(),
+                platform = Application.platform.ToString(),
+            };
+            return JsonUtility.ToJson(payload);
         }
 
         protected override void OnRequestComplete(string result)
@@ -46,10 +64,10 @@ namespace JahroConsole.Core.Network
             OnComplete?.Invoke(result);
         }
 
-        protected override void OnRequestFail(string error, long responseCode)
+        protected override void OnRequestFail(NetworkError error)
         {
-            base.OnRequestFail(error, responseCode);
-            OnFail(error);
+            base.OnRequestFail(error);
+            OnFail?.Invoke(error);
         }
     }
 }

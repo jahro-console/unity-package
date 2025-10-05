@@ -1,53 +1,53 @@
-using System;
-using System.Diagnostics;
 using System.IO;
+using JahroConsole.Core.Context;
 using JahroConsole.Core.Data;
-using JahroConsole.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace JahroConsole.Core.Registry
+namespace JahroConsole.Editor
 {
 
     [InitializeOnLoad]
-    internal class JahroInstallManager : AssetPostprocessor
+    internal class JahroInstallManager
     {
-
-        private const string BaseFolder = "Assets/Jahro";
-        private const string ResourcesFolder = "Assets/Jahro/Resources";
-
         static JahroInstallManager()
         {
+#if UNITY_EDITOR
+            EditorApplication.projectChanged += onProjectChanged;
+#endif
         }
 
-        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        private static void onProjectChanged()
         {
-            if (didDomainReload)
+            bool isSettingsFileExists = JahroProjectSettings.isSettingsFileExists();
+            ValidateSettingsFile(JahroProjectSettings.Load());
+            if (!isSettingsFileExists && Application.isPlaying == false)
             {
-                bool isSettingsFileExists = JahroProjectSettings.isSettingsFileExists();
-                var settings = JahroProjectSettings.LoadOrCreate();
-                ValidateSettingsFile(settings);
-                if (!isSettingsFileExists)
-                {
-                    JahroEditorView.isFreshInstall = !isSettingsFileExists;
-                    JahroEditorView.ShowWindow();
-                }
+                JahroEditorView.isFreshInstall = true;
+                JahroEditorView.ShowWindow();
             }
         }
 
-        public static void ValidateSettingsFile(JahroProjectSettings settings)
+        private static JahroProjectSettings ValidateSettingsFile(JahroProjectSettings settings)
         {
 #if UNITY_EDITOR
-            EnsureFolderExists(BaseFolder);
-            EnsureFolderExists(ResourcesFolder);
-
-            string assetPath = $"{ResourcesFolder}/{FileManager.ProjectSettingFile}.asset";
-
-            if (!AssetExists<JahroProjectSettings>(assetPath))
+            string assetPath = $"{JahroConfig.ProjectResourcesFolder}/{JahroConfig.ProjectSettingFile}.asset";
+            if (settings == null)
             {
-                CreateAsset(settings, assetPath);
+                settings = JahroProjectSettings.CreateDefault();
+            }
+
+            EnsureFolderExists(JahroConfig.ProjectBaseFolder);
+            EnsureFolderExists(JahroConfig.ProjectResourcesFolder);
+
+            if (AssetDatabase.LoadAssetAtPath<JahroProjectSettings>(assetPath) == null)
+            {
+                AssetDatabase.CreateAsset(settings, assetPath);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
             }
 #endif
+            return settings;
         }
 
         private static void EnsureFolderExists(string folderPath)
@@ -60,18 +60,6 @@ namespace JahroConsole.Core.Registry
                 AssetDatabase.CreateFolder(parentFolder, folderName);
                 AssetDatabase.SaveAssets();
             }
-        }
-
-        private static bool AssetExists<T>(string assetPath) where T : UnityEngine.Object
-        {
-            return AssetDatabase.LoadAssetAtPath<T>(assetPath) != null;
-        }
-
-        private static void CreateAsset<T>(T asset, string assetPath) where T : UnityEngine.Object
-        {
-            AssetDatabase.CreateAsset(asset, assetPath);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
         }
     }
 }

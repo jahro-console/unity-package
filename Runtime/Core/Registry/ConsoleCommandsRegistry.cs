@@ -25,9 +25,6 @@ namespace JahroConsole.Core.Registry
 
         internal static void Initialize(IProjectSettings projectSettings, JahroContext context)
         {
-#if JAHRO_DEBUG
-            Debug.Log("Jahro Registry: start init");
-#endif
             var methods = RetrieveMethods(projectSettings);
             InitializeStaticConsoleCommands(methods, context);
         }

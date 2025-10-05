@@ -19,20 +19,20 @@
                 <ui:Label text="Loading..." />
                 <ui:Label text="Loading..." name="ErrorLabel" class="error-text" />
             </ui:VisualElement>
-            <ui:VisualElement name="WelcomeBlock" style="flex-grow: 0; align-content: center; justify-content: center; align-items: center; flex-shrink: 10; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: stretch; display: none;">
-                <ui:ScrollView vertical-scroller-visibility="Auto" name="ScrollView" horizontal-scroller-visibility="Hidden" style="flex-grow: 0; flex-shrink: 1; align-self: stretch;">
-                    <ui:VisualElement name="WelcomeBlock" style="flex-grow: 0; align-content: stretch; justify-content: space-between; align-items: stretch; flex-shrink: 1; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; align-self: stretch; display: flex;">
+            <ui:VisualElement name="WelcomeBlock" style="flex-grow: 1; align-content: center; justify-content: center; align-items: center; flex-shrink: 0; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: stretch; display: none;">
+                <ui:ScrollView vertical-scroller-visibility="Auto" name="ScrollView" horizontal-scroller-visibility="Hidden" style="flex-grow: 1; flex-shrink: 0; align-self: stretch;">
+                    <ui:VisualElement name="WelcomeBlock" style="flex-grow: 1; align-content: stretch; justify-content: space-between; align-items: stretch; flex-shrink: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; align-self: stretch; display: flex;">
                         <ui:Label text="Welcome to Jahro" name="Title" class="h1" />
                         <ui:Label text="enter your API key to begin" name="Subtitle" class="h2" />
-                        <ui:VisualElement style="flex-grow: 0; margin-top: 32px; align-self: stretch;">
+                        <ui:VisualElement style="flex-grow: 0; margin-top: 32px; align-self: stretch; flex-shrink: 1;">
                             <ui:Label text="Project API Key" class="text-category" />
                             <ui:VisualElement name="apikey-input" style="flex-grow: 0; flex-direction: row; margin-bottom: 0; justify-content: center; align-items: center; align-content: flex-start;">
                                 <ui:TextField label="Text Field" placeholder-text="Enter your API key" name="key-input" hide-placeholder-on-focus="false" password="false" style="flex-grow: 1; min-width: 200px; flex-shrink: 0; margin-top: 4px;" />
                                 <ui:Button text="Submit" name="ValidateKey" class="btn-primary" style="flex-shrink: 1; flex-grow: 0; width: 100px; height: 36px; margin-top: 5px; margin-bottom: 0; padding-top: 0; padding-bottom: 0; padding-right: 0; padding-left: 0; margin-right: 0; margin-left: 0; align-self: auto; align-content: auto; align-items: stretch; justify-content: center; -unity-font-style: bold;" />
                             </ui:VisualElement>
                             <ui:Label text="Error Message" name="KeyErrorLabel" class="text-subline error-text" style="padding-top: 6px;" />
-                            <ui:VisualElement style="flex-basis: 20px; flex-direction: row; align-items: center;">
-                                <ui:Label text="You can find the API key here in the" enable-rich-text="true" class="text-subline" style="padding-top: 0; -unity-text-align: middle-left;" />
+                            <ui:VisualElement style="flex-basis: 20px; flex-direction: row; align-items: center; flex-grow: 1; flex-shrink: 0; flex-wrap: wrap; padding-top: 4px;">
+                                <ui:Label text="You can find the API key here in the" enable-rich-text="true" class="text-subline" style="padding-top: 0; -unity-text-align: middle-left; white-space: normal;" />
                                 <ui:Button text="Project API Keys page" display-tooltip-when-elided="true" name="ProjectPageLink" class="footer-button" style="-unity-text-align: middle-left; align-items: flex-start; margin-left: 0; padding-left: 2px; padding-right: 2px;" />
                             </ui:VisualElement>
                         </ui:VisualElement>
@@ -41,11 +41,12 @@
             </ui:VisualElement>
             <ui:VisualElement name="SettingsBlock" style="flex-grow: 1; align-content: center; justify-content: flex-start; align-items: stretch; flex-shrink: 0; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; align-self: auto; display: flex; flex-basis: 100%;">
                 <ui:VisualElement name="TabView" style="flex-grow: 1; max-width: none; flex-basis: 100%;">
-                    <ui:VisualElement name="TabsControl" class="tab-header" style="height: 40px; flex-direction: row; justify-content: center; flex-shrink: 0; flex-basis: 40px; margin-bottom: 16px;">
-                        <ui:Button text="Account" display-tooltip-when-elided="true" name="AccountTab" class="tab-button" />
-                        <ui:Button text="Settings" display-tooltip-when-elided="true" name="SettingTab" class="tab-button" />
+                    <ui:VisualElement name="TabsControl" class="tab-header" style="height: auto; flex-direction: row; justify-content: center; flex-shrink: 0; flex-basis: auto; margin-bottom: 0; flex-wrap: wrap; flex-grow: 0; align-items: stretch; padding-top: 0; padding-bottom: 0; padding-right: 0; padding-left: 0;">
+                        <ui:Button text="Account" display-tooltip-when-elided="true" name="AccountTab" class="tab-button" style="max-height: 36px; min-height: 36px; height: 36px; margin-top: 4px; margin-bottom: 4px;" />
+                        <ui:Button text="Snapshots Settings" display-tooltip-when-elided="true" name="SnapshotsTab" class="tab-button" style="height: 40px; max-height: 40px; min-height: 40px; margin-top: 4px; margin-bottom: 4px;" />
+                        <ui:Button text="General Settings" display-tooltip-when-elided="true" name="SettingTab" class="tab-button" style="height: 40px; min-height: 40px; max-height: 40px; margin-top: 4px; margin-bottom: 4px;" />
                     </ui:VisualElement>
-                    <ui:VisualElement style="flex-grow: 1;">
+                    <ui:VisualElement style="flex-grow: 100; margin-top: 16px;">
                         <ui:VisualElement name="AccountContainer" style="flex-grow: 1; display: none;">
                             <ui:ScrollView>
                                 <ui:VisualElement name="VisualElement" style="flex-grow: 1; flex-shrink: 0; justify-content: space-between; align-self: stretch; align-content: stretch; height: 100%; flex-basis: auto;">
@@ -81,7 +82,7 @@
                                 </ui:VisualElement>
                             </ui:ScrollView>
                         </ui:VisualElement>
-                        <ui:VisualElement name="SettingsContainer" style="display: flex; flex-grow: 1;">
+                        <ui:VisualElement name="SettingsContainer" style="display: none; flex-grow: 1;">
                             <ui:ScrollView horizontal-scroller-visibility="Hidden" name="ScrollView" style="margin-top: 8px; margin-bottom: 8px;">
                                 <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
                                     <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
@@ -103,7 +104,7 @@
                                         <ui:Label text="Launch Key" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
                                         <ui:Label text="Set the key to open the Jahro window during play mode." name="Description" class="settings-item-description" />
                                     </ui:VisualElement>
-                                    <uie:EnumField value="Center" name="LaunchKeyPicker" style="min-width: auto; flex-grow: 1;" />
+                                    <uie:EnumField value="Center" name="LaunchKeyPicker" style="min-width: 150px; flex-grow: 1; min-height: 40px; max-height: 40px; margin-top: 3px; margin-bottom: 3px;" />
                                 </ui:VisualElement>
                                 <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
                                     <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
@@ -119,21 +120,27 @@
                                     </ui:VisualElement>
                                     <ui:Toggle name="MobileTapAreaToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
                                 </ui:VisualElement>
-                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: nowrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
-                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
-                                        <ui:Label text="Duplicate Jahro.Log to Console" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
-                                        <ui:Label text="Show Jahro.Log() messages in Unity Console too." name="Description" class="settings-item-description" />
-                                    </ui:VisualElement>
-                                    <ui:Toggle name="DublicateLogsToggle" style="min-width: auto; justify-content: flex-end; align-content: flex-end; align-self: auto; align-items: stretch; flex-direction: row;" />
-                                </ui:VisualElement>
                                 <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
                                 <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: wrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px;">
                                     <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0; min-width: 150px;">
                                         <ui:Label text="Assemblies" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px;" />
                                         <ui:Label text="Select assemblies where Jahro looks for Commands and Watchers." name="Description" class="settings-item-description" />
                                     </ui:VisualElement>
-                                    <uie:MaskField name="AssembliesPicker" style="min-width: auto; flex-grow: 1;" />
+                                    <uie:MaskField name="AssembliesPicker" style="min-width: 150px; flex-grow: 1; min-height: 40px; max-height: 40px; margin-top: 3px; margin-bottom: 3px;" />
                                 </ui:VisualElement>
+                                <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
+                            </ui:ScrollView>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="SnapshotsContainer" style="display: flex; flex-grow: 1;">
+                            <ui:ScrollView horizontal-scroller-visibility="Hidden" name="ScrollView" style="margin-top: 8px; margin-bottom: 8px;">
+                                <ui:VisualElement name="SettingsItem" style="flex-grow: 1; flex-direction: row; justify-content: space-between; flex-wrap: wrap; flex-shrink: 0; flex-basis: auto; padding-top: 8px; padding-bottom: 8px; align-items: flex-end;">
+                                    <ui:VisualElement name="VisualElement" style="flex-grow: 1; margin-left: 0;">
+                                        <ui:Label text="Snapshots Mode" name="Title" class="settings-item-title" style="margin-top: 2px; margin-bottom: 2px; padding-bottom: 8px;" />
+                                        <ui:Label text="&lt;color=white&gt;&lt;b&gt;Recording&lt;/b&gt;&lt;/color&gt;&#10;Snapshots are stored on the device only. Nothing is uploaded to Jahro.&#10;&#10;&lt;color=white&gt;&lt;b&gt;Streaming - Except Editor&lt;/b&gt;&lt;/color&gt;&#10;Auto-upload for devices; Editor snapshots stay local&#10;&#10;&lt;color=white&gt;&lt;b&gt;Streaming - All&lt;/b&gt;&lt;/color&gt;&#10;Auto-upload snapshots to Jahro for every platform" name="Description" double-click-selects-word="false" class="settings-item-description" />
+                                    </ui:VisualElement>
+                                    <uie:EnumField value="Center" name="SnapshotsModePicker" style="min-width: 150px; flex-grow: 1; max-height: 40px; min-height: 40px; margin-top: 3px; margin-bottom: 3px;" />
+                                </ui:VisualElement>
+                                <ui:VisualElement name="Separator" style="flex-grow: 1; border-top-width: 0; border-left-color: rgba(0, 0, 0, 0.6); border-right-color: rgba(0, 0, 0, 0.6); border-top-color: rgba(0, 0, 0, 0.6); border-bottom-color: rgba(0, 0, 0, 0.6); background-color: rgb(75, 75, 75); height: 2px; margin-top: 8px; margin-bottom: 4px;" />
                             </ui:ScrollView>
                         </ui:VisualElement>
                     </ui:VisualElement>

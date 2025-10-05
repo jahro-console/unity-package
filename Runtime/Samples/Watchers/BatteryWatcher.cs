@@ -28,8 +28,7 @@ namespace JahroConsole.Samples
                 };
 
                 var level = $"{batteryLevel * 100:F0}%";
-                var color = batteryLevel <= LOW_BATTERY_THRESHOLD ? "red" : "#17E96B";
-                return $"<color={color}>{level} - {status}</color>";
+                return $"{level} - {status}";
             }
         }
     }

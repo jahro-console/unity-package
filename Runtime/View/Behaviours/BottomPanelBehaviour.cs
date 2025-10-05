@@ -20,6 +20,7 @@ namespace JahroConsole.View
         {
             _sizeDragBehaviour = GetComponentInChildren<SizeDragBehaviour>();
             _sizeDragBehaviour.OnWindowRectChanged += OnWindowRectChanged;
+            _sizeDragBehaviour.OnDragFinished += OnDragFinished;
             _layoutElement = GetComponent<LayoutElement>();
             _statusBar = GetComponentInChildren<StatusBar>();
             _statusBarLayoutGroup = _statusBar.GetComponent<LayoutGroup>();
@@ -49,6 +50,12 @@ namespace JahroConsole.View
         private void OnWindowRectChanged(Rect obj)
         {
             _mainWindow?.WindowRectChanged(obj);
+        }
+
+        private void OnDragFinished()
+        {
+            // Trigger height recalculation when drag is finished
+            _mainWindow?.TriggerHeightRecalculation();
         }
 
         private void OnCloseButtonClick()

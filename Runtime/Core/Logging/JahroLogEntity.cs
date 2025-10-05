@@ -14,6 +14,9 @@ namespace JahroConsole.Core.Logging
         internal bool HasDetails { get { return detailsPosition != -1; } }
         internal bool Selectable { get { return logType != EJahroLogType.JahroInfo; } }
 
+        // Cached height for this entity
+        internal int CachedHeight { get; set; } = -1;
+
         internal string StackTrace { get { return ReadStackTrace(); } }
 
         internal JahroLogEntity(string message, string stackTrace, EJahroLogType logType)

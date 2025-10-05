@@ -209,7 +209,9 @@ namespace JahroConsole.Core.Commands
                     {
                         var r = _groups.SelectMany(g => g.Entries).Where(e => e.SimpleName == entryData.SimpleName).FirstOrDefault();
                         if (r != null)
+                        {
                             group.Entries.Add(r);
+                        }
                     }
                     GroupCommandsData.ApplyData(groupData, group);
                 }
@@ -267,6 +269,10 @@ namespace JahroConsole.Core.Commands
                 if (group is FavoritesGroup<ConsoleCommandEntry>)
                 {
                     groupData = GroupCommandsData.ExtractFavoritesGroup(group as FavoritesGroup<ConsoleCommandEntry>);
+                }
+                else if (group is RecentGroup)
+                {
+                    groupData = GroupCommandsData.ExtractRecentGroup(group as RecentGroup);
                 }
                 else
                 {

@@ -46,12 +46,7 @@ namespace JahroConsole.View
         public void AddSession(SnapshotSession session)
         {
             var item = CreateItem(session);
-            if (session.GetStatus() == SnapshotSession.Status.Recording)
-            {
-                item.ShowHint();
-            }
             SessionItems.Add(session, item);
-
         }
 
         public void DeleteSnapshot(SnapshotSession session)
@@ -60,7 +55,10 @@ namespace JahroConsole.View
             {
                 var item = SessionItems[session];
                 SessionItems.Remove(session);
-                Destroy(item.gameObject);
+                if (item != null)
+                {
+                    Destroy(item.gameObject);
+                }
             }
         }
 

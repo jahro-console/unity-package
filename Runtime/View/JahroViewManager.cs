@@ -211,8 +211,7 @@ namespace JahroConsole
 
         private void OnApplicationQuit()
         {
-            ConsoleStorageController.SaveState();
-            JahroSession.EndSession();
+            Jahro.Release();
         }
 
         private void OnApplicationPause(bool pause)

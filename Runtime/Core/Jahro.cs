@@ -1,6 +1,8 @@
-﻿using JahroConsole.Core.Context;
+﻿using System;
+using JahroConsole.Core.Context;
 using JahroConsole.Core.Data;
 using JahroConsole.Core.Logging;
+using JahroConsole.Core.Network;
 using JahroConsole.View;
 using UnityEngine;
 using UnityEngine.Events;
@@ -31,6 +33,11 @@ namespace JahroConsole
         public static bool IsLaunchButtonEnabled { get; private set; } = true;
 
         /// <summary>
+        /// Indicates if Jahro has been released and cleaned up.
+        /// </summary>
+        public static bool IsReleased { get { return _isReleased; } }
+
+        /// <summary>
         /// Event triggered when the Jahro Console is displayed.
         /// </summary>
         public static UnityAction OnConsoleShow;
@@ -42,9 +49,12 @@ namespace JahroConsole
 
         private static JahroViewManager _viewManager;
         private static bool _isInitialized;
+        private static bool _isReleased = false;
+        private static readonly object _releaseLock = new object();
+        private static GameObject _lifecycleManager;
 
         /// <summary>
-        /// Use this method to manually initialize Jahro, if necessary.
+        /// Use this method to manually initialize Jahro, if necessary. The most cases you don't need to call this method.
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
         public static void InitializeIfNeeded()
@@ -53,10 +63,14 @@ namespace JahroConsole
             {
                 return;
             }
-            ///
+
+            JahroConfig.Init();
+
             LogFileManager.Clear();
 
-            var projectSettings = JahroProjectSettings.LoadOrCreate();
+            var projectSettings = JahroProjectSettings.Load();
+            if (projectSettings == null) throw new Exception("Jahro Project Settings not found InitializeIfNeeded");
+
             ConsoleStorageController.InitSettings(projectSettings);
             if (projectSettings.AutoDisableInRelease && !Debug.isDebugBuild)
             {
@@ -66,6 +80,7 @@ namespace JahroConsole
             {
                 Enabled = projectSettings.JahroEnabled;
             }
+
             if (!Enabled)
             {
                 Debug.Log("Jahro Console: Disabled in this build");
@@ -73,7 +88,6 @@ namespace JahroConsole
             }
 
             JahroLogger.Instance.StartCatching();
-            JahroLogger.DuplicateToUnityConsole = projectSettings.DuplicateToUnityConsole;
 
 #if UNITY_EDITOR
 
@@ -90,7 +104,9 @@ namespace JahroConsole
                 return;
             }
 
-            var projectSettings = JahroProjectSettings.LoadOrCreate();
+            var projectSettings = JahroProjectSettings.Load();
+            if (projectSettings == null) throw new Exception("Jahro Project Settings not found Runtime");
+
             ConsoleStorageController.InitSettings(projectSettings);
 
             InitView();
@@ -158,6 +174,19 @@ namespace JahroConsole
         }
 
         /// <summary>
+        /// Enables the Jahro Console's Launch button.
+        /// </summary>
+        public static void EnableLaunchButton()
+        {
+            if (!Enabled)
+            {
+                Debug.LogWarning("Jahro Console disabled. Can't enable launch button");
+                return;
+            }
+            IsLaunchButtonEnabled = true;
+        }
+
+        /// <summary>
         /// Disables the Jahro Console's Launch button.
         /// </summary>
         public static void DisableLaunchButton()
@@ -175,9 +204,8 @@ namespace JahroConsole
         }
 
         /// <summary>
-        /// Shows the Jahro Console's Launch button.
+        /// Shows the Jahro Console's Launch button in view.
         /// </summary>
-        [System.Obsolete("This method is deprecated. Use DisableLaunchButton() instead.")]
         public static void ShowLaunchButton()
         {
             if (!Enabled)
@@ -185,13 +213,17 @@ namespace JahroConsole
                 Debug.LogWarning("Jahro Console disabled. Can't show Status Button");
                 return;
             }
+            if (!IsLaunchButtonEnabled)
+            {
+                Debug.LogWarning("Jahro Console Launch button disabled. Can't show Launch button");
+                return;
+            }
             _viewManager.ShowLaunchButton();
         }
 
         /// <summary>
-        /// Hides the Jahro Console's Launch button.
+        /// Hides the Jahro Console's Launch button in view.
         /// </summary>
-        [System.Obsolete("This method is deprecated. Use DisableLaunchButton() instead.")]
         public static void HideLaunchButton()
         {
             if (!Enabled)
@@ -222,10 +254,27 @@ namespace JahroConsole
         /// </summary>
         public static void Release()
         {
-            JahroLogger.Instance.Dispose();
-            JahroViewManager.DestroyInstance();
-            ConsoleStorageController.Release();
-            JahroSession.EndSession();
+            lock (_releaseLock)
+            {
+                if (_isReleased)
+                {
+                    return;
+                }
+                _isReleased = true;
+            }
+
+            try
+            {
+                ConsoleStorageController.SaveState();
+                JahroLogger.Instance.Dispose();
+                JahroViewManager.DestroyInstance();
+                ConsoleStorageController.Release();
+                JahroSession.EndSession();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         private static void OnAssemblyReload()
@@ -233,7 +282,6 @@ namespace JahroConsole
 #if UNITY_EDITOR            
             if (UnityEditor.EditorApplication.isPlaying)
             {
-                ConsoleStorageController.SaveState();
                 Release();
             }
 #endif

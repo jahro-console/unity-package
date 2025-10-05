@@ -11,6 +11,21 @@ namespace JahroConsole.Core.Context
     {
 
         [Serializable]
+        internal class InitContextPayload
+        {
+            [SerializeField]
+            internal string sessionId;
+            [SerializeField]
+            internal string platform;
+            [SerializeField]
+            internal string unityVersion;
+            [SerializeField]
+            internal string deviceName;
+            [SerializeField]
+            internal string jahroVersion;
+        }
+
+        [Serializable]
         internal class InitContextResponse
         {
             [SerializeField]
@@ -25,7 +40,7 @@ namespace JahroConsole.Core.Context
 
         internal Action<InitContextResponse> OnComplete;
 
-        internal Action<string, long> OnFail;
+        internal Action<NetworkError> OnFail;
 
         private string _sessionId;
 
@@ -45,20 +60,27 @@ namespace JahroConsole.Core.Context
             return RequestType.POST;
         }
 
+        internal override int GetTimeout()
+        {
+            return JahroConfig.DefaultShortTimeout;
+        }
+
         internal override string GetURL()
         {
             return JahroConfig.HostUrl + "/client/session";
         }
 
-        internal override WWWForm FormDataWWW()
+        internal override string GetBodyData()
         {
-            var form = new WWWForm();
-            form.AddField("sessionId", _sessionId);
-            form.AddField("platform", Application.platform.ToString());
-            form.AddField("unityVersion", Application.unityVersion);
-            form.AddField("deviceName", SystemInfo.deviceName);
-            form.AddField("jahro-version", _version);
-            return form;
+            var payload = new InitContextPayload
+            {
+                sessionId = _sessionId,
+                platform = Application.platform.ToString(),
+                unityVersion = Application.unityVersion,
+                deviceName = SystemInfo.deviceName,
+                jahroVersion = _version,
+            };
+            return JsonUtility.ToJson(payload);
         }
 
         internal override void FillHeaders(UnityWebRequest request)
@@ -72,10 +94,10 @@ namespace JahroConsole.Core.Context
             OnComplete?.Invoke(JsonUtility.FromJson<InitContextResponse>(result));
         }
 
-        protected override void OnRequestFail(string error, long responseCode)
+        protected override void OnRequestFail(NetworkError error)
         {
-            base.OnRequestFail(error, responseCode);
-            OnFail?.Invoke(error, responseCode);
+            base.OnRequestFail(error);
+            OnFail?.Invoke(error);
         }
     }
 }

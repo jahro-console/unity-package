@@ -3,6 +3,10 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using JahroConsole.Core.Snapshots;
+using JahroConsole.Core.Context;
+using UnityEngine.UI;
+using JahroConsole.Core.Data;
+using JahroConsole.Core.Notifications;
 
 namespace JahroConsole.View
 {
@@ -17,6 +21,15 @@ namespace JahroConsole.View
         [SerializeField]
         private DialogModalView _dialogModalView;
 
+        [SerializeField]
+        private Text _snapshotsModeLabel;
+
+        [SerializeField]
+        private Button _snapshotsInfoButton;
+
+        [SerializeField]
+        private Button _refreshButton;
+
         private List<SnapshotSession> _snapshotSessions;
 
         private SnapshotSessionsGroupLayout _activeSessionGroupLayout;
@@ -29,6 +42,10 @@ namespace JahroConsole.View
 
             SnapshotsManager.Instance.OnSessionAdded += OnSessionAdded;
             SnapshotsManager.Instance.OnSessionRemoved += OnSessionRemoved;
+
+            SetSnapshotModeLabel(Context.SnapshotMode);
+            _snapshotsInfoButton?.onClick.AddListener(OnSnapshotsInfoButtonClick);
+            _refreshButton?.onClick.AddListener(OnRefreshButtonClick);
         }
 
         public void OpenDialog(string title, string description, Action onAction = null)
@@ -51,7 +68,7 @@ namespace JahroConsole.View
 
             foreach (var session in _snapshotSessions)
             {
-                if (session.GetStatus() == SnapshotSession.Status.Recording)
+                if (session.sessionId == JahroSession.Current.Id)
                 {
                     _activeSessionGroupLayout.AddSession(session);
                 }
@@ -109,6 +126,34 @@ namespace JahroConsole.View
         {
             base.OnWindowRectChanged(rect);
             CloseModalView();
+        }
+
+        private void OnSnapshotsInfoButtonClick()
+        {
+            Application.OpenURL(JahroConfig.DocumentationSnapshots);
+        }
+
+        private void OnRefreshButtonClick()
+        {
+            SnapshotsManager.Instance.RefreshSnapshots();
+        }
+
+        private void SetSnapshotModeLabel(IProjectSettings.SnapshotMode mode)
+        {
+            if (_snapshotsModeLabel == null) return;
+
+            switch (mode)
+            {
+                case IProjectSettings.SnapshotMode.Recording:
+                    _snapshotsModeLabel.text = "Mode: Recording";
+                    break;
+                case IProjectSettings.SnapshotMode.StreamingAll:
+                    _snapshotsModeLabel.text = "Mode: Streaming (all)";
+                    break;
+                case IProjectSettings.SnapshotMode.StreamingExceptEditor:
+                    _snapshotsModeLabel.text = "Mode: Streaming (except Editor)";
+                    break;
+            }
         }
 
         private SnapshotSessionsGroupLayout CreateGroup(bool isActiveGroup)

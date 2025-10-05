@@ -7,6 +7,16 @@ namespace JahroConsole.Core.Context
 {
     internal class RefreshContextRequest : RequestBase
     {
+        [Serializable]
+        internal class RefreshContextPayload
+        {
+            [SerializeField]
+            internal string sessionId;
+            [SerializeField]
+            internal string projectId;
+            [SerializeField]
+            internal string userId;
+        }
 
         [Serializable]
         internal class RefreshContextResponse
@@ -21,7 +31,7 @@ namespace JahroConsole.Core.Context
 
         internal Action<RefreshContextResponse> OnComplete;
 
-        internal Action<string, long> OnFail;
+        internal Action<NetworkError> OnFail;
 
         private string _sessionId;
 
@@ -49,13 +59,15 @@ namespace JahroConsole.Core.Context
             return JahroConfig.HostUrl + "/client/refresh";
         }
 
-        internal override WWWForm FormDataWWW()
+        internal override string GetBodyData()
         {
-            var form = new WWWForm();
-            form.AddField("sessionId", _sessionId);
-            form.AddField("projectId", _projectId);
-            form.AddField("userId", _userId);
-            return form;
+            var payload = new RefreshContextPayload
+            {
+                sessionId = _sessionId,
+                projectId = _projectId,
+                userId = _userId,
+            };
+            return JsonUtility.ToJson(payload);
         }
 
         internal override void FillHeaders(UnityWebRequest request)
@@ -70,10 +82,10 @@ namespace JahroConsole.Core.Context
             OnComplete?.Invoke(response);
         }
 
-        protected override void OnRequestFail(string error, long responseCode)
+        protected override void OnRequestFail(NetworkError error)
         {
-            base.OnRequestFail(error, responseCode);
-            OnFail?.Invoke(error, responseCode);
+            base.OnRequestFail(error);
+            OnFail?.Invoke(error);
         }
     }
 }

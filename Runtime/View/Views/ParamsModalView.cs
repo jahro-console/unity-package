@@ -233,7 +233,7 @@ namespace JahroConsole.View
                 }
                 else
                 {
-                    Jahro.LogError(string.Format(MessagesResource.LogCommandUnsupportedParamters, param.Name, param.ParameterType));
+                    Debug.LogError(string.Format(MessagesResource.LogCommandUnsupportedParamters, param.Name, param.ParameterType));
                 }
                 index++;
             }

@@ -76,24 +76,37 @@ namespace JahroConsole.Core.Data
             var item = filteredCommandsCache[index];
             if (item == null)
             {
-                return Mathf.RoundToInt(DEFAULT_ITEM_SIZE);
+                return DEFAULT_ITEM_SIZE;
             }
-            var str = item.Message;
-            if (string.IsNullOrEmpty(str))
+
+            if (string.IsNullOrEmpty(item.Message))
             {
-                return Mathf.RoundToInt(DEFAULT_ITEM_SIZE);
+                return DEFAULT_ITEM_SIZE;
             }
-            if (str == MessagesResource.LogWelcomeMessage)
+
+            if (item.Message == MessagesResource.LogWelcomeMessage)
             {
                 return 150;
             }
 
-            var resultingHeight = TextHeightCaluculator.Instance.GetMainTextHeight(str);
-
-            if (item.Expanded & item.HasDetails)
+            // Use cached height if available, otherwise calculate and cache it
+            if (item.CachedHeight == -1)
             {
-                resultingHeight += TextHeightCaluculator.Instance.GetMainTextHeight(item.StackTrace);
+                item.CachedHeight = CalculateItemHeight(item);
             }
+
+            return item.CachedHeight;
+        }
+
+        private int CalculateItemHeight(JahroLogEntity item)
+        {
+            var resultingHeight = TextHeightCaluculator.Instance.GetMainTextHeight(item.Message);
+
+            if (item.Expanded && item.HasDetails)
+            {
+                resultingHeight += TextHeightCaluculator.Instance.GetDetailsTextHeight(item.StackTrace);
+            }
+
             return resultingHeight;
         }
 
@@ -154,8 +167,27 @@ namespace JahroConsole.Core.Data
 
         public void UpdateReferenceSize()
         {
+            // Clear global cache and update reference size
             TextHeightCaluculator.Instance.UpdateReferenceSize(jahroScrollView.ContentRect.rect.width);
-            ResetScroller();
+
+            // Clear all cached heights in entities
+            ClearAllEntityHeights();
+
+            // Force complete recalculation of all heights
+            jahroScrollView.ForceHeightRecalculation();
+        }
+
+        private void ClearAllEntityHeights()
+        {
+            // Clear cached heights for all entities
+            foreach (var entity in allCommandsCache)
+            {
+                entity.CachedHeight = -1;
+            }
+            foreach (var entity in filteredCommandsCache)
+            {
+                entity.CachedHeight = -1;
+            }
         }
 
         private void OnFillAtIndexPath(int arg1, JahroScrollItem item)
@@ -171,7 +203,14 @@ namespace JahroConsole.Core.Data
 
         private void OnItemExpanded(JahroScrollItem item)
         {
+            // Clear the specific entity's cached height when it expands/collapses
+            if (item.AssignedEntity != null)
+            {
+                item.AssignedEntity.CachedHeight = -1;
+            }
 
+            // Force recalculation when item expands/collapses
+            jahroScrollView.ForceHeightRecalculation();
         }
 
         private void OnResetExpand()

@@ -10,14 +10,19 @@ namespace JahroConsole.Core.Network
         internal enum RequestType
         {
             POST,
-            POST_MULTIPART,
             GET,
             DELETE,
-            PUT
+            PUT,
+            POST_MULTIPART
         }
 
         internal Action<float> OnUploadProgress;
 
+        internal virtual string GetContentType() => null;
+
+        internal virtual bool UseDownloadFileHandler => false;
+
+        internal virtual string GetDownloadFilePath() => null;
 
         internal string BuildRequestURL()
         {
@@ -42,6 +47,11 @@ namespace JahroConsole.Core.Network
         internal abstract string GetURL();
 
         internal abstract RequestType GetRequestType();
+
+        internal virtual int GetTimeout()
+        {
+            return JahroConfig.DefaultTimeout;
+        }
 
         internal virtual string GetBodyData()
         {
@@ -84,12 +94,12 @@ namespace JahroConsole.Core.Network
 
         }
 
-        protected virtual void OnRequestFail(string error, long responseCode)
+        protected virtual void OnRequestFail(NetworkError error)
         {
 
         }
 
-        internal void HandleResponse(UnityWebRequest request)
+        internal void HandleResponse(UnityWebRequest request, NetworkError error = null)
         {
             if (request.result == UnityWebRequest.Result.Success)
             {
@@ -97,7 +107,7 @@ namespace JahroConsole.Core.Network
             }
             else
             {
-                OnRequestFail(request.error, request.responseCode);
+                OnRequestFail(error);
             }
         }
     }

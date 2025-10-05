@@ -37,10 +37,15 @@ namespace JahroConsole.Editor
             JahroEditorView wnd = GetWindow<JahroEditorView>(false, "Jahro Settings", true);
             wnd.titleContent = new GUIContent("Jahro Settings");
             wnd.minSize = new Vector2(300, 300);
+            Vector2 size = new Vector2(EditorGUIUtility.GetMainWindowPosition().width, EditorGUIUtility.GetMainWindowPosition().height);
+            size = size * 0.5f;
+            wnd.position = new Rect(EditorGUIUtility.GetMainWindowPosition().center - size * 0.5f, size);
         }
 
         public void CreateGUI()
         {
+            _projectSettings = JahroProjectSettings.Load();
+
             VisualElement root = rootVisualElement;
             m_VisualTreeAsset.CloneTree(rootVisualElement);
 
@@ -66,9 +71,6 @@ namespace JahroConsole.Editor
 
             _welcomeView.OnValidationSuccess += OnAPIKeyValidated;
             _settingsView.OnResetApiKey += ResetApiKey;
-
-            _projectSettings = JahroProjectSettings.LoadOrCreate();
-
             _projectSettings.OnSettingsChanged += SaveProjectSettings;
 
             SetWindowMode(WindowMode.LOADING);
@@ -104,6 +106,7 @@ namespace JahroConsole.Editor
                     (error) =>
                     {
                         _errorLoadingLabel.text = "Error checking version: " + error.message;
+                        Debug.LogError("Error checking version: " + error.message);
                     }
                 );
             }
@@ -129,6 +132,8 @@ namespace JahroConsole.Editor
                 return;
             }
 
+            SetWindowMode(WindowMode.WELCOME);
+
             try
             {
                 await KeyValidator.Send(savedApiKey, (response) =>
@@ -138,6 +143,7 @@ namespace JahroConsole.Editor
                 {
                     _apiKeyValidation = response;
                     _welcomeView.ShowError(response.message);
+                    Debug.LogError("Error validating API key: " + response.message);
                 });
 
                 if (_apiKeyValidation != null && _apiKeyValidation.success)

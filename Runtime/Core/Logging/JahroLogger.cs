@@ -43,15 +43,11 @@ namespace JahroConsole.Core.Logging
             }
         }
 
-        internal static bool DuplicateToUnityConsole { get; set; }
-
         internal static event JahroCommandInputHandler OnLogEvent = delegate { };
 
         internal static event Action OnClearAllLogs = delegate { };
 
         private static JahroLogger _instance;
-
-        private bool _onHoldForIncomingLog;
 
         private List<LogMessageData> _preSplashLogMessages;
 
@@ -61,9 +57,6 @@ namespace JahroConsole.Core.Logging
 
         internal void StartCatching()
         {
-#if JAHRO_DEBUG
-            Debug.Log("Logger start catching...");
-#endif
             _preSplashLogMessages = new List<LogMessageData>();
             Application.logMessageReceivedThreaded += ApplicationOnlogMessageReceived;
 
@@ -75,12 +68,6 @@ namespace JahroConsole.Core.Logging
 
         private void ApplicationOnlogMessageReceived(string logString, string stacktrace, LogType type)
         {
-            if (DuplicateToUnityConsole && _onHoldForIncomingLog)
-            {
-                _onHoldForIncomingLog = false;
-                return;
-            }
-
             var jahroLogType = (EJahroLogType)(int)type;
             LogUnity(logString, stacktrace, jahroLogType);
         }
@@ -168,12 +155,6 @@ namespace JahroConsole.Core.Logging
         internal static void Log(string message, string details, EJahroLogType logType)
         {
             LogUnity(message, details, logType);
-
-            if (DuplicateToUnityConsole)
-            {
-                Instance._onHoldForIncomingLog = true;
-                ToUnityConsole(message, details, logType);
-            }
         }
 
         internal static void LogCommand(string command, object[] parameters)
@@ -210,28 +191,6 @@ namespace JahroConsole.Core.Logging
         internal static void LogException(string message, Exception e)
         {
             Log(message, e.StackTrace, EJahroLogType.JahroException);
-        }
-
-        internal static void ToUnityConsole(string message, string details, EJahroLogType logType)
-        {
-            var logGroup = JahroLogGroup.MatchGroup(logType);
-            switch (logGroup)
-            {
-                case JahroLogGroup.EJahroLogGroup.Internal:
-                    break;
-                case JahroLogGroup.EJahroLogGroup.Debug:
-                    Debug.Log(message);
-                    break;
-                case JahroLogGroup.EJahroLogGroup.Warning:
-                    Debug.LogWarning(message);
-                    break;
-                case JahroLogGroup.EJahroLogGroup.Error:
-                    Debug.LogError(message);
-                    break;
-                case JahroLogGroup.EJahroLogGroup.Command:
-                    Debug.Log(message + "\n" + details);
-                    break;
-            }
         }
     }
 
@@ -278,6 +237,34 @@ namespace JahroConsole.Core.Logging
                     break;
             }
             return group;
+        }
+
+        internal static string GroupToCommonString(EJahroLogType logType)
+        {
+            switch (logType)
+            {
+                case EJahroLogType.JahroInfo:
+                case EJahroLogType.Assert:
+                case EJahroLogType.Log:
+                case EJahroLogType.JahroDebug:
+                    return "DEBUG";
+
+                case EJahroLogType.Warning:
+                case EJahroLogType.JahroWarning:
+                    return "WARNING";
+
+                case EJahroLogType.JahroCommand:
+                    return "COMMAND";
+
+                case EJahroLogType.Error:
+                case EJahroLogType.JahroError:
+                    return "ERROR";
+
+                case EJahroLogType.Exception:
+                case EJahroLogType.JahroException:
+                    return "EXCEPTION";
+            }
+            return null;
         }
     }
 }

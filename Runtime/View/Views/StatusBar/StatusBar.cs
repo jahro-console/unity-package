@@ -30,10 +30,12 @@ namespace JahroConsole.View
 
         void Start()
         {
-            NotificationService.Instance.NetworkSyncStateChanged += OnNetworkSyncStateChanged;
-            NotificationService.Instance.SnapshotingStateChanged += OnSnapshotingStateChanged;
-            OnSnapshotingStateChanged(SnapshotsManager.Instance.ActiveSession != null);
-            OnNetworkSyncStateChanged(NetworkManager.Instance.HasActiveRequests);
+            // NotificationService.Instance.NetworkSyncStateChanged += OnNetworkSyncStateChanged;
+            // NotificationService.Instance.SnapshotingStateChanged += OnSnapshotingStateChanged;
+            // OnSnapshotingStateChanged(SnapshotsManager.Instance.ActiveSession != null);
+            // OnNetworkSyncStateChanged(NetworkManager.Instance.HasActiveRequests);
+            _statusSyncIcon.SetActive(false);
+            SnapshotingStatusLabel.text = "";
             if (_context != null)
             {
                 OnContextInfoChanged(_context);
@@ -42,8 +44,8 @@ namespace JahroConsole.View
 
         void OnDestroy()
         {
-            NotificationService.Instance.NetworkSyncStateChanged -= OnNetworkSyncStateChanged;
-            NotificationService.Instance.SnapshotingStateChanged -= OnSnapshotingStateChanged;
+            // NotificationService.Instance.NetworkSyncStateChanged -= OnNetworkSyncStateChanged;
+            // NotificationService.Instance.SnapshotingStateChanged -= OnSnapshotingStateChanged;
         }
 
         public void InitContext(JahroContext context)
@@ -67,7 +69,7 @@ namespace JahroConsole.View
 
         private void OnNetworkSyncStateChanged(bool active)
         {
-            _statusSyncIcon.SetActive(active);
+            // _statusSyncIcon.SetActive(active);
         }
 
         private void OnContextInfoChanged(JahroContext context)

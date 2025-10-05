@@ -31,7 +31,7 @@ namespace JahroConsole.Core.Data
             };
             request.OnFail += (error) =>
             {
-                onError?.Invoke(new ValidateKeyResponse() { success = false, message = error });
+                onError?.Invoke(new ValidateKeyResponse() { success = false, message = error.message });
             };
             await NetworkManager.Instance.SendRequestAsync(request);
         }

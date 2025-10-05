@@ -27,6 +27,8 @@ namespace JahroConsole.Core.Context
 
         private bool _apiKeyVerified;
 
+        private IProjectSettings.SnapshotMode _snapshotMode;
+
         internal ProjectInfo ProjectInfo { get { return _projectInfo; } }
 
         internal TeamInfo TeamInfo { get { return _teamInfo; } }
@@ -39,6 +41,10 @@ namespace JahroConsole.Core.Context
 
         internal bool ApiKeyVerified { get { return _apiKeyVerified; } }
 
+        internal string ApiKey { get; private set; }
+
+        internal IProjectSettings.SnapshotMode SnapshotMode { get { return _snapshotMode; } }
+
         internal void SetSelectedMember(UserInfo userInfo)
         {
             if (userInfo == null)
@@ -48,6 +54,11 @@ namespace JahroConsole.Core.Context
             _selectedUserInfo = userInfo;
             ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo = userInfo;
             OnSelectedUserInfoChanged?.Invoke(userInfo);
+        }
+
+        internal void Release()
+        {
+            OnContextInfoChanged = null;
         }
 
         private void UpdateInfo(ProjectInfo projectInfo, TeamInfo teamInfo, UserInfo[] users, VersionInfo versionInfo, ConsoleStorage storage)
@@ -75,7 +86,9 @@ namespace JahroConsole.Core.Context
         internal static async void Init(ConsoleStorage storage, string sessionId, Action<JahroContext> onProcessed)
         {
             var context = new JahroContext();
-            var initContextRequest = new InitContextRequest(sessionId, storage.ProjectSettings.APIKey, JahroConfig.CurrentVersion);
+            context.ApiKey = storage.ProjectSettings.APIKey;
+            context._snapshotMode = storage.ProjectSettings.SnapshotingMode;
+            var initContextRequest = new InitContextRequest(sessionId, context.ApiKey, JahroConfig.CurrentVersion);
             context._selectedUserInfo = ConsoleStorageController.Instance.ConsoleStorage.SelectedUserInfo;
             initContextRequest.OnComplete = (result) =>
             {
@@ -92,10 +105,10 @@ namespace JahroConsole.Core.Context
                 }
                 onProcessed(context);
             };
-            initContextRequest.OnFail = (error, responseCode) =>
+            initContextRequest.OnFail = (error) =>
             {
-                Debug.LogError($"Jahro: {responseCode} - {error}");
-                if (responseCode == 401)
+                Debug.LogError(error.ToLogString());
+                if (error.statusCode == 401)
                 {
                     OnApiError(storage, context);
                     onProcessed(context);
@@ -112,17 +125,19 @@ namespace JahroConsole.Core.Context
 
         internal static async void Refresh(ConsoleStorage storage, string sessionId, JahroContext context)
         {
-            var refreshRequest = new RefreshContextRequest(sessionId, storage.ProjectSettings.APIKey, context._projectInfo.Id, context._selectedUserInfo.Id);
+            if (context == null) return;
+
+            var refreshRequest = new RefreshContextRequest(sessionId, context.ApiKey, context._projectInfo.Id, context._selectedUserInfo.Id);
             refreshRequest.OnComplete = (result) =>
             {
                 context.UpdateInfo(result.projectInfo, result.tenantInfo, result.users, null, storage);
                 var selectedUser = result.users.FirstOrDefault(u => u.Id == context._selectedUserInfo.Id);
                 context.SetSelectedMember(selectedUser);
             };
-            refreshRequest.OnFail = (error, responseCode) =>
+            refreshRequest.OnFail = (error) =>
             {
-                Debug.LogError($"Jahro: {responseCode} - {error}");
-                if (responseCode == 401)
+                Debug.LogError(error.ToLogString());
+                if (error.statusCode == 401)
                 {
                     OnApiError(storage, context);
                 }
@@ -134,6 +149,8 @@ namespace JahroConsole.Core.Context
             };
             await NetworkManager.Instance.SendRequestAsync(refreshRequest);
         }
+
+
 
         private static void OnApiError(ConsoleStorage storage, JahroContext context)
         {
