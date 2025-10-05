@@ -139,17 +139,16 @@ namespace JahroConsole.Editor
                 await KeyValidator.Send(savedApiKey, (response) =>
                 {
                     _apiKeyValidation = response;
+                    if (_apiKeyValidation != null && _apiKeyValidation.success)
+                    {
+                        OnAPIKeyValidated(_apiKeyValidation);
+                    }
                 }, (response) =>
                 {
                     _apiKeyValidation = response;
                     _welcomeView.ShowError(response.message);
                     Debug.LogError("Error validating API key: " + response.message);
                 });
-
-                if (_apiKeyValidation != null && _apiKeyValidation.success)
-                {
-                    OnAPIKeyValidated(_apiKeyValidation);
-                }
             }
             catch (Exception ex)
             {
