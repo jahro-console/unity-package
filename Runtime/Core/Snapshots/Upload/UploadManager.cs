@@ -146,7 +146,7 @@ namespace JahroConsole.Core.Snapshots
                             _cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                             var chunk = chunks[i];
-                            StreamChunkContent(writer, chunk.chunkFilePath, i > 0);
+                            BulkChunkContent(writer, chunk.chunkFilePath, i != chunks.Count - 1);
                             chunk.status = ChunkMeta.ChunkStatus.Uploading;
                             ChunkManager.UpdateChunkMeta(chunk);
                         }
@@ -171,7 +171,7 @@ namespace JahroConsole.Core.Snapshots
             }, _cancellationTokenSource.Token);
         }
 
-        private void StreamChunkContent(StreamWriter writer, string chunkFilePath, bool addComma)
+        private void BulkChunkContent(StreamWriter writer, string chunkFilePath, bool addComma)
         {
             try
             {
@@ -184,42 +184,29 @@ namespace JahroConsole.Core.Snapshots
                 using (var chunkFileStream = new FileStream(chunkFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (var chunkReader = new StreamReader(chunkFileStream, Encoding.UTF8))
                 {
-                    var firstChar = chunkReader.Peek();
-                    if (firstChar == '[')
+                    string line;
+
+                    var startBracket = chunkReader.ReadLine();
+                    if (startBracket != "[")
                     {
-                        chunkReader.Read();
+                        Debug.LogError($"Corrupted chunk file: {chunkFilePath}");
+                        return;
+                    }
+
+                    while ((line = chunkReader.ReadLine()) != null)
+                    {
+                        if (line == "]" && chunkReader.EndOfStream)
+                        {
+                        }
+                        else
+                        {
+                            writer.Write(line);
+                        }
                     }
 
                     if (addComma)
                     {
                         writer.Write(",\n");
-                    }
-
-                    var buffer = new char[4096];
-                    int charsRead;
-                    bool foundClosingBracket = false;
-
-                    while ((charsRead = chunkReader.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        var content = new string(buffer, 0, charsRead);
-
-                        var closingBracketIndex = content.LastIndexOf(']');
-                        if (closingBracketIndex >= 0)
-                        {
-                            var contentToWrite = content.Substring(0, closingBracketIndex);
-                            writer.Write(contentToWrite);
-                            foundClosingBracket = true;
-                            break;
-                        }
-                        else
-                        {
-                            writer.Write(content);
-                        }
-                    }
-
-                    if (!foundClosingBracket)
-                    {
-                        Debug.LogWarning($"No closing bracket found in chunk file: {chunkFilePath}");
                     }
                 }
             }
