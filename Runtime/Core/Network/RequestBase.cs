@@ -101,7 +101,7 @@ namespace JahroConsole.Core.Network
 
         internal void HandleResponse(UnityWebRequest request, NetworkError error = null)
         {
-            if (request.result == UnityWebRequest.Result.Success)
+            if (request != null && request.result == UnityWebRequest.Result.Success)
             {
                 OnRequestComplete(request.downloadHandler.text);
             }

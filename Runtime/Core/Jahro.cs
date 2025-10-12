@@ -14,6 +14,14 @@ namespace JahroConsole
     /// </summary>
     public static partial class Jahro
     {
+
+        const bool FORCE_DISABLE =
+#if JAHRO_DISABLE
+        true;
+#else
+        false;
+#endif
+
         /// <summary>
         /// Verifies if the Jahro Console window is currently open.
         /// </summary>
@@ -72,13 +80,22 @@ namespace JahroConsole
             if (projectSettings == null) throw new Exception("Jahro Project Settings not found InitializeIfNeeded");
 
             ConsoleStorageController.InitSettings(projectSettings);
-            if (projectSettings.AutoDisableInRelease && !Debug.isDebugBuild)
+            if (FORCE_DISABLE)
             {
+#pragma warning disable CS0162 // Unreachable code detected
                 Enabled = false;
+#pragma warning restore CS0162 // Unreachable code detected
             }
             else
             {
-                Enabled = projectSettings.JahroEnabled;
+                if (projectSettings.AutoDisableInRelease && !Debug.isDebugBuild)
+                {
+                    Enabled = false;
+                }
+                else
+                {
+                    Enabled = projectSettings.JahroEnabled;
+                }
             }
 
             if (!Enabled)

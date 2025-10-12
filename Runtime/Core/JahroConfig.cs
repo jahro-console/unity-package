@@ -15,7 +15,7 @@ namespace JahroConsole
         }
 
         internal const Environment ENV = Environment.PROD;
-        public static readonly string CurrentVersion = "1.0.0-beta3";
+        public static readonly string CurrentVersion = "1.0.0-beta4";
 
         #endregion
 
@@ -57,14 +57,18 @@ namespace JahroConsole
 
 
         // Web URLs
-        internal static readonly string RegisterUrl = "https://console.jahro.io";
+        public static readonly string RegisterUrl = "https://console.jahro.io";
         public static readonly string ChangelogUrl = "https://jahro.io/changelog";
+        public static readonly string DiscordUrl = "https://discord.gg/txcHFRDeV4";
+        public static readonly string GitHubUrl = "https://github.com/jahro-console/unity-package";
+        public static readonly string ReportIssueUrl = "https://github.com/jahro-console/unity-package/issues";
 
         // Documentation URLs
-        internal static readonly string DocumentationRoot = "https://jahro.io/docs/";
-        internal static readonly string DocumentationWatcherOverview = "https://jahro.io/docs/watcher";
-        internal static readonly string DocumentationCommandsOverview = "https://jahro.io/docs/unity-commands";
-        internal static readonly string DocumentationSnapshots = "https://jahro.io/docs/snapshots";
+        public static readonly string HomeUrl = "https://jahro.io";
+        public static readonly string DocumentationRoot = "https://jahro.io/docs/";
+        public static readonly string DocumentationWatcherOverview = "https://jahro.io/docs/watcher";
+        public static readonly string DocumentationCommandsOverview = "https://jahro.io/docs/unity-commands";
+        public static readonly string DocumentationSnapshots = "https://jahro.io/docs/snapshots";
 
         #endregion
 

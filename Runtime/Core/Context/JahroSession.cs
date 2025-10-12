@@ -66,7 +66,10 @@ namespace JahroConsole.Core.Context
                 if (Current == null) return;
                 Current._context = context;
                 ConsoleCommandsRegistry.Initialize(projectSettings, Current._context);
-                SnapshotsManager.Instance.InitContext(Current._context);
+                if (Current._context.ApiKeyVerified)
+                {
+                    SnapshotsManager.Instance.InitContext(Current._context);
+                }
                 OnContextLoaded?.Invoke(Current._context);
             });
         }

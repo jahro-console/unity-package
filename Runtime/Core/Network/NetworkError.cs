@@ -5,12 +5,12 @@ using UnityEngine.Networking;
 namespace JahroConsole.Core.Network
 {
     [Serializable]
-    internal class NetworkError
+    public class NetworkError
     {
-        [SerializeField] internal string message;
-        [SerializeField] internal string error;
-        [SerializeField] internal int statusCode;
-        [SerializeField] internal string details;
+        [SerializeField] public string message;
+        [SerializeField] public string error;
+        [SerializeField] public int statusCode;
+        [SerializeField] public string details;
         internal UnityWebRequest.Result result;
 
 
@@ -40,9 +40,8 @@ namespace JahroConsole.Core.Network
                 var error = JsonUtility.FromJson<NetworkError>(errorDetails);
                 return error;
             }
-            catch (Exception ex)
+            catch
             {
-                Debug.LogError("Error parse: " + ex.Message);
                 return new NetworkError()
                 {
                     message = errorName,

@@ -1,6 +1,4 @@
 using System;
-using System.Threading.Tasks;
-using JahroConsole.Core.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,11 +10,8 @@ namespace JahroConsole.Editor
         private TextField _keyInput;
         private Label _errorLabel;
         private Button _validateButton;
-        private string _originalButtonText;
-        private int _animationFrame;
-        private IVisualElementScheduledItem _loadingAnimation;
 
-        public event Action<KeyValidator.ValidateKeyResponse> OnValidationSuccess;
+        public event Action<string> OnValidationRequested;
 
         public WelcomeView(VisualElement root)
         {
@@ -24,7 +19,7 @@ namespace JahroConsole.Editor
             _keyInput = root.Q<TextField>("key-input");
             _errorLabel = root.Q<Label>("KeyErrorLabel");
             _validateButton = root.Q<Button>("ValidateKey");
-            _originalButtonText = _validateButton.text;
+            _validateButton.text = "Submit";
 
             _errorLabel.style.display = DisplayStyle.None;
 
@@ -41,57 +36,39 @@ namespace JahroConsole.Editor
             });
         }
 
-        private async void OnValidateKeyClicked()
+        private void OnValidateKeyClicked()
         {
             StartLoadingAnimation();
+            OnValidationRequested?.Invoke(_keyInput.value.Trim());
+        }
 
-            string key = _keyInput.value;
-            if (string.IsNullOrEmpty(key))
-            {
-                ShowError("API Key is required");
-                StopLoadingAnimation();
-                return;
-            }
-
-            KeyValidator.ValidateKeyResponse validation = await ValidateAPIKey(key);
+        public void OnValidationComplete(bool success, string errorMessage = null)
+        {
             StopLoadingAnimation();
 
-            if (validation != null && validation.success)
+            if (!success && !string.IsNullOrEmpty(errorMessage))
             {
-                OnValidationSuccess?.Invoke(validation);
+                ShowError(errorMessage);
             }
-            else if (validation != null && !validation.success)
-            {
-                ShowError(validation.message);
-            }
+        }
+
+        public void ClearInput()
+        {
+            _keyInput.value = "";
+            _errorLabel.style.display = DisplayStyle.None;
         }
 
         private void StartLoadingAnimation()
         {
             _validateButton.SetEnabled(false);
-            _animationFrame = 0;
 
-            if (_loadingAnimation != null)
-                _loadingAnimation.Pause();
-
-            _loadingAnimation = _validateButton.schedule.Execute(() =>
-            {
-                _animationFrame = (_animationFrame + 1) % 4;
-                string dots = new string('.', _animationFrame);
-                _validateButton.text = $"Validating{dots.PadRight(3)}";
-            }).Every(300);
+            _validateButton.text = "Validating...";
         }
 
         private void StopLoadingAnimation()
         {
             _validateButton.SetEnabled(true);
-            _validateButton.text = _originalButtonText;
-
-            if (_loadingAnimation != null)
-            {
-                _loadingAnimation.Pause();
-                _loadingAnimation = null;
-            }
+            _validateButton.text = "Submit";
         }
 
         public void Show()
@@ -110,23 +87,8 @@ namespace JahroConsole.Editor
             _errorLabel.text = message;
         }
 
-        private async Task<KeyValidator.ValidateKeyResponse> ValidateAPIKey(string key)
+        public void Cleanup()
         {
-            try
-            {
-                KeyValidator.ValidateKeyResponse result = null;
-                await KeyValidator.Send(key,
-                    (response) => { result = response; },
-                    (response) => { result = response; }
-                );
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-                ShowError(ex.Message);
-                return null;
-            }
         }
     }
 }

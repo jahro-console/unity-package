@@ -356,13 +356,19 @@ namespace JahroConsole.Core.Snapshots
                     continue;
                 }
 
+                if (snapshot.GetStatus() == SnapshotSession.Status.Recording)
+                {
+                    snapshot.SetStatus(SnapshotSession.Status.Recorded);
+                    snapshot.SaveInfo();
+                    continue;
+                }
+
                 int chunksToUpload = snapshot.chunksCreated - snapshot.chunksUploaded;
 
                 if (snapshot.GetStatus() == SnapshotSession.Status.Streamed && chunksToUpload > 0)
                 {
                     //TODO: recheck if chunks are uploaded
                 }
-
             }
         }
 

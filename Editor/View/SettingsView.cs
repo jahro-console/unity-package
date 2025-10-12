@@ -44,8 +44,11 @@ namespace JahroConsole.Editor
 
             var accountTab = tabViewContainer.Q<VisualElement>("AccountContainer");
             _projectNameLabel = accountTab.Q<Label>("ProjectName");
+            _projectNameLabel.text = "";
             _teamNameLabel = accountTab.Q<Label>("TeamName");
+            _teamNameLabel.text = "";
             _apiKeyLabel = accountTab.Q<VisualElement>("APIKeyContainer").Q<Label>("TeamName");
+            _apiKeyLabel.text = "";
             _resetApiKeyButton = accountTab.Q<Button>("ResetApiKey");
 
             var linksContainer = accountTab.Q<VisualElement>("LinksContainer");
@@ -67,8 +70,7 @@ namespace JahroConsole.Editor
             _snapshotsModeField = snapshotsSettingsTab.Q<EnumField>("SnapshotsModePicker");
 
             InitializeEnumFields();
-
-            _resetApiKeyButton.clicked += OnResetApiKeyClicked;
+            SetupEventHandlers();
         }
 
         private void LoadAssemblies()
@@ -146,6 +148,13 @@ namespace JahroConsole.Editor
 
             if (validation == null) return;
 
+            UpdateAccountInfo(validation);
+            SetupExternalLinks(validation);
+            LoadProjectSettings();
+        }
+
+        private void UpdateAccountInfo(KeyValidator.ValidateKeyResponse validation)
+        {
             string apiKey = _projectSettings.APIKey;
             _projectNameLabel.text = validation.projectName;
             _teamNameLabel.text = validation.teamName;
@@ -156,119 +165,70 @@ namespace JahroConsole.Editor
                 string end = apiKey.Substring(apiKey.Length - 4);
                 _apiKeyLabel.text = $"{start}...{end}";
             }
+        }
 
+        private void SetupExternalLinks(KeyValidator.ValidateKeyResponse validation)
+        {
             SetupExternalLinkButton(_projectOverviewButton, validation.projectUrl);
             SetupExternalLinkButton(_teamOverviewButton, validation.teamOverviewUrl);
             SetupExternalLinkButton(_accountSettingsButton, validation.accountSettingsUrl);
-
-            if (_launchKeyField != null && _projectSettings.LaunchKey != default)
-            {
-                _launchKeyField.value = _projectSettings.LaunchKey;
-            }
-
-            if (_projectSettings.ActiveAssemblies == null)
-            {
-                _projectSettings.ActiveAssemblies = new List<string>();
-                if (_assembliesNames != null && _assembliesNames.Count > 0)
-                {
-                    _projectSettings.ActiveAssemblies = new List<string>(_assembliesNames);
-                }
-            }
-
-            UpdateAssemblySelection();
-
-            SetupManualBinding();
         }
 
-        private void SetupManualBinding()
+        private void LoadProjectSettings()
         {
             if (_projectSettings == null) return;
 
-            if (_jahroEnableToggle != null)
+            // Load assemblies
+            LoadAssemblies();
+            UpdateAssemblySelection();
+
+            // Set initial values
+            _jahroEnableToggle.value = _projectSettings.JahroEnabled;
+            _autoDisableToggle.value = _projectSettings.AutoDisableInRelease;
+            _keyboardShortcutsToggle.value = _projectSettings.UseLaunchKeyboardShortcut;
+            _mobileTapAreaToggle.value = _projectSettings.UseLaunchTapArea;
+            _launchKeyField.value = _projectSettings.LaunchKey;
+            _snapshotsModeField.value = _projectSettings.SnapshotingMode;
+        }
+
+        private void SetupEventHandlers()
+        {
+            _resetApiKeyButton.clicked += OnResetApiKeyClicked;
+
+            _jahroEnableToggle.RegisterValueChangedCallback(evt =>
+                _projectSettings.JahroEnabled = evt.newValue);
+            _autoDisableToggle.RegisterValueChangedCallback(evt =>
+                _projectSettings.AutoDisableInRelease = evt.newValue);
+            _keyboardShortcutsToggle.RegisterValueChangedCallback(evt =>
+                _projectSettings.UseLaunchKeyboardShortcut = evt.newValue);
+            _mobileTapAreaToggle.RegisterValueChangedCallback(evt =>
+                _projectSettings.UseLaunchTapArea = evt.newValue);
+            _launchKeyField.RegisterValueChangedCallback(evt =>
+                _projectSettings.LaunchKey = (KeyCode)evt.newValue);
+            _snapshotsModeField.RegisterValueChangedCallback(evt =>
+                _projectSettings.SnapshotingMode = (IProjectSettings.SnapshotMode)evt.newValue);
+
+            _assembliesField.RegisterValueChangedCallback(OnAssemblySelectionChanged);
+        }
+
+        private void OnAssemblySelectionChanged(ChangeEvent<int> evt)
+        {
+            if (_projectSettings == null || _assembliesNames == null || _assembliesNames.Count == 0)
+                return;
+
+            _assembliesFlag = evt.newValue;
+            var newActiveAssemblies = new List<string>();
+
+            for (int i = 0; i < _assembliesNames.Count; i++)
             {
-                _jahroEnableToggle.value = _projectSettings.JahroEnabled;
-                _jahroEnableToggle.RegisterValueChangedCallback(evt =>
+                int layer = 1 << i;
+                if ((_assembliesFlag & layer) != 0)
                 {
-                    _projectSettings.JahroEnabled = evt.newValue;
-                });
+                    newActiveAssemblies.Add(_assembliesNames[i]);
+                }
             }
 
-            if (_autoDisableToggle != null)
-            {
-                _autoDisableToggle.value = _projectSettings.AutoDisableInRelease;
-                _autoDisableToggle.RegisterValueChangedCallback(evt =>
-                {
-                    _projectSettings.AutoDisableInRelease = evt.newValue;
-                });
-            }
-
-            if (_keyboardShortcutsToggle != null)
-            {
-                _keyboardShortcutsToggle.value = _projectSettings.UseLaunchKeyboardShortcut;
-                _keyboardShortcutsToggle.RegisterValueChangedCallback(evt =>
-                {
-                    _projectSettings.UseLaunchKeyboardShortcut = evt.newValue;
-                });
-            }
-
-            if (_mobileTapAreaToggle != null)
-            {
-                _mobileTapAreaToggle.value = _projectSettings.UseLaunchTapArea;
-                _mobileTapAreaToggle.RegisterValueChangedCallback(evt =>
-                {
-                    _projectSettings.UseLaunchTapArea = evt.newValue;
-                });
-            }
-
-            if (_launchKeyField != null)
-            {
-                _launchKeyField.value = _projectSettings.LaunchKey;
-                _launchKeyField.RegisterValueChangedCallback(evt =>
-                {
-                    _projectSettings.LaunchKey = (KeyCode)evt.newValue;
-                });
-            }
-
-            if (_assembliesField != null)
-            {
-                _assembliesField.RegisterValueChangedCallback(evt =>
-                {
-                    if (_projectSettings != null && _assembliesNames != null && _assembliesNames.Count > 0)
-                    {
-                        _assembliesFlag = (int)evt.newValue;
-
-                        var newActiveAssemblies = new List<string>(_projectSettings.ActiveAssemblies);
-
-                        for (int i = 0; i < _assembliesNames.Count; i++)
-                        {
-                            string name = _assembliesNames[i];
-                            bool active = newActiveAssemblies.Contains(name);
-                            int layer = 1 << i;
-                            bool selected = (_assembliesFlag & layer) != 0;
-
-                            if (!active && selected)
-                            {
-                                newActiveAssemblies.Add(name);
-                            }
-                            else if (active && !selected)
-                            {
-                                newActiveAssemblies.Remove(name);
-                            }
-                        }
-
-                        _projectSettings.ActiveAssemblies = newActiveAssemblies;
-                    }
-                });
-            }
-
-            if (_snapshotsModeField != null)
-            {
-                _snapshotsModeField.value = _projectSettings.SnapshotingMode;
-                _snapshotsModeField.RegisterValueChangedCallback(evt =>
-                {
-                    _projectSettings.SnapshotingMode = (IProjectSettings.SnapshotMode)evt.newValue;
-                });
-            }
+            _projectSettings.ActiveAssemblies = newActiveAssemblies;
         }
 
         private void OnResetApiKeyClicked()
@@ -304,6 +264,8 @@ namespace JahroConsole.Editor
             _container.style.display = DisplayStyle.None;
         }
 
-
+        public void Cleanup()
+        {
+        }
     }
 }

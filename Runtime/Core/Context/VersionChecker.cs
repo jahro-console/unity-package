@@ -8,7 +8,7 @@ namespace JahroConsole.Core.Data
 {
     public static class VersionChecker
     {
-        public static async Task Send(bool isFreshInstall, Action<VersionInfo> onComplete, Action<VersionInfo> onError)
+        public static async Task EditorSend(bool isFreshInstall, Action<VersionInfo> onComplete, Action<VersionInfo> onError = null)
         {
             VersionCheckRequest request = new VersionCheckRequest(isFreshInstall);
             request.OnComplete += (result) =>
@@ -19,7 +19,7 @@ namespace JahroConsole.Core.Data
             {
                 onError?.Invoke(new VersionInfo() { message = error.message });
             };
-            await NetworkManager.Instance.SendRequestAsync(request);
+            await EditorNetworkManager.Instance.SendRequestAsync(request);
         }
     }
 }

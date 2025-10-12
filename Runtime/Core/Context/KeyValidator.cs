@@ -22,7 +22,7 @@ namespace JahroConsole.Core.Data
             public string accountSettingsUrl;
         }
 
-        public static async Task Send(string key, Action<ValidateKeyResponse> onComplete, Action<ValidateKeyResponse> onError)
+        public static async Task EditorSend(string key, Action<ValidateKeyResponse> onComplete, Action<NetworkError> onError)
         {
             ValidateKeyRequest request = new ValidateKeyRequest(key);
             request.OnComplete += (result) =>
@@ -31,9 +31,9 @@ namespace JahroConsole.Core.Data
             };
             request.OnFail += (error) =>
             {
-                onError?.Invoke(new ValidateKeyResponse() { success = false, message = error.message });
+                onError?.Invoke(error);
             };
-            await NetworkManager.Instance.SendRequestAsync(request);
+            await EditorNetworkManager.Instance.SendRequestAsync(request);
         }
     }
 }

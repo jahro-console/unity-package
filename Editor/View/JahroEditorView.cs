@@ -9,25 +9,15 @@ namespace JahroConsole.Editor
 {
     public class JahroEditorView : EditorWindow
     {
-        private enum WindowMode
-        {
-            LOADING,
-            WELCOME,
-            SETTINGS
-        }
-
         [SerializeField]
         private VisualTreeAsset m_VisualTreeAsset = default;
 
-        [SerializeField]
-        private JahroProjectSettings _projectSettings;
-
+        private JahroEditorController _controller;
         private WelcomeView _welcomeView;
         private SettingsView _settingsView;
         private Button _versionButton;
         private VisualElement _loadingContainer;
         private Label _errorLoadingLabel;
-        private KeyValidator.ValidateKeyResponse _apiKeyValidation;
         private Label _versionLabel;
         public static bool isFreshInstall { get; set; }
 
@@ -42,159 +32,145 @@ namespace JahroConsole.Editor
             wnd.position = new Rect(EditorGUIUtility.GetMainWindowPosition().center - size * 0.5f, size);
         }
 
-        public void CreateGUI()
+        public async void CreateGUI()
         {
-            _projectSettings = JahroProjectSettings.Load();
+            _controller = new JahroEditorController();
+            SetupControllerEvents();
 
             VisualElement root = rootVisualElement;
             m_VisualTreeAsset.CloneTree(rootVisualElement);
 
-            _loadingContainer = root.Q<VisualElement>("LoadingBlock");
-            _errorLoadingLabel = _loadingContainer.Q<Label>("ErrorLabel");
-            _errorLoadingLabel.text = "";
-            _welcomeView = new WelcomeView(root);
-            _settingsView = new SettingsView(root);
-            _versionLabel = root.Q<Label>("VersionMessage");
-            _versionButton = root.Q<Button>("VersionButton");
-            _versionButton.text = JahroConfig.CurrentVersion;
-            _versionButton.clicked += () =>
-            {
-                Application.OpenURL(JahroConfig.ChangelogUrl);
-            };
-            var projectPageLink = root.Q<Button>("ProjectPageLink");
-            projectPageLink.clicked += () =>
-            {
-                Application.OpenURL("https://console.jahro.io");
-            };
-
+            InitializeUIElements(root);
+            SetupViews(root);
             ConfigureFooterLinks(root.Q<VisualElement>("Footer"));
 
-            _welcomeView.OnValidationSuccess += OnAPIKeyValidated;
-            _settingsView.OnResetApiKey += ResetApiKey;
-            _projectSettings.OnSettingsChanged += SaveProjectSettings;
-
-            SetWindowMode(WindowMode.LOADING);
-
-            CheckVersion();
+            await _controller.InitializeAsync();
         }
 
         private void OnDestroy()
         {
-            _projectSettings.OnSettingsChanged -= SaveProjectSettings;
+            _controller?.Cleanup();
+            _welcomeView?.Cleanup();
+            _settingsView?.Cleanup();
         }
 
-        private void SaveProjectSettings()
+        private void SetupControllerEvents()
         {
-            if (_projectSettings != null)
-            {
-                EditorUtility.SetDirty(_projectSettings);
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-            }
+            _controller.OnStateChanged += OnStateChanged;
+            _controller.OnLoadingError += OnError;
+            _controller.OnVersionChecked += OnVersionChecked;
+            _controller.OnApiKeyValidated += OnApiKeyValidated;
+            _controller.OnApiKeyReset += OnApiKeyReset;
+            _controller.OnValidationComplete += OnValidationComplete;
         }
 
-        private async void CheckVersion()
+        private void InitializeUIElements(VisualElement root)
         {
-            try
-            {
-                await VersionChecker.Send(isFreshInstall,
-                    (response) =>
-                    {
-                        UpdateUI(response);
-                        _errorLoadingLabel.text = "";
-                    },
-                    (error) =>
-                    {
-                        _errorLoadingLabel.text = "Error checking version: " + error.message;
-                        Debug.LogError("Error checking version: " + error.message);
-                    }
-                );
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
-            finally
-            {
-                CheckAndValidateAPIKey();
-            }
+            _loadingContainer = root.Q<VisualElement>("LoadingBlock");
+            _errorLoadingLabel = _loadingContainer.Q<Label>("ErrorLabel");
+            _errorLoadingLabel.text = "";
+            _versionLabel = root.Q<Label>("VersionMessage");
+            _versionButton = root.Q<Button>("VersionButton");
+            _versionButton.text = JahroConfig.CurrentVersion;
+            _versionButton.clicked += () => Application.OpenURL(JahroConfig.ChangelogUrl);
+
+            var projectPageLink = root.Q<Button>("ProjectPageLink");
+            projectPageLink.clicked += () => Application.OpenURL("https://console.jahro.io");
         }
 
-        private async void CheckAndValidateAPIKey()
+        private void SetupViews(VisualElement root)
         {
-            SetWindowMode(WindowMode.LOADING);
+            _welcomeView = new WelcomeView(root);
+            _welcomeView.OnValidationRequested += OnValidationRequested;
 
-            string savedApiKey = _projectSettings.APIKey;
-
-            if (string.IsNullOrEmpty(savedApiKey))
-            {
-                SetWindowMode(WindowMode.WELCOME);
-                return;
-            }
-
-            SetWindowMode(WindowMode.WELCOME);
-
-            try
-            {
-                await KeyValidator.Send(savedApiKey, (response) =>
-                {
-                    _apiKeyValidation = response;
-                    if (_apiKeyValidation != null && _apiKeyValidation.success)
-                    {
-                        OnAPIKeyValidated(_apiKeyValidation);
-                    }
-                }, (response) =>
-                {
-                    _apiKeyValidation = response;
-                    _welcomeView.ShowError(response.message);
-                    Debug.LogError("Error validating API key: " + response.message);
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-                _welcomeView.ShowError("Error connecting to server. Please try again later.");
-                SetWindowMode(WindowMode.WELCOME);
-            }
+            _settingsView = new SettingsView(root);
+            _settingsView.OnResetApiKey += OnResetApiKeyRequested;
         }
 
-        private void OnAPIKeyValidated(KeyValidator.ValidateKeyResponse validation)
+        private async void OnValidationRequested(string apiKey)
         {
-            _apiKeyValidation = validation;
-            _projectSettings.APIKey = validation.apiKey;
-            _settingsView.Initialize(validation, _projectSettings);
-            SetWindowMode(WindowMode.SETTINGS);
+            await _controller.CheckAndValidateExistingApiKeyAsync(apiKey);
         }
 
-        private void ResetApiKey()
+        private void OnResetApiKeyRequested()
         {
-            _projectSettings.APIKey = string.Empty;
-            SetWindowMode(WindowMode.WELCOME);
+            _controller.ResetApiKey();
         }
 
-        private void SetWindowMode(WindowMode mode)
+        private void OnStateChanged(JahroEditorController.EditorState state)
         {
-            switch (mode)
+            switch (state)
             {
-                case WindowMode.LOADING:
-                    _loadingContainer.style.display = DisplayStyle.Flex;
-                    _welcomeView.Hide();
-                    _settingsView.Hide();
+                case JahroEditorController.EditorState.Loading:
+                    ShowLoading();
                     break;
-                case WindowMode.WELCOME:
-                    _loadingContainer.style.display = DisplayStyle.None;
-                    _welcomeView.Show();
-                    _settingsView.Hide();
+                case JahroEditorController.EditorState.Welcome:
+                    ShowWelcome();
                     break;
-                case WindowMode.SETTINGS:
-                    _loadingContainer.style.display = DisplayStyle.None;
-                    _welcomeView.Hide();
-                    _settingsView.Show();
+                case JahroEditorController.EditorState.Settings:
+                    ShowSettings();
+                    break;
+                case JahroEditorController.EditorState.Error:
+                    ShowError();
                     break;
             }
         }
 
-        private void UpdateUI(VersionInfo response)
+        private void OnError(string errorMessage)
+        {
+            _errorLoadingLabel.text = errorMessage;
+            _errorLoadingLabel.style.display = DisplayStyle.Flex;
+        }
+
+        private void OnVersionChecked(VersionInfo versionInfo)
+        {
+            UpdateVersionUI(versionInfo);
+        }
+
+        private void OnApiKeyValidated(KeyValidator.ValidateKeyResponse validation)
+        {
+            _settingsView.Initialize(validation, _controller.ProjectSettings);
+        }
+
+        private void OnApiKeyReset()
+        {
+            _welcomeView.ClearInput();
+        }
+
+        private void OnValidationComplete(bool success, string errorMessage)
+        {
+            _welcomeView.OnValidationComplete(success, errorMessage);
+        }
+
+        private void ShowLoading()
+        {
+            _loadingContainer.style.display = DisplayStyle.Flex;
+            _welcomeView.Hide();
+            _settingsView.Hide();
+        }
+
+        private void ShowWelcome()
+        {
+            _loadingContainer.style.display = DisplayStyle.None;
+            _welcomeView.Show();
+            _settingsView.Hide();
+        }
+
+        private void ShowSettings()
+        {
+            _loadingContainer.style.display = DisplayStyle.None;
+            _welcomeView.Hide();
+            _settingsView.Show();
+        }
+
+        private void ShowError()
+        {
+            _loadingContainer.style.display = DisplayStyle.Flex;
+            _welcomeView.Hide();
+            _settingsView.Hide();
+        }
+
+        private void UpdateVersionUI(VersionInfo response)
         {
             if (response.updateRequired)
             {
@@ -217,11 +193,11 @@ namespace JahroConsole.Editor
 
         private void ConfigureFooterLinks(VisualElement root)
         {
-            SetupLinkButton(root, "HomeLink", "https://jahro.io?utm_source=unity-client&utm_medium=settings&utm_content=footer");
-            SetupLinkButton(root, "DocsLink", "https://docs.jahro.io/?utm_source=unity-client&utm_medium=settings&utm_content=footer");
-            SetupLinkButton(root, "DiscordLink", "https://discord.gg/txcHFRDeV4");
-            SetupLinkButton(root, "GitHubLink", "https://github.com/jahro-console/unity-package");
-            SetupLinkButton(root, "ReportIssueLink", "https://github.com/jahro-console/unity-package/issues");
+            SetupLinkButton(root, "HomeLink", JahroConfig.HomeUrl);
+            SetupLinkButton(root, "DocsLink", JahroConfig.DocumentationRoot);
+            SetupLinkButton(root, "DiscordLink", JahroConfig.DiscordUrl);
+            SetupLinkButton(root, "GitHubLink", JahroConfig.GitHubUrl);
+            SetupLinkButton(root, "ReportIssueLink", JahroConfig.ReportIssueUrl);
         }
 
         private void SetupLinkButton(VisualElement root, string buttonName, string url)
