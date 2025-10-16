@@ -15,7 +15,7 @@ namespace JahroConsole
         }
 
         internal const Environment ENV = Environment.PROD;
-        public static readonly string CurrentVersion = "1.0.0-beta4";
+        public static readonly string CurrentVersion = "1.0.0-beta5";
 
         #endregion
 

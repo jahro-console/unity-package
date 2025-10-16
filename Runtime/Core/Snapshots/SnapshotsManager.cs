@@ -336,6 +336,8 @@ namespace JahroConsole.Core.Snapshots
         {
             foreach (var snapshot in SnapshotSessions)
             {
+                if (_activeSession.sessionId == snapshot.sessionId) continue;
+
                 snapshot.SetError(null);
                 if (snapshot.GetStatus() == SnapshotSession.Status.Recorded)
                 {
