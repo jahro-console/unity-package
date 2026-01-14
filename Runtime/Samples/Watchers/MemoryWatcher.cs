@@ -43,12 +43,6 @@ namespace JahroConsole.Samples
             _lastNativeMemory = nativeMemory;
             _lastUpdateTime = currentTime;
 
-            var isWarning = false;
-#if UNITY_ANDROID || UNITY_IOS
-            var systemMemory = SystemInfo.systemMemorySize * MB;
-            isWarning = totalMemory > systemMemory * WARNING_THRESHOLD;
-#endif
-
             var managedPercent = totalMemory > 0 ? (managedMemory * 100f / totalMemory) : 0f;
             var nativePercent = totalMemory > 0 ? (nativeMemory * 100f / totalMemory) : 0f;
 

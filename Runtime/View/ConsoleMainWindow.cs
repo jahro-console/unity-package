@@ -20,19 +20,19 @@ namespace JahroConsole.View
 
         public RectTransform HeaderPanelTransform;
 
-        public Canvas RootCanvas;// { get; private set; }
+        public Canvas RootCanvas;
 
         public Canvas JahroCanvas;
 
         public float FrameRightOffset;
 
+        [SerializeField]
+        internal HeaderPanelBehaviour HeaderPanelBehaviour;
+
+        [SerializeField]
+        internal BottomPanelBehaviour BottomPanelBehaviour;
+
         public RectTransform WindowTransform { get; private set; }
-
-        [SerializeField]
-        internal HeaderPanelBehaviour HeaderPanelBehaviour { get; private set; }
-
-        [SerializeField]
-        internal BottomPanelBehaviour BottomPanelBehaviour { get; private set; }
 
         internal CanvasScalingBehaviour ScalingBehaviour { get; private set; }
 

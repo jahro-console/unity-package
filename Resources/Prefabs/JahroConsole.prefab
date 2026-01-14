@@ -482,6 +482,8 @@ MonoBehaviour:
   RootCanvas: {fileID: 223818785136117448}
   JahroCanvas: {fileID: 223818785136117448}
   FrameRightOffset: 1
+  HeaderPanelBehaviour: {fileID: 8960605617001624582}
+  BottomPanelBehaviour: {fileID: 4547090548311684740}
   IsTightMode: 0
 --- !u!222 &4191908702528107408
 CanvasRenderer:
@@ -5176,8 +5178,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 46.674404, y: -12}
-  m_SizeDelta: {x: 37.34881, y: 24}
+  m_AnchoredPosition: {x: 46.299774, y: -12}
+  m_SizeDelta: {x: 36.599545, y: 24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5330727327824361671
 CanvasRenderer:
@@ -10388,8 +10390,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 56.011604, y: -12}
-  m_SizeDelta: {x: 56.023212, y: 24}
+  m_AnchoredPosition: {x: 55.44966, y: -12}
+  m_SizeDelta: {x: 54.89932, y: 24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8459077280610024453
 CanvasRenderer:
@@ -24527,8 +24529,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 49.786804, y: -12}
-  m_SizeDelta: {x: 43.57361, y: 24}
+  m_AnchoredPosition: {x: 49.349735, y: -12}
+  m_SizeDelta: {x: 42.69947, y: 24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1941159336070731657
 CanvasRenderer:

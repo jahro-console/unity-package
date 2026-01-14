@@ -67,7 +67,6 @@ namespace JahroConsole.Core.Data
             }
             else
             {
-                JahroLogger.LogDebug(MessagesResource.LogSavesLoadingError);
                 _storage = new ConsoleStorage();
             }
 

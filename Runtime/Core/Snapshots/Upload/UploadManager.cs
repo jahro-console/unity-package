@@ -96,22 +96,21 @@ namespace JahroConsole.Core.Snapshots
                     chunk.status == ChunkMeta.ChunkStatus.Queued ||
                     chunk.status == ChunkMeta.ChunkStatus.Failed).ToList();
 
-                if (chunksToUpload.Count == 0)
+                if (chunksToUpload.Count != 0)
                 {
-                    OnSnapshotUploaded?.Invoke(session);
-                    return;
+                    var bulkFilePath = await CreateBulkFileInBackgroundAsync(session, chunksToUpload);
+
+                    if (string.IsNullOrEmpty(bulkFilePath))
+                    {
+                        throw new Exception("Failed to create bulk file");
+                    }
+
+                    await UploadBulkFileAsync(session, bulkFilePath);
+                    CleanupBulkFile(bulkFilePath);
                 }
 
-                var bulkFilePath = await CreateBulkFileInBackgroundAsync(session, chunksToUpload);
-
-                if (string.IsNullOrEmpty(bulkFilePath))
-                {
-                    throw new Exception("Failed to create bulk file");
-                }
-
-                await UploadBulkFileAsync(session, bulkFilePath);
                 await UploadAllScreenshotsAsync(session);
-                CleanupBulkFile(bulkFilePath);
+
                 session.SetStatus(SnapshotSession.Status.Uploaded);
                 session.SetError(null);
                 session.SaveInfo();

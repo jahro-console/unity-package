@@ -288,8 +288,6 @@ namespace JahroConsole.View.InputHandling
           return unknownKey;
         case Key.OEM5:
           return unknownKey;
-        case Key.IMESelected:
-          return unknownKey;
         default:
           return unknownKey;
       }

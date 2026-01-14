@@ -28,14 +28,11 @@ namespace JahroConsole.View
         [SerializeField]
         private SearchInputBehaviour _searchInputBehaviour;
 
-        private VerticalLayoutGroup _layoutGroup;
-
         private RectTransform _rectTransform;
 
         private void Awake()
         {
             _rectTransform = GetComponent<RectTransform>();
-            _layoutGroup = GetComponent<VerticalLayoutGroup>();
 
             InputBehavior = GetComponentInChildren<ConsoleWindowInputBehaviour>();
             InputBehavior.DidEnterCommand += DidEnterCommand;
