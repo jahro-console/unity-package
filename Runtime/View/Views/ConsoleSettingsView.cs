@@ -1,4 +1,5 @@
 ﻿using JahroConsole.Core.Data;
+using JahroConsole.Core.Snapshots;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,12 +19,26 @@ namespace JahroConsole.View
         [SerializeField]
         private Toggle _keepInWindowBounds;
 
+        [SerializeField]
+        private Toggle _replayManualModeToggle;
+
+        [SerializeField]
+        private Toggle _replayAutostartModeToggle;
+
+        [SerializeField]
+        private Toggle _replayShadowModeToggle;
+
+        private int _replayRecordingMode;
+
         public void Awake()
         {
             _uiScaleSmallToggle.onValueChanged.AddListener(OnUiScaleSmallToggleValueChanged);
             _uiScaleDefaultToggle.onValueChanged.AddListener(OnUiScaleDefaultToggleValueChanged);
             _uiScaleLargeToggle.onValueChanged.AddListener(OnUiScaleLargeToggleValueChanged);
             _keepInWindowBounds.onValueChanged.AddListener(OnKeepInWindowBoundsValueChanged);
+            _replayManualModeToggle.onValueChanged.AddListener(OnReplayManualModeToggleValueChanged);
+            _replayAutostartModeToggle.onValueChanged.AddListener(OnReplayAutostartModeToggleValueChanged);
+            _replayShadowModeToggle.onValueChanged.AddListener(OnReplayShadowModeToggleValueChanged);
         }
 
         public override void OnStateLoad(ConsoleStorage storage)
@@ -44,7 +59,28 @@ namespace JahroConsole.View
             }
 
             _keepInWindowBounds.SetIsOnWithoutNotify(storage.GeneralSettings.keepInWindowBounds);
+
+            _replayRecordingMode = storage.GeneralSettings.replayRecordingMode;
+            switch ((SnapshotsManager.ReplayRecordingMode)_replayRecordingMode)
+            {
+                case SnapshotsManager.ReplayRecordingMode.Manual:
+                    _replayManualModeToggle.SetIsOnWithoutNotify(true);
+                    break;
+                case (SnapshotsManager.ReplayRecordingMode)1:
+                    _replayAutostartModeToggle.SetIsOnWithoutNotify(true);
+                    break;
+                case (SnapshotsManager.ReplayRecordingMode)2:
+                    _replayShadowModeToggle.SetIsOnWithoutNotify(true);
+                    break;
+            }
         }
+
+        public override void OnStateSave(ConsoleStorage storage)
+        {
+            base.OnStateSave(storage);
+            storage.GeneralSettings.replayRecordingMode = _replayRecordingMode;
+        }
+
 
         protected override void OnActivate()
         {
@@ -89,6 +125,20 @@ namespace JahroConsole.View
             {
                 MainWindow.ScalingBehaviour.SwitchToMode(CanvasScalingBehaviour.ScaleMode.Small);
             }
+        }
+
+        private void OnReplayManualModeToggleValueChanged(bool isOn)
+        {
+            _replayRecordingMode = (int)SnapshotsManager.ReplayRecordingMode.Manual;
+        }
+
+        private void OnReplayAutostartModeToggleValueChanged(bool isOn)
+        {
+            _replayRecordingMode = (int)SnapshotsManager.ReplayRecordingMode.Autostart;
+        }
+        private void OnReplayShadowModeToggleValueChanged(bool isOn)
+        {
+            _replayRecordingMode = (int)SnapshotsManager.ReplayRecordingMode.Shadow;
         }
     }
 }

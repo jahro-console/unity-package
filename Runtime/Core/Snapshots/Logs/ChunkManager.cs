@@ -45,6 +45,20 @@ namespace JahroConsole.Core.Snapshots
             _flushTimer.Change(FLUSH_INTERVAL_MS, FLUSH_INTERVAL_MS);
         }
 
+        internal void Abort()
+        {
+            if (!_isRunning) return;
+
+            _isRunning = false;
+            _flushTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _flushTimer.Dispose();
+
+            lock (_bufferLock)
+            {
+                _uniqueBuffer.Clear();
+            }
+        }
+
         internal async Task FlushAndStopAsync()
         {
             if (!_isRunning) return;

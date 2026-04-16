@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using JahroConsole.Core.Context;
@@ -8,7 +9,6 @@ using JahroConsole.Core.Data;
 using JahroConsole.Core.Logging;
 using JahroConsole.Core.Network;
 using JahroConsole.Core.Notifications;
-using JahroConsole.Core.Utilities;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -20,6 +20,13 @@ namespace JahroConsole.Core.Snapshots
         {
             Recording,
             Streaming,
+        }
+
+        internal enum ReplayRecordingMode
+        {
+            Manual,
+            Autostart,
+            Shadow,
         }
 
         private const int MAX_SNAPSHOTS = 10;
@@ -36,9 +43,17 @@ namespace JahroConsole.Core.Snapshots
 
         private bool _isRecording = false;
 
+        private JahroVideoRecorder _videoRecorder;
+
+        private JahroSnapshotVideoCoroutineHost _videoCoroutineHost;
+
+        internal JahroVideoRecorder VideoRecorder { get { return _videoRecorder; } }
+
         internal List<SnapshotSession> SnapshotSessions { get; private set; }
 
         internal UploadMode Mode { get; private set; }
+
+        internal ReplayRecordingMode ReplayMode { get; set; }
 
         internal SnapshotSession ActiveSession { get { return _activeSession; } }
 
@@ -87,6 +102,8 @@ namespace JahroConsole.Core.Snapshots
             _chunkManager = new ChunkManager(_activeSession);
             _chunkManager.Start();
 
+            ConsoleStorageController.Instance.OnStorageLoad += OnStorageLoad;
+
             JahroLogger.OnLogEvent += LogEvent;
             NotificationService.Instance.SnapshotingActive(true);
         }
@@ -104,6 +121,7 @@ namespace JahroConsole.Core.Snapshots
             {
                 CreateRemoteSnapshot(_context, _activeSession, (session) =>
                 {
+                    _streamManager.OnLogLimitExceeded += HandleStreamLogLimitExceeded;
                     _streamManager.StreamSnapshot(_activeSession, _chunkManager);
                     _activeSession.SetStatus(SnapshotSession.Status.Streaming);
                     _activeSession.SaveInfo();
@@ -119,9 +137,32 @@ namespace JahroConsole.Core.Snapshots
             }
 
             ChechExistingSnapshots();
+
+            SetupVideoRecorder();
+            if (ReplayMode == ReplayRecordingMode.Autostart)
+            {
+                StartVideoRecording();
+            }
+            else if (ReplayMode == ReplayRecordingMode.Shadow)
+            {
+                StartShadowRecording();
+            }
         }
 
-        internal async Task FlushAsync()
+        internal void PauseSession(bool pause)
+        {
+            if (_videoRecorder != null)
+            {
+                _videoRecorder.OnApplicationPause(pause);
+            }
+        }
+
+        private void OnStorageLoad(ConsoleStorage storage)
+        {
+            ReplayMode = (ReplayRecordingMode)storage.GeneralSettings.replayRecordingMode;
+        }
+
+        internal async Task FlushAsync(string logLimitErrorMessage = null)
         {
             if (!_isRecording) return;
 
@@ -130,20 +171,45 @@ namespace JahroConsole.Core.Snapshots
                 return;
             }
 
+            if (!string.IsNullOrEmpty(logLimitErrorMessage))
+            {
+                _activeSession.SetError(logLimitErrorMessage);
+                _activeSession.SaveInfo();
+            }
+
+            if (_videoRecorder != null)
+            {
+                if (_videoRecorder.CurrentState == JahroVideoState.Recording ||
+                    _videoRecorder.CurrentState == JahroVideoState.Shadow)
+                {
+                    _videoRecorder.StopRecording();
+                }
+                _activeSession.videoPartsCount = _videoRecorder.VideoPartIndex;
+                _videoRecorder.OnStateChanged -= OnVideoRecorderStateChanged;
+                _videoRecorder.Dispose();
+                _videoRecorder = null;
+            }
+
+            DestroyVideoCoroutineHost();
+
             JahroLogger.OnLogEvent -= LogEvent;
 
             ValidateSession(_activeSession);
 
             if (_chunkManager != null)
             {
-                await _chunkManager.FlushAndStopAsync();
+                if (!string.IsNullOrEmpty(logLimitErrorMessage))
+                    _chunkManager.Abort();
+                else
+                    await _chunkManager.FlushAndStopAsync();
                 _chunkManager = null;
             }
 
             if (_streamManager != null)
             {
-                await _streamManager?.StopAsync();
-                _streamManager?.Dispose();
+                _streamManager.OnLogLimitExceeded -= HandleStreamLogLimitExceeded;
+                await _streamManager.StopAsync();
+                _streamManager.Dispose();
                 _streamManager = null;
             }
 
@@ -156,6 +222,21 @@ namespace JahroConsole.Core.Snapshots
 
             _isRecording = false;
             _activeSession = null;
+        }
+
+        private void HandleStreamLogLimitExceeded(string errorMessage)
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await FlushAsync(errorMessage);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"FlushAsync after log limit: {ex.Message}");
+                }
+            });
         }
 
         internal void UploadSnapshot(SnapshotSession session, Action onComplete, Action<string> onError)
@@ -184,6 +265,14 @@ namespace JahroConsole.Core.Snapshots
             if (session == null) throw new Exception("Session is not set");
             if (session.sessionId != _activeSession.sessionId) throw new Exception("Session is not the active session");
 
+            if (_videoRecorder != null &&
+                (_videoRecorder.CurrentState == JahroVideoState.Recording ||
+                 _videoRecorder.CurrentState == JahroVideoState.Shadow))
+            {
+                _videoRecorder.StopRecording();
+                _activeSession.videoPartsCount = _videoRecorder.VideoPartIndex;
+            }
+
             if (_chunkManager == null) return;
 
             await _chunkManager.FlushAndStopAsync();
@@ -210,21 +299,35 @@ namespace JahroConsole.Core.Snapshots
 
             try
             {
-                // Step 1: Stop accepting new logs and flush all pending logs to chunks
+                int totalFrames = 0;
+                if (_videoRecorder != null &&
+                    (_videoRecorder.CurrentState == JahroVideoState.Recording ||
+                     _videoRecorder.CurrentState == JahroVideoState.Shadow))
+                {
+                    totalFrames = _videoRecorder.FramesCaptured;
+                    _videoRecorder.StopRecording();
+                    session.videoPartsCount = _videoRecorder.VideoPartIndex;
+                }
+
                 if (_chunkManager != null)
                 {
                     await _chunkManager.FlushAndStopAsync();
                     _chunkManager = null;
                 }
 
-                // Step 2: Wait for all pending uploads to complete
                 if (_streamManager != null)
                 {
+                    if (!string.IsNullOrEmpty(_streamManager.VideoFramesPath) && totalFrames > 0)
+                    {
+                        _streamManager.EnqueueFinalVideoUpload(totalFrames);
+                    }
+
                     await _streamManager.FlushAndStopAsync();
+                    _streamManager.OnLogLimitExceeded -= HandleStreamLogLimitExceeded;
+                    _streamManager.Dispose();
                     _streamManager = null;
                 }
 
-                // Step 3: Stop recording and validate session
                 ValidateSession(session);
             }
             catch (Exception ex)
@@ -238,7 +341,7 @@ namespace JahroConsole.Core.Snapshots
         {
             if (_activeSession == null)
             {
-                NotificationService.Instance.SendNotification(new Notification("Session stopped, can't capture screenshot"));
+                NotificationService.Instance.SendNotification(new Notification("Session stopped. Can't capture screenshot"));
                 yield break;
             }
 
@@ -426,13 +529,9 @@ namespace JahroConsole.Core.Snapshots
 
             try
             {
-                // Convert log type to string
                 var logTypeStr = JahroLogGroup.GroupToCommonString(logType);
-
-                // Enqueue to chunk manager
                 _chunkManager.EnqueueLog(message, logTypeStr, context);
 
-                // Update session counts
                 var logGroup = JahroLogGroup.MatchGroup(logType);
                 switch (logGroup)
                 {
@@ -456,5 +555,146 @@ namespace JahroConsole.Core.Snapshots
                 Debug.LogError($"Error processing log event: {ex.Message}");
             }
         }
+
+        private void SetupVideoRecorder()
+        {
+            if (_videoRecorder != null)
+            {
+                _videoRecorder.OnStateChanged -= OnVideoRecorderStateChanged;
+                _videoRecorder.Dispose();
+            }
+
+            _videoRecorder = new JahroVideoRecorder(_context.VideoConfig);
+            _videoRecorder.OnStateChanged += OnVideoRecorderStateChanged;
+
+            string videoBasePath = Path.Combine(_activeSession.folderPath, "video");
+            _videoRecorder.SetVideoBasePath(videoBasePath);
+
+            EnsureVideoCoroutineHost();
+        }
+
+        private void OnVideoRecorderStateChanged(JahroVideoState state)
+        {
+            if (state == JahroVideoState.Idle && _activeSession != null && _videoRecorder != null)
+            {
+                _activeSession.videoPartsCount = _videoRecorder.VideoPartIndex;
+                _activeSession.SaveInfo();
+            }
+            Jahro.FireVideoStateChanged(state);
+        }
+
+        private void EnsureVideoCoroutineHost()
+        {
+            if (_videoCoroutineHost != null)
+                return;
+
+            var viewManager = JahroViewManager.GetInstance();
+            if (viewManager == null)
+            {
+                Debug.LogWarning("[JahroVideo] Cannot create coroutine host: Jahro console root not found");
+                return;
+            }
+
+            var go = new GameObject("JahroSnapshotVideoCoroutineHost");
+            go.transform.SetParent(viewManager.transform, false);
+            _videoCoroutineHost = go.AddComponent<JahroSnapshotVideoCoroutineHost>();
+        }
+
+        private void DestroyVideoCoroutineHost()
+        {
+            if (_videoCoroutineHost == null)
+                return;
+
+            UnityEngine.Object.Destroy(_videoCoroutineHost.gameObject);
+            _videoCoroutineHost = null;
+        }
+
+        internal void StartVideoRecording()
+        {
+            EnsureVideoCoroutineHost();
+            if (_videoCoroutineHost == null)
+                return;
+
+            _videoCoroutineHost.StartCoroutine(VideoRecordingRoutine());
+        }
+
+        private IEnumerator VideoRecordingRoutine()
+        {
+            if (_activeSession == null)
+            {
+                Debug.LogWarning("[JahroVideo] Cannot start: no active snapshot session");
+                yield break;
+            }
+            if (_videoRecorder == null) yield break;
+
+            _videoRecorder.StartRecording();
+            if (_videoRecorder.CurrentState != JahroVideoState.Recording)
+                yield break;
+
+            _activeSession.videoPartsCount++;
+            _activeSession.FlushVideoFragmentsCount();
+
+            if (Mode == UploadMode.Streaming && _streamManager != null)
+            {
+                _streamManager.SetVideoSource(_videoRecorder.CurrentPartPath,
+                    _videoRecorder.VideoPartIndex, () => _videoRecorder.FramesCaptured);
+            }
+
+            yield return _videoRecorder.CaptureLoop();
+        }
+
+        internal void StopVideoRecording()
+        {
+            if (_videoRecorder == null || _videoRecorder.CurrentState != JahroVideoState.Recording)
+                return;
+
+            int totalFrames = _videoRecorder.FramesCaptured;
+            _videoRecorder.StopRecording();
+
+            if (_activeSession != null)
+                _activeSession.videoPartsCount = _videoRecorder.VideoPartIndex;
+
+            if (Mode == UploadMode.Streaming && _streamManager != null)
+            {
+                _streamManager.EnqueueFinalVideoUpload(totalFrames);
+            }
+        }
+
+        internal void StartShadowRecording()
+        {
+            EnsureVideoCoroutineHost();
+            if (_videoCoroutineHost == null) return;
+            _videoCoroutineHost.StartCoroutine(ShadowRecordingRoutine());
+        }
+
+        private IEnumerator ShadowRecordingRoutine()
+        {
+            if (_activeSession == null || _videoRecorder == null) yield break;
+
+            string shadowPath = Path.Combine(_activeSession.folderPath, "video", "shadow");
+            float windowSec = _context.VideoConfig.shadowWindowSec;
+
+            _videoRecorder.StartShadowRecording(shadowPath, windowSec);
+            if (_videoRecorder.CurrentState != JahroVideoState.Shadow) yield break;
+
+            yield return _videoRecorder.CaptureLoop();
+        }
+
+        internal void CommitShadowRecording()
+        {
+            if (_videoRecorder == null) return;
+            if (_videoRecorder.CurrentState != JahroVideoState.Shadow) return;
+
+            string partPath = _videoRecorder.CommitShadow();
+
+            if (partPath != null && _activeSession != null)
+            {
+                _activeSession.videoPartsCount = _videoRecorder.VideoPartIndex;
+                _activeSession.FlushVideoFragmentsCount();
+                _activeSession.SaveInfo();
+                Jahro.FireVideoStateChanged(JahroVideoState.Shadow);
+            }
+        }
+
     }
 }

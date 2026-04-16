@@ -79,11 +79,13 @@ namespace JahroConsole.Core.Snapshots
         //System
         [SerializeField] internal int chunksCreated;
         [SerializeField] internal int chunksUploaded;
+        [SerializeField] internal int videoPartsCount;
+        [SerializeField] internal int videoFramesUploaded;
 
 
         internal Action<Status> OnStatusUpdate = delegate { };
 
-        internal Action<int> OnScreenshotsCountUpdate = delegate { };
+        internal Action<int, int> OnMediaCountUpdate = delegate { };
 
         internal Action<int, int, int, int> OnLogsCountUpdate = delegate { };
 
@@ -106,6 +108,11 @@ namespace JahroConsole.Core.Snapshots
         internal int GetScreenshotCount()
         {
             return screenshotsCount;
+        }
+
+        internal int GetVideoFragmentsCount()
+        {
+            return videoPartsCount;
         }
 
         internal string[] GetScreenshotFilesPaths()
@@ -150,7 +157,8 @@ namespace JahroConsole.Core.Snapshots
 
         internal bool isEmpty()
         {
-            return logsCountDebug == 0 && logsCountWarning == 0 && logsCountErrors == 0 && logsCountCommands == 0 && screenshotsCount == 0;
+            return logsCountDebug == 0 && logsCountWarning == 0 && logsCountErrors == 0
+                && logsCountCommands == 0 && screenshotsCount == 0 && videoPartsCount == 0;
         }
 
         internal bool IsRemote()
@@ -165,7 +173,12 @@ namespace JahroConsole.Core.Snapshots
 
         internal void FlushScreenshotCount()
         {
-            OnScreenshotsCountUpdate(screenshotsCount);
+            OnMediaCountUpdate(screenshotsCount, videoPartsCount);
+        }
+
+        internal void FlushVideoFragmentsCount()
+        {
+            OnMediaCountUpdate(screenshotsCount, videoPartsCount);
         }
 
         internal void SaveInfo()

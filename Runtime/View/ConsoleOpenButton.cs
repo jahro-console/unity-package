@@ -11,11 +11,17 @@ namespace JahroConsole.View
 {
     public class ConsoleOpenButton : MonoBehaviour
     {
+        private readonly Color RECORD_BUTTON_COLOR_RECORDING = new Color(0.98039216f, 0f, 0.1764706f, 1f); // FA002D
+        private readonly Color RECORD_BUTTON_COLOR_IDLE = new Color(0.76862746f, 0.76862746f, 0.76862746f, 1f); //C4C4C4
         private const float NOTIFICATION_LIFETIME_SECONDS = 3f;
 
         [SerializeField] private ConsoleMainWindow _mainWindow;
         [SerializeField] private GameObject _notificationPrefab;
         [SerializeField] private GameObject _notificationHolder;
+        [SerializeField] private Button _recordButton;
+        [SerializeField] private Image _recordStartIcon;
+        [SerializeField] private Image _recordStopIcon;
+        [SerializeField] private Image _recordShadowIcon;
         private List<Notification> _notifications = new List<Notification>();
         private Vector2 _dragOffset;
         private RectTransform _holderTransform;
@@ -44,12 +50,15 @@ namespace JahroConsole.View
 
         void OnEnable()
         {
+            Jahro.OnVideoStateChanged += OnVideoStateChanged;
             NotificationService.Instance.OnNoficationAdded += OnNoficationAdded;
             _notificationHolder.gameObject.SetActive(false);
+            SetRecordButtonState(Jahro.VideoState);
         }
 
         void OnDisable()
         {
+            Jahro.OnVideoStateChanged -= OnVideoStateChanged;
             NotificationService.Instance.OnNoficationAdded -= OnNoficationAdded;
             ClearNotifications();
         }
@@ -93,6 +102,22 @@ namespace JahroConsole.View
             StartCoroutine(RestoreVisibility());
         }
 
+        public void OnRecordClick()
+        {
+            if (Jahro.IsShadowRecording)
+            {
+                Jahro.CommitShadowRecording();
+            }
+            else if (Jahro.IsVideoRecording)
+            {
+                Jahro.StopVideoRecording();
+            }
+            else
+            {
+                Jahro.StartVideoRecording();
+            }
+        }
+
         public void OnButtonPointerDown(BaseEventData eventData)
         {
             PointerEventData pointerEventData = (PointerEventData)eventData;
@@ -129,6 +154,7 @@ namespace JahroConsole.View
             _holderTransform = GetComponent<RectTransform>();
             _canvasTransform = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
             _canvasGroup = GetComponent<CanvasGroup>();
+            SetRecordButtonState(Jahro.VideoState);
         }
 
         private void SetupEventHandlers()
@@ -263,6 +289,28 @@ namespace JahroConsole.View
             _notificationHolder.gameObject.SetActive(true);
             _notifications.Add(notification);
             StartCoroutine(CreateNotificationText(notification));
+        }
+
+        private void OnVideoStateChanged(JahroVideoState state)
+        {
+            SetRecordButtonState(state);
+        }
+
+        private void SetRecordButtonState(JahroVideoState state)
+        {
+            bool isRecording = state == JahroVideoState.Recording;
+            bool isShadow = state == JahroVideoState.Shadow || state == JahroVideoState.Committing;
+
+            _recordStartIcon.gameObject.SetActive(!isRecording && !isShadow);
+            _recordStopIcon.gameObject.SetActive(isRecording);
+            _recordShadowIcon.gameObject.SetActive(isShadow);
+
+            var colorBlock = _recordButton.colors;
+            if (isRecording)
+                colorBlock.normalColor = RECORD_BUTTON_COLOR_RECORDING;
+            else
+                colorBlock.normalColor = RECORD_BUTTON_COLOR_IDLE;
+            _recordButton.colors = colorBlock;
         }
 
         private IEnumerator CreateNotificationText(Notification notification)

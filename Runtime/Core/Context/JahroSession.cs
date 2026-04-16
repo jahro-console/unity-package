@@ -84,7 +84,7 @@ namespace JahroConsole.Core.Context
 
         internal static void PauseSession(bool pause)
         {
-
+            SnapshotsManager.Instance.PauseSession(pause);
         }
 
         internal static async void EndSession()

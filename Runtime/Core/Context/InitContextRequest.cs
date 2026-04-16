@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Concurrent;
-using JahroConsole.Core.Data;
 using JahroConsole.Core.Network;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -23,6 +21,8 @@ namespace JahroConsole.Core.Context
             internal string deviceName;
             [SerializeField]
             internal string jahroVersion;
+            [SerializeField]
+            internal string userId;
         }
 
         [Serializable]
@@ -36,6 +36,9 @@ namespace JahroConsole.Core.Context
             internal UserInfo[] users;
             [SerializeField]
             internal VersionInfo versionInfo;
+
+            [SerializeField]
+            internal VideoConfig videoConfig;
         }
 
         internal Action<InitContextResponse> OnComplete;
@@ -47,12 +50,14 @@ namespace JahroConsole.Core.Context
         private string _key;
 
         private string _version;
+        private string _userId;
 
-        internal InitContextRequest(string sessionId, string apiKey, string version)
+        internal InitContextRequest(string sessionId, string apiKey, string version, string userId)
         {
             _sessionId = sessionId;
             _key = apiKey;
             _version = version;
+            _userId = userId;
         }
 
         internal override RequestType GetRequestType()
@@ -79,6 +84,7 @@ namespace JahroConsole.Core.Context
                 unityVersion = Application.unityVersion,
                 deviceName = SystemInfo.deviceName,
                 jahroVersion = _version,
+                userId = _userId,
             };
             return JsonUtility.ToJson(payload);
         }

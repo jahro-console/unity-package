@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using JahroConsole.Core.Context;
@@ -19,8 +20,24 @@ namespace JahroConsole.Core.Snapshots
         private readonly SemaphoreSlim _queueSemaphore;
         private Task _queueProcessorTask;
         private volatile bool _isProcessing;
+        private int _logLimitFlushScheduled;
         internal event Action<ChunkMeta> OnChunkUploaded;
         internal event Action<ChunkMeta, string> OnChunkFailed;
+
+        /// <summary>
+        /// Raised when the backend rejects a chunk for exceeding the per-snapshot log cap, after stopping the upload pump.
+        /// Handlers must schedule any work that awaits shutdown of this manager off the current upload path (deadlock risk otherwise).
+        /// </summary>
+        internal event Action<string> OnLogLimitExceeded;
+
+        private string _videoFramesPath;
+        private int _videoPartIndex;
+        private string _videoId;
+        private int _lastUploadedFrameNumber;
+        private Func<int> _getFramesCaptured;
+
+        internal string VideoFramesPath => _videoFramesPath;
+        internal int LastUploadedFrameNumber => _lastUploadedFrameNumber;
 
         internal StreamManager(JahroContext context)
         {
@@ -91,6 +108,39 @@ namespace JahroConsole.Core.Snapshots
             _queueProcessorTask = ProcessUploadQueueAsync();
         }
 
+        internal void SetVideoSource(string framesPath, int videoPartIndex, Func<int> getFramesCaptured)
+        {
+            _videoFramesPath = framesPath;
+            _videoPartIndex = videoPartIndex;
+            _videoId = videoPartIndex.ToString("D3");
+            _lastUploadedFrameNumber = 0;
+            _getFramesCaptured = getFramesCaptured;
+        }
+
+        internal void ClearVideoSource()
+        {
+            _videoFramesPath = null;
+            _videoPartIndex = 0;
+            _videoId = null;
+            _getFramesCaptured = null;
+        }
+
+        internal void EnqueueFinalVideoUpload(int totalFramesCaptured)
+        {
+            if (string.IsNullOrEmpty(_videoFramesPath)) return;
+
+            var framesPath = _videoFramesPath;
+            int videoPartIndex = _videoPartIndex;
+            string videoId = _videoId;
+            int lastUploaded = _lastUploadedFrameNumber;
+
+            _uploadQueue.Enqueue(async () =>
+                await UploadVideoFramesBatchAsync(
+                    framesPath, videoPartIndex, videoId, lastUploaded, totalFramesCaptured,
+                    isFinal: true, totalFrames: totalFramesCaptured));
+            _queueSemaphore.Release();
+        }
+
         internal void StreamScreenshot(ScreenshotMeta screenshotMeta)
         {
             if (screenshotMeta == null) throw new Exception("Screenshot meta is null");
@@ -103,6 +153,12 @@ namespace JahroConsole.Core.Snapshots
         {
             _uploadQueue.Enqueue(async () => await UploadChunkAsync(chunkInfo, _cancellationTokenSource.Token));
             _queueSemaphore.Release();
+
+            if (!string.IsNullOrEmpty(_videoFramesPath))
+            {
+                _uploadQueue.Enqueue(async () => await UploadPendingVideoFramesAsync());
+                _queueSemaphore.Release();
+            }
         }
 
         private async Task ProcessUploadQueueAsync()
@@ -191,6 +247,13 @@ namespace JahroConsole.Core.Snapshots
                         ChunkManager.UpdateChunkMeta(chunkInfo);
 
                         Debug.LogError(error.ToLogString());
+                        var flushMsg = LogLimitFlushMessage(error, null);
+                        if (flushMsg != null)
+                        {
+                            ScheduleLogLimitShutdown(flushMsg);
+                            return;
+                        }
+
                         OnChunkFailed?.Invoke(chunkInfo, error.message);
                     };
 
@@ -205,7 +268,99 @@ namespace JahroConsole.Core.Snapshots
                 ChunkManager.UpdateChunkMeta(chunkInfo);
 
                 Debug.LogError($"Chunk {chunkInfo.chunkId} failed: {ex.Message}");
+                var flushMsgEx = LogLimitFlushMessage(null, ex.Message);
+                if (flushMsgEx != null)
+                {
+                    ScheduleLogLimitShutdown(flushMsgEx);
+                    return;
+                }
+
                 OnChunkFailed?.Invoke(chunkInfo, ex.Message);
+            }
+        }
+
+        /// <summary>Returns the error text when the backend rejected a bulk for exceeding the per-snapshot log cap; otherwise null (caller keeps streaming).</summary>
+        private static string LogLimitFlushMessage(NetworkError error, string exceptionMessage)
+        {
+            var text = error?.message ?? error?.details ?? exceptionMessage;
+            if (string.IsNullOrEmpty(text) || text.IndexOf("Too many logs", StringComparison.OrdinalIgnoreCase) < 0)
+                return null;
+            return text;
+        }
+
+        /// <summary>Stops the upload pump and notifies listeners; flush must run outside this queue (see <see cref="OnLogLimitExceeded"/>).</summary>
+        private void ScheduleLogLimitShutdown(string errorMessage)
+        {
+            if (Interlocked.Exchange(ref _logLimitFlushScheduled, 1) != 0)
+                return;
+
+            _isProcessing = false;
+            try { _cancellationTokenSource.Cancel(); }
+            catch (Exception ex) { Debug.LogWarning($"StreamManager cancel: {ex.Message}"); }
+
+            OnLogLimitExceeded?.Invoke(errorMessage);
+        }
+
+        private Task UploadPendingVideoFramesAsync()
+        {
+            int totalCaptured = _getFramesCaptured?.Invoke() ?? 0;
+            return UploadVideoFramesBatchAsync(
+                _videoFramesPath, _videoPartIndex, _videoId,
+                _lastUploadedFrameNumber, totalCaptured,
+                isFinal: false, totalFrames: -1);
+        }
+
+        private async Task UploadVideoFramesBatchAsync(
+            string framesPath, int videoPartIndex, string videoId,
+            int lastUploaded, int totalCaptured,
+            bool isFinal, int totalFrames)
+        {
+            if (string.IsNullOrEmpty(framesPath) || !Directory.Exists(framesPath))
+                return;
+
+            if (totalCaptured <= lastUploaded)
+                return;
+
+            var pendingFrames = VideoPackager.GetPendingFramesByCounter(
+                framesPath, videoPartIndex, lastUploaded, totalCaptured);
+            if (pendingFrames.Count == 0) return;
+
+            string tempZipPath = null;
+            try
+            {
+                tempZipPath = await VideoPackager.CreateFramePackageAsync(
+                    pendingFrames, _cancellationTokenSource.Token);
+
+                int fromFrame = VideoPackager.ExtractFrameNumber(pendingFrames[0]);
+                int toFrame = VideoPackager.ExtractFrameNumber(pendingFrames[pendingFrames.Count - 1]);
+
+                using var request = new VideoFrameUploadRequest(
+                    _context, _snapshotSession, videoId, tempZipPath,
+                    fromFrame, toFrame, pendingFrames.Count,
+                    "streaming", isFinal, totalFrames);
+
+                request.OnComplete = response =>
+                {
+                    _lastUploadedFrameNumber = toFrame;
+                    _snapshotSession.videoFramesUploaded += pendingFrames.Count;
+                };
+
+                request.OnFail = error =>
+                {
+                    Debug.LogError($"[JahroVideo] Frame upload failed: {error.ToLogString()}");
+                };
+
+                await NetworkManager.Instance.SendRequestAsync(request);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[JahroVideo] Frame batch upload error: {ex.Message}");
+            }
+            finally
+            {
+                if (tempZipPath != null)
+                    SharedFileUtility.DeleteFileSafe(tempZipPath);
             }
         }
 
@@ -219,6 +374,4 @@ namespace JahroConsole.Core.Snapshots
             _queueSemaphore?.Dispose();
         }
     }
-
-
 }

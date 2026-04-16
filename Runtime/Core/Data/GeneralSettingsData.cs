@@ -28,5 +28,7 @@ namespace JahroConsole.Core.Data
         internal int scaleMode = 1;
         [SerializeField]
         internal bool keepInWindowBounds = true;
+        [SerializeField]
+        internal int replayRecordingMode = 0;
     }
 }

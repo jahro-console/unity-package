@@ -73,7 +73,7 @@ namespace JahroConsole.View
             if (_session.GetStatus() == SnapshotSession.Status.Recording || _session.GetStatus() == SnapshotSession.Status.Streaming)
             {
                 _session.OnLogsCountUpdate += OnLogsCountUpdate;
-                _session.OnScreenshotsCountUpdate += OnScreenshotsCountUpdate;
+                _session.OnMediaCountUpdate += OnMediaCountUpdate;
             }
             _session.OnStatusUpdate += OnStatusUpdate;
 
@@ -82,7 +82,7 @@ namespace JahroConsole.View
             _indicatorErrorGroup = IndicatorError.gameObject.transform.parent.gameObject;
             _indicatorCommandsGroup = IndicatorCommands.gameObject.transform.parent.gameObject;
 
-            SetScreenshotsCount(_session.GetScreenshotCount());
+            SetMediaCount(_session.GetScreenshotCount(), _session.GetVideoFragmentsCount());
             _session.GetLogsCount(out int debug, out int warning, out int error, out int command);
             SetLogsCount(debug, warning, error, command);
             SetUITightMode(view.MainWindow.IsTightMode);
@@ -132,9 +132,9 @@ namespace JahroConsole.View
             SetLogsCount(arg1, arg2, arg3, arg4);
         }
 
-        private void OnScreenshotsCountUpdate(int obj)
+        private void OnMediaCountUpdate(int screenshotsCount, int videoPartsCount)
         {
-            SetScreenshotsCount(obj);
+            SetMediaCount(screenshotsCount, videoPartsCount);
         }
 
         private void OnUploadClick()
@@ -293,9 +293,12 @@ namespace JahroConsole.View
             StatusDetailsText.color = Color.red;
         }
 
-        private void SetScreenshotsCount(int count)
+        private void SetMediaCount(int screenshotsCount, int replaysCount)
         {
-            ScreenshotsInfo.text = count.ToString() + " Screenshots";
+            var mediaLabelText = screenshotsCount > 0 ? screenshotsCount + " Screenshot" + (screenshotsCount == 1 ? "" : "s") : "";
+            mediaLabelText += screenshotsCount > 0 ? "  " : "";
+            mediaLabelText += replaysCount > 0 ? replaysCount + " Replay" + (replaysCount == 1 ? "" : "s") : "";
+            ScreenshotsInfo.text = mediaLabelText;
         }
 
         private void SetLogsCount(int debug, int warning, int error, int command)
@@ -357,7 +360,7 @@ namespace JahroConsole.View
             if (_session != null)
             {
                 _session.OnLogsCountUpdate -= OnLogsCountUpdate;
-                _session.OnScreenshotsCountUpdate -= OnScreenshotsCountUpdate;
+                _session.OnMediaCountUpdate -= OnMediaCountUpdate;
                 _session.OnStatusUpdate -= OnStatusUpdate;
             }
         }

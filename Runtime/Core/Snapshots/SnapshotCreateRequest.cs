@@ -24,6 +24,11 @@ namespace JahroConsole.Core.Snapshots
             [SerializeField] internal string deviceName;
             [SerializeField] internal string unityVersion;
             [SerializeField] internal string version;
+            // [SerializeField] internal bool hasVideo;
+            // [SerializeField] internal int videoFrameRate;
+            // [SerializeField] internal int videoResolutionWidth;
+            // [SerializeField] internal int videoResolutionHeight;
+            // [SerializeField] internal int videoJpegQuality;
         }
 
         internal Action<SnapshotSession.RemoteSnapshotInfo> OnComplete;
@@ -61,6 +66,11 @@ namespace JahroConsole.Core.Snapshots
                 deviceName = SystemInfo.deviceName,
                 unityVersion = Application.unityVersion,
                 version = Application.version,
+                // hasVideo = _session.videoPartsCount > 0,
+                // videoFrameRate = JahroVideoConfig.CaptureFrameRate,
+                // videoResolutionWidth = JahroVideoConfig.MaxPixelSize,
+                // videoResolutionHeight = JahroVideoConfig.MaxPixelSize,
+                // videoJpegQuality = JahroVideoConfig.JpegQuality,
             };
             return JsonUtility.ToJson(payload);
         }

@@ -14,6 +14,7 @@ namespace JahroConsole.Core.Snapshots
 {
     internal class UploadManager : IDisposable
     {
+        internal const int BULK_BATCH_SIZE = 100;
         private readonly JahroContext _context;
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly HashSet<Task> _activeUploadTasks;
@@ -109,6 +110,7 @@ namespace JahroConsole.Core.Snapshots
                     CleanupBulkFile(bulkFilePath);
                 }
 
+                await UploadAllVideoFramesAsync(session);
                 await UploadAllScreenshotsAsync(session);
 
                 session.SetStatus(SnapshotSession.Status.Uploaded);
@@ -301,6 +303,98 @@ namespace JahroConsole.Core.Snapshots
                 screenshotMeta.status = ScreenshotMeta.ScreenshotState.UploadFailed;
                 screenshotMeta.lastError = ex.Message;
                 ScreenshotFileUtility.SaveScreenshotMeta(screenshotMeta);
+            }
+        }
+
+        private async Task UploadAllVideoFramesAsync(SnapshotSession session)
+        {
+            string videoBasePath = Path.Combine(session.folderPath, "video");
+            if (!Directory.Exists(videoBasePath)) return;
+
+            var videoParts = Directory.GetDirectories(videoBasePath, "video-*");
+            Array.Sort(videoParts, StringComparer.Ordinal);
+
+            foreach (var videoPartPath in videoParts)
+            {
+                _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                string videoPartFolder = Path.GetFileName(videoPartPath);
+                if (!int.TryParse(videoPartFolder.Replace("video-", ""), out int videoIndex))
+                    continue;
+                string videoId = videoIndex.ToString("D3");
+
+                var pendingFrames = VideoPackager.GetPendingFrames(videoPartPath, 0);
+                if (pendingFrames.Count == 0) continue;
+
+                int allFrameCount = pendingFrames.Count;
+
+                for (int i = 0; i < pendingFrames.Count; i += BULK_BATCH_SIZE)
+                {
+                    _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                    int batchSize = Math.Min(BULK_BATCH_SIZE, pendingFrames.Count - i);
+                    var batch = pendingFrames.GetRange(i, batchSize);
+                    bool isLastBatch = (i + batchSize >= pendingFrames.Count);
+
+                    string tempZipPath = null;
+                    try
+                    {
+                        tempZipPath = await VideoPackager.CreateFramePackageAsync(
+                            batch, _cancellationTokenSource.Token);
+
+                        int fromFrame = VideoPackager.ExtractFrameNumber(batch[0]);
+                        int toFrame = VideoPackager.ExtractFrameNumber(batch[batch.Count - 1]);
+
+                        await UploadVideoFrameBatchAsync(session, videoId, tempZipPath,
+                            fromFrame, toFrame, batch.Count,
+                            "recording",
+                            isLastBatch,
+                            isLastBatch ? allFrameCount : -1);
+
+                        session.videoFramesUploaded += batch.Count;
+                    }
+                    finally
+                    {
+                        if (tempZipPath != null)
+                            SharedFileUtility.DeleteFileSafe(tempZipPath);
+                    }
+                }
+            }
+        }
+
+        private async Task UploadVideoFrameBatchAsync(
+            SnapshotSession session, string videoId, string zipFilePath,
+            int fromFrame, int toFrame, int frameCount,
+            string uploadMode, bool isFinal, int totalFrames)
+        {
+            var request = new VideoFrameUploadRequest(_context, session, videoId,
+                zipFilePath, fromFrame, toFrame, frameCount,
+                uploadMode, isFinal, totalFrames);
+            Debug.Log($"Uploading video frame batch {fromFrame} to {toFrame} for video {videoId}");
+
+            var tcs = new TaskCompletionSource<bool>();
+
+            request.OnComplete = response =>
+            {
+                Debug.Log($"Video frame batch {fromFrame} to {toFrame} uploaded successfully for video {videoId}");
+                tcs.SetResult(true);
+            };
+
+            request.OnFail = error =>
+            {
+                Debug.LogError($"[JahroVideo] Bulk frame upload failed: {error.ToLogString()}");
+                tcs.SetException(new Exception($"Frame upload failed: {error.message}"));
+            };
+
+            try
+            {
+                await NetworkManager.Instance.SendRequestAsync(request);
+                await tcs.Task;
+                Debug.Log($"Video frame batch {fromFrame} to {toFrame} uploaded successfully for video {videoId}");
+            }
+            finally
+            {
+                request.Dispose();
             }
         }
 
