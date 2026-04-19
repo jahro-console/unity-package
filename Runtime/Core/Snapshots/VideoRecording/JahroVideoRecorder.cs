@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.IO;
-using UnityEngine;
 using JahroConsole.Core.Context;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Notifications;
+using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
 {
@@ -68,7 +69,7 @@ namespace JahroConsole.Core.Snapshots
         {
             if (_state != JahroVideoState.Idle && _state != JahroVideoState.Error)
             {
-                Debug.LogWarning("[JahroVideo] Cannot change video path while recording");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot change video path while recording — state={_state}");
                 return;
             }
             _videoBasePath = videoBasePath;
@@ -83,13 +84,13 @@ namespace JahroConsole.Core.Snapshots
         {
             if (string.IsNullOrEmpty(_videoBasePath))
             {
-                Debug.LogWarning("[JahroVideo] Cannot start recording: video base path not set");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot start recording — reason=video base path not set");
                 return;
             }
 
             if (_state != JahroVideoState.Idle && _state != JahroVideoState.Error)
             {
-                Debug.LogWarning("[JahroVideo] Cannot start recording: current state is " + _state);
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot start recording — state={_state}, reason=not in Idle or Error state");
                 return;
             }
 
@@ -97,7 +98,7 @@ namespace JahroConsole.Core.Snapshots
 
             if (_cumulativeDurationSec >= _config.maxRecordingsDurationSec)
             {
-                Debug.LogWarning("[JahroVideo] Cannot start recording: global duration limit already reached");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot start recording — reason=global duration limit already reached, duration={_cumulativeDurationSec:F1}s");
                 FireError(JahroVideoError.MaxDurationReached);
                 return;
             }
@@ -105,7 +106,7 @@ namespace JahroConsole.Core.Snapshots
             long maxVideoBytes = (long)_config.maxVideoSizeMB * 1024L * 1024L;
             if (maxVideoBytes > 0 && _cumulativeVideoBytesWritten >= maxVideoBytes)
             {
-                Debug.LogWarning("[JahroVideo] Cannot start recording: session video size limit already reached");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot start recording — reason=session video size limit already reached, bytesWritten={_cumulativeVideoBytesWritten}");
                 FireError(JahroVideoError.StorageLimitReached);
                 return;
             }
@@ -139,11 +140,7 @@ namespace JahroConsole.Core.Snapshots
 
             SetState(JahroVideoState.Recording);
             NotificationService.Instance.SendNotification(new Notification("Replay recording"));
-            Debug.Log($"[JahroVideo] Recording started — part: {videoPartName}, resolution: {_captureService.TargetWidth}x{_captureService.TargetHeight}, fps: {_config.frameRate}, captureMode: {(_captureService.UseReadPixelsFallback ? "ReadPixels" : "AsyncGPU")}");
-            Debug.Log($"[JahroVideo] Frames directory — path={_framesPath}");
-#if UNITY_ANDROID
-            Debug.Log($"[JahroVideo] Android frame access — run: adb pull \"{_framesPath}\" .");
-#endif
+            JahroLogger.LogDebug($"[{JahroLogTag.Video}] Recording started — part={videoPartName}, resolution={_captureService.TargetWidth}x{_captureService.TargetHeight}, fps={_config.frameRate}, captureMode={(_captureService.UseReadPixelsFallback ? "ReadPixels" : "AsyncGPU")}");
         }
 
         internal void StopRecording()
@@ -185,7 +182,7 @@ namespace JahroConsole.Core.Snapshots
             _framesPath = null;
 
             SetState(JahroVideoState.Idle);
-            Debug.Log($"[JahroVideo] Recording stopped — {totalFrames} frames, cumulative duration: {_cumulativeDurationSec:F1}s");
+            JahroLogger.LogDebug($"[{JahroLogTag.Video}] Recording stopped — frames={totalFrames}, cumulativeDuration={_cumulativeDurationSec:F1}s");
         }
 
         #endregion
@@ -196,13 +193,13 @@ namespace JahroConsole.Core.Snapshots
         {
             if (string.IsNullOrEmpty(_videoBasePath))
             {
-                Debug.LogWarning("[JahroVideo] Cannot start shadow recording: video base path not set");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot start shadow recording — reason=video base path not set");
                 return;
             }
 
             if (_state != JahroVideoState.Idle && _state != JahroVideoState.Error)
             {
-                Debug.LogWarning("[JahroVideo] Cannot start shadow recording: current state is " + _state);
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot start shadow recording — state={_state}, reason=not in Idle or Error state");
                 return;
             }
 
@@ -236,18 +233,14 @@ namespace JahroConsole.Core.Snapshots
 
             SetState(JahroVideoState.Shadow);
             NotificationService.Instance.SendNotification(new Notification("Shadow recording active"));
-            Debug.Log($"[JahroVideo] Shadow recording started — window: {windowSec}s, resolution: {_captureService.TargetWidth}x{_captureService.TargetHeight}, captureMode: {(_captureService.UseReadPixelsFallback ? "ReadPixels" : "AsyncGPU")}");
-            Debug.Log($"[JahroVideo] Shadow frames directory — path={_framesPath}");
-#if UNITY_ANDROID
-            Debug.Log($"[JahroVideo] Android frame access — run: adb pull \"{_framesPath}\" .");
-#endif
+            JahroLogger.LogDebug($"[{JahroLogTag.Video}] Shadow recording started — window={windowSec}s, resolution={_captureService.TargetWidth}x{_captureService.TargetHeight}, captureMode={(_captureService.UseReadPixelsFallback ? "ReadPixels" : "AsyncGPU")}");
         }
 
         internal string CommitShadow()
         {
             if (_state != JahroVideoState.Shadow)
             {
-                Debug.LogWarning("[JahroVideo] CommitShadow called but not in Shadow state");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] CommitShadow called but not in Shadow state — state={_state}");
                 return null;
             }
 
@@ -289,7 +282,7 @@ namespace JahroConsole.Core.Snapshots
             _currentPartPath = null;
             _framesPath = null;
             SetState(JahroVideoState.Idle);
-            Debug.Log("[JahroVideo] Shadow recording stopped without commit");
+            JahroLogger.LogDebug($"[{JahroLogTag.Video}] Shadow recording stopped without commit");
         }
 
         private void RestartShadowWriter()
@@ -376,7 +369,7 @@ namespace JahroConsole.Core.Snapshots
             long diskSpaceMB = VideoStorageManager.GetAvailableDiskSpaceMB();
             if (diskSpaceMB < _minDiskSpaceMB)
             {
-                Debug.LogWarning($"[JahroVideo] Insufficient disk space: {diskSpaceMB}MB available, {_minDiskSpaceMB}MB required");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Insufficient disk space — available={diskSpaceMB}MB, required={_minDiskSpaceMB}MB");
                 SetState(JahroVideoState.Error);
                 FireError(JahroVideoError.InsufficientDiskSpace);
                 return false;
@@ -389,7 +382,7 @@ namespace JahroConsole.Core.Snapshots
             float totalDuration = _cumulativeDurationSec + RecordingDurationSec;
             if (totalDuration >= _config.maxRecordingsDurationSec)
             {
-                Debug.Log("[JahroVideo] Max recording duration reached (global limit)");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Max recording duration reached — totalDuration={totalDuration:F1}s, limit={_config.maxRecordingsDurationSec}s");
                 StopRecording();
                 FireError(JahroVideoError.MaxDurationReached);
                 return;
@@ -400,7 +393,7 @@ namespace JahroConsole.Core.Snapshots
             long maxBytes = (long)_config.maxVideoSizeMB * 1024L * 1024L;
             if (maxBytes > 0 && totalBytes >= maxBytes)
             {
-                Debug.Log("[JahroVideo] Max video size reached (session limit)");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Max video size reached — totalBytes={totalBytes}, limit={maxBytes}");
                 StopRecording();
                 FireError(JahroVideoError.StorageLimitReached);
             }
@@ -411,7 +404,7 @@ namespace JahroConsole.Core.Snapshots
             long diskSpaceMB = VideoStorageManager.GetAvailableDiskSpaceMB();
             if (diskSpaceMB < _minDiskSpaceMB)
             {
-                Debug.LogWarning("[JahroVideo] Disk space low — stopping recording");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Disk space low — available={diskSpaceMB}MB, required={_minDiskSpaceMB}MB, stopping recording");
                 StopRecording();
                 FireError(JahroVideoError.InsufficientDiskSpace);
             }
@@ -437,7 +430,7 @@ namespace JahroConsole.Core.Snapshots
         {
             if (ex is IOException)
             {
-                Debug.LogError($"[JahroVideo] Disk write error — may indicate full disk: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] Disk write error — may indicate full disk, error={ex.Message}");
             }
         }
 

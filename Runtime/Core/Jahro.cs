@@ -80,6 +80,9 @@ namespace JahroConsole
             if (projectSettings == null) throw new Exception("Jahro Project Settings not found InitializeIfNeeded");
 
             ConsoleStorageController.InitSettings(projectSettings);
+
+            JahroLogger.SetDebugMode(JahroConfig.DebugMode);
+
             if (FORCE_DISABLE)
             {
 #pragma warning disable CS0162 // Unreachable code detected
@@ -100,7 +103,7 @@ namespace JahroConsole
 
             if (!Enabled)
             {
-                Debug.Log("Jahro Console: Disabled in this build");
+                JahroLogger.LogInfo($"[{JahroLogTag.Core}] Jahro disabled in this build — autoDisableInRelease={projectSettings.AutoDisableInRelease}, isDebugBuild={Debug.isDebugBuild}");
                 return;
             }
 
@@ -142,7 +145,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] InitView called while Jahro is disabled — skipping view setup");
                 return;
             }
             if (!JahroViewManager.IsViewInstantiated())
@@ -171,7 +174,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Can't show console view");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] ShowConsoleView called while Jahro is disabled");
                 return;
             }
             _viewManager.ShowWindow();
@@ -184,7 +187,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Can't hide view");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] CloseConsoleView called while Jahro is disabled");
                 return;
             }
             _viewManager.HideWindow();
@@ -197,7 +200,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Can't enable launch button");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] EnableLaunchButton called while Jahro is disabled");
                 return;
             }
             IsLaunchButtonEnabled = true;
@@ -210,7 +213,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Can't disable launch button");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] DisableLaunchButton called while Jahro is disabled");
                 return;
             }
             IsLaunchButtonEnabled = false;
@@ -227,12 +230,12 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Can't show Status Button");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] ShowLaunchButton called while Jahro is disabled");
                 return;
             }
             if (!IsLaunchButtonEnabled)
             {
-                Debug.LogWarning("Jahro Console Launch button disabled. Can't show Launch button");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] ShowLaunchButton called but launch button is disabled — call EnableLaunchButton first");
                 return;
             }
             _viewManager.ShowLaunchButton();
@@ -245,7 +248,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Can't hide Status Button");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] HideLaunchButton called while Jahro is disabled");
                 return;
             }
             _viewManager.HideLaunchButton();
@@ -260,7 +263,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Status button disabled");
+                JahroLogger.LogWarning($"[{JahroLogTag.Core}] IsStatusButtonEnabled called while Jahro is disabled");
                 return false;
             }
             return _viewManager.IsOpenButtonVisible();
@@ -290,7 +293,7 @@ namespace JahroConsole
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                JahroLogger.LogException($"[{JahroLogTag.Core}] Release failed — error={e.GetType().Name}: {e.Message}", e);
             }
         }
 

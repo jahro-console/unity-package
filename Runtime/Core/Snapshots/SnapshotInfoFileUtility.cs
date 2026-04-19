@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using JahroConsole.Core.Context;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -36,7 +37,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to create snapshot folder: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Failed to create snapshot folder — path={folderPath}, error={ex.Message}");
             }
         }
 
@@ -101,14 +102,14 @@ namespace JahroConsole.Core.Snapshots
                     }
                     catch (Exception dirEx)
                     {
-                        Debug.LogWarning($"Error processing snapshot directory: {dirPath}, {dirEx.Message}");
+                        JahroLogger.LogWarning($"[{JahroLogTag.Snapshots}] Snapshot directory processing failed — dir={dirPath}, error={dirEx.Message}");
                         SharedFileUtility.RemoveDirectorySafe(dirPath);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to read snapshots: {ex.GetType().Name} - {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Failed to read snapshots — error={ex.GetType().Name}: {ex.Message}");
             }
 
             return sessions;
@@ -126,7 +127,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to get snapshot log file path: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Failed to get snapshot log file path — error={ex.Message}");
                 return null;
             }
         }

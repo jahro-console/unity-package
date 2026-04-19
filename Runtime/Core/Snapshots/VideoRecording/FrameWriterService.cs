@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Snapshots;
 using UnityEngine;
 
@@ -77,7 +78,7 @@ namespace JahroConsole.Core.Snapshots
             {
                 if (!_writerThread.Join(5000))
                 {
-                    Debug.LogWarning("[JahroVideo] Writer thread did not finish within timeout");
+                    JahroLogger.LogWarning($"[{JahroLogTag.Video}] Writer thread did not finish within timeout — frames may be lost");
                 }
             }
             _writerThread = null;
@@ -102,7 +103,7 @@ namespace JahroConsole.Core.Snapshots
                     catch (Exception ex)
                     {
                         Interlocked.Increment(ref _errorCount);
-                        Debug.LogError($"[JahroVideo] Failed to write frame {frame.FrameNumber}: {ex.Message}");
+                        JahroLogger.LogError($"[{JahroLogTag.Video}] Frame write failed — frame={frame.FrameNumber}, error={ex.Message}");
                         _onError?.Invoke(ex);
                     }
                 }

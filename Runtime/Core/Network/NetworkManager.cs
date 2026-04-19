@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Notifications;
 using UnityEditor;
 using UnityEngine;
@@ -189,7 +190,7 @@ namespace JahroConsole.Core.Network
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error creating multipart request: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Network}] Multipart request build failed — error={ex.GetType().Name}: {ex.Message}");
                 throw;
             }
             return webRequest;

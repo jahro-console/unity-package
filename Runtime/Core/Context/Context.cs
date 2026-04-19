@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using JahroConsole.Core.Data;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Network;
 using UnityEngine;
 
@@ -76,7 +77,7 @@ namespace JahroConsole.Core.Context
                 storage.VersionInfo = _versionInfo = versionInfo;
             }
             _videoConfig = videoConfig ?? VideoConfig.Default;
-            Debug.Log($"[JahroVideo] Video config: {_videoConfig.maxVideoSizeMB}MB, {_videoConfig.maxRecordingsDurationSec}s, {_videoConfig.frameRate}fps, {_videoConfig.jpegQuality}quality, {_videoConfig.maxResolutionSize}px");
+            JahroLogger.LogDebug($"[{JahroLogTag.Context}] Video config loaded — maxSizeMB={_videoConfig.maxVideoSizeMB}, maxDurationSec={_videoConfig.maxRecordingsDurationSec}, fps={_videoConfig.frameRate}, quality={_videoConfig.jpegQuality}, maxResolution={_videoConfig.maxResolutionSize}px");
             OnContextInfoChanged?.Invoke(this);
         }
 
@@ -116,7 +117,7 @@ namespace JahroConsole.Core.Context
             };
             initContextRequest.OnFail = (error) =>
             {
-                Debug.LogError(error.ToLogString());
+                JahroLogger.LogError($"[{JahroLogTag.Context}] Context request failed — {error.ToLogString()}");
                 if (error.statusCode == 401)
                 {
                     OnApiError(storage, context);
@@ -145,7 +146,7 @@ namespace JahroConsole.Core.Context
             };
             refreshRequest.OnFail = (error) =>
             {
-                Debug.LogError(error.ToLogString());
+                JahroLogger.LogError($"[{JahroLogTag.Context}] Context request failed — {error.ToLogString()}");
                 if (error.statusCode == 401)
                 {
                     OnApiError(storage, context);

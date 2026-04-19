@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -62,7 +63,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"Failed to delete file {path}: {ex.Message}");
+                JahroLogger.LogWarning($"[{JahroLogTag.Storage}] File delete failed — path={path}, error={ex.Message}");
             }
         }
 
@@ -86,7 +87,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Rename failed from {src} to {dst}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] File rename failed — src={src}, dst={dst}, error={ex.Message}");
                 return false;
             }
         }
@@ -108,7 +109,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"Fsync failed: {ex.Message}");
+                JahroLogger.LogWarning($"[{JahroLogTag.Storage}] Fsync failed — error={ex.Message}");
                 return false;
             }
         }
@@ -132,15 +133,15 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (UnauthorizedAccessException ex)
             {
-                Debug.LogError($"Access denied when removing directory: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] Directory removal access denied — path={directoryPath}, error={ex.Message}");
             }
             catch (IOException ex)
             {
-                Debug.LogError($"IO error when removing directory: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] Directory removal IO error — path={directoryPath}, error={ex.Message}");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to remove directory: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] Directory removal failed — path={directoryPath}, error={ex.Message}");
             }
         }
 
@@ -164,7 +165,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to load JSON from {filePath}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] JSON load failed — path={filePath}, error={ex.Message}");
                 return null;
             }
         }
@@ -184,7 +185,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to save JSON to {filePath}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] JSON save failed — path={filePath}, error={ex.Message}");
             }
         }
 
@@ -199,7 +200,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to get files from {directoryPath}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] Directory listing failed — path={directoryPath}, error={ex.Message}");
                 return new string[0];
             }
         }

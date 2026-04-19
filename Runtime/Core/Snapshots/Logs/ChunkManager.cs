@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -84,7 +85,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Error writing final chunk: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Chunks}] Final chunk write failed — error={ex.Message}");
                 }
             }
         }
@@ -177,7 +178,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to write chunk: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Chunks}] Chunk write failed — error={ex.Message}");
             }
         }
 

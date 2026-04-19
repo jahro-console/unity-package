@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -30,7 +31,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to get screenshot metas: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Screenshot metas load failed — error={ex.Message}");
                 return new ScreenshotMeta[0];
             }
         }

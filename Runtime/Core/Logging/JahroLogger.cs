@@ -66,8 +66,12 @@ namespace JahroConsole.Core.Logging
             }
         }
 
+        [ThreadStatic]
+        private static bool _suppressCapture;
+
         private void ApplicationOnlogMessageReceived(string logString, string stacktrace, LogType type)
         {
+            if (_suppressCapture) return;
             var jahroLogType = (EJahroLogType)(int)type;
             LogUnity(logString, stacktrace, jahroLogType);
         }
@@ -173,24 +177,51 @@ namespace JahroConsole.Core.Logging
             NotificationService.Instance.InvokeLogsClear();
         }
 
+        internal static bool IsDebugMode { get; private set; } = true;
+
+        internal static void SetDebugMode(bool enabled) => IsDebugMode = enabled;
+
         internal static void LogDebug(string message)
         {
+            if (!IsDebugMode) return;
             Log(message, string.Empty, EJahroLogType.JahroDebug);
+            _suppressCapture = true;
+            try { Debug.Log(message); }
+            finally { _suppressCapture = false; }
+        }
+
+        internal static void LogInfo(string message)
+        {
+            if (!IsDebugMode) return;
+            Log(message, string.Empty, EJahroLogType.JahroInfo);
+            _suppressCapture = true;
+            try { Debug.Log(message); }
+            finally { _suppressCapture = false; }
         }
 
         internal static void LogWarning(string message)
         {
+            if (!IsDebugMode) return;
             Log(message, string.Empty, EJahroLogType.JahroWarning);
+            _suppressCapture = true;
+            try { Debug.LogWarning(message); }
+            finally { _suppressCapture = false; }
         }
 
         internal static void LogError(string message)
         {
             Log(message, string.Empty, EJahroLogType.JahroError);
+            _suppressCapture = true;
+            try { Debug.LogError(message); }
+            finally { _suppressCapture = false; }
         }
 
         internal static void LogException(string message, Exception e)
         {
             Log(message, e.StackTrace, EJahroLogType.JahroException);
+            _suppressCapture = true;
+            try { Debug.LogException(e); }
+            finally { _suppressCapture = false; }
         }
     }
 

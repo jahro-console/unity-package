@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -35,7 +36,7 @@ namespace JahroConsole.Core.Snapshots
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogWarning($"Failed to load chunk meta from {metaFile}: {ex.Message}");
+                        JahroLogger.LogWarning($"[{JahroLogTag.Chunks}] Chunk meta load failed — path={metaFile}, error={ex.Message}. Chunk will be skipped.");
                     }
                 }
 
@@ -43,7 +44,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to load existing chunks: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Chunks}] Failed to load existing chunks — error={ex.Message}");
             }
 
             return chunks;

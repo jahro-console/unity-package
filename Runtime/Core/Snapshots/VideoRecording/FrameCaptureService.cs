@@ -1,10 +1,11 @@
 using System;
 using System.Threading;
+using JahroConsole.Core.Context;
+using JahroConsole.Core.Logging;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
-using JahroConsole.Core.Context;
 
 namespace JahroConsole.Core.Snapshots
 {
@@ -94,7 +95,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] Capture error: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] Frame capture error — error={ex.Message}");
                 _consecutiveErrors++;
                 return;
             }
@@ -112,7 +113,7 @@ namespace JahroConsole.Core.Snapshots
                 _consecutiveErrors++;
                 if (_consecutiveErrors >= MAX_CONSECUTIVE_ERRORS)
                 {
-                    Debug.LogError("[JahroVideo] Too many consecutive readback errors — stopping");
+                    JahroLogger.LogError($"[{JahroLogTag.Video}] Too many consecutive readback errors — count={_consecutiveErrors}, stopping capture");
                     OnCaptureErrorLimitReached?.Invoke();
                 }
                 return;
@@ -132,7 +133,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] Encoding error: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] Frame encoding error — error={ex.Message}");
                 _consecutiveErrors++;
             }
         }
@@ -158,7 +159,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] Failed to reallocate capture RT: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] Failed to reallocate capture RT — error={ex.Message}");
                 _fullResRT = null;
             }
         }
@@ -225,7 +226,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] Fallback capture error: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] Fallback capture error — error={ex.Message}");
                 _consecutiveErrors++;
             }
         }
@@ -306,7 +307,7 @@ namespace JahroConsole.Core.Snapshots
 
             if (jpegBytes == null || jpegBytes.Length == 0)
             {
-                Debug.LogWarning("[JahroVideo] JPEG encoding produced empty result");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] JPEG encoding produced empty result — check graphics format compatibility");
                 return null;
             }
 
@@ -404,25 +405,25 @@ namespace JahroConsole.Core.Snapshots
                 int screenH = Screen.height;
                 if (screenW <= 0 || screenH <= 0)
                 {
-                    Debug.LogError("[JahroVideo] Cannot allocate resources: invalid screen dimensions");
+                    JahroLogger.LogError($"[{JahroLogTag.Video}] Cannot allocate resources — reason=invalid screen dimensions, screen={screenW}x{screenH}");
                     return false;
                 }
 
-                Debug.Log($"[JahroVideo] GPU info — device={SystemInfo.graphicsDeviceName}, type={SystemInfo.graphicsDeviceType}, asyncReadback={SystemInfo.supportsAsyncGPUReadback}, screen={screenW}x{screenH}");
+                JahroLogger.LogDebug($"[{JahroLogTag.Video}] GPU info — device={SystemInfo.graphicsDeviceName}, type={SystemInfo.graphicsDeviceType}, asyncReadback={SystemInfo.supportsAsyncGPUReadback}, screen={screenW}x{screenH}");
 
                 _fullResRT = new RenderTexture(screenW, screenH, 0, RenderTextureFormat.ARGB32);
                 _fullResRT.Create();
-                Debug.Log($"[JahroVideo] Full-res RT allocated — size={screenW}x{screenH}, created={_fullResRT.IsCreated()}");
+                JahroLogger.LogDebug($"[{JahroLogTag.Video}] Full-res RT allocated — size={screenW}x{screenH}, created={_fullResRT.IsCreated()}");
 
                 _targetRT = new RenderTexture(_targetWidth, _targetHeight, 0, RenderTextureFormat.ARGB32);
                 _targetRT.Create();
-                Debug.Log($"[JahroVideo] Target RT allocated — size={_targetWidth}x{_targetHeight}, created={_targetRT.IsCreated()}");
+                JahroLogger.LogDebug($"[{JahroLogTag.Video}] Target RT allocated — size={_targetWidth}x{_targetHeight}, created={_targetRT.IsCreated()}");
 
                 return true;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] Failed to allocate resources: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] Failed to allocate capture resources — error={ex.Message}");
                 ReleaseResources();
                 return false;
             }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JahroConsole.Core.Context;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Network;
 using UnityEngine;
 
@@ -48,7 +49,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Error during UploadManager shutdown: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Shutdown failed — error={ex.Message}");
                 }
             }
         }
@@ -120,7 +121,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error during bulk upload for snapshot {session.sessionId}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Bulk upload failed — sessionId={session.sessionId}, error={ex.Message}");
                 session.SetError(ex.Message);
                 session.SaveInfo();
                 OnSnapshotFailed?.Invoke(session, ex.Message);
@@ -166,7 +167,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Failed to create bulk file for session {session.sessionId}: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Failed to create bulk file — sessionId={session.sessionId}, error={ex.Message}");
                     return null;
                 }
             }, _cancellationTokenSource.Token);
@@ -178,7 +179,7 @@ namespace JahroConsole.Core.Snapshots
             {
                 if (!File.Exists(chunkFilePath))
                 {
-                    Debug.LogWarning($"Chunk file not found: {chunkFilePath}");
+                    JahroLogger.LogWarning($"[{JahroLogTag.Upload}] Chunk file missing — path={chunkFilePath}. Upload will skip this chunk.");
                     return;
                 }
 
@@ -190,7 +191,7 @@ namespace JahroConsole.Core.Snapshots
                     var startBracket = chunkReader.ReadLine();
                     if (startBracket != "[")
                     {
-                        Debug.LogError($"Corrupted chunk file: {chunkFilePath}");
+                        JahroLogger.LogError($"[{JahroLogTag.Upload}] Corrupt chunk file — path={chunkFilePath}. File header failed validation.");
                         return;
                     }
 
@@ -213,7 +214,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to stream chunk content from {chunkFilePath}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Chunk content stream failed — path={chunkFilePath}, error={ex.Message}");
             }
         }
 
@@ -234,7 +235,7 @@ namespace JahroConsole.Core.Snapshots
             {
                 session.SetError(error.message);
                 session.SaveInfo();
-                Debug.LogError(error.ToLogString());
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Upload request failed — {error.ToLogString()}");
                 tcs.SetException(new Exception($"Upload failed: {error.message}"));
             };
 
@@ -290,7 +291,7 @@ namespace JahroConsole.Core.Snapshots
                     screenshotMeta.status = ScreenshotMeta.ScreenshotState.UploadFailed;
                     screenshotMeta.lastError = error.message;
                     ScreenshotFileUtility.SaveScreenshotMeta(screenshotMeta);
-                    Debug.LogError(error.ToLogString());
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Upload request failed — {error.ToLogString()}");
                     tcs.SetException(new Exception($"Upload failed: {error}"));
                 };
 
@@ -299,7 +300,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error uploading screenshot {screenshotMeta.id} for session {session.sessionId}: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Screenshot upload failed — screenshotId={screenshotMeta.id}, sessionId={session.sessionId}, error={ex.Message}");
                 screenshotMeta.status = ScreenshotMeta.ScreenshotState.UploadFailed;
                 screenshotMeta.lastError = ex.Message;
                 ScreenshotFileUtility.SaveScreenshotMeta(screenshotMeta);
@@ -370,19 +371,19 @@ namespace JahroConsole.Core.Snapshots
             var request = new VideoFrameUploadRequest(_context, session, videoId,
                 zipFilePath, fromFrame, toFrame, frameCount,
                 uploadMode, isFinal, totalFrames);
-            Debug.Log($"Uploading video frame batch {fromFrame} to {toFrame} for video {videoId}");
+            JahroLogger.LogDebug($"[{JahroLogTag.Upload}] Video frame batch uploading — videoId={videoId}, from={fromFrame}, to={toFrame}");
 
             var tcs = new TaskCompletionSource<bool>();
 
             request.OnComplete = response =>
             {
-                Debug.Log($"Video frame batch {fromFrame} to {toFrame} uploaded successfully for video {videoId}");
+                JahroLogger.LogDebug($"[{JahroLogTag.Upload}] Video frame batch uploaded — videoId={videoId}, from={fromFrame}, to={toFrame}");
                 tcs.SetResult(true);
             };
 
             request.OnFail = error =>
             {
-                Debug.LogError($"[JahroVideo] Bulk frame upload failed: {error.ToLogString()}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Video frame batch upload failed — {error.ToLogString()}");
                 tcs.SetException(new Exception($"Frame upload failed: {error.message}"));
             };
 
@@ -390,7 +391,7 @@ namespace JahroConsole.Core.Snapshots
             {
                 await NetworkManager.Instance.SendRequestAsync(request);
                 await tcs.Task;
-                Debug.Log($"Video frame batch {fromFrame} to {toFrame} uploaded successfully for video {videoId}");
+                JahroLogger.LogDebug($"[{JahroLogTag.Upload}] Video frame batch confirmed — videoId={videoId}, from={fromFrame}, to={toFrame}");
             }
             finally
             {

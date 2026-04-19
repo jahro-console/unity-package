@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -91,7 +92,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] CommitShadow: failed to enumerate shadow files: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Video}] CommitShadow failed to enumerate shadow files — path={_shadowPath}, error={ex.Message}");
                 return null;
             }
 
@@ -120,7 +121,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"[JahroVideo] CommitShadow: failed to move frame: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Video}] CommitShadow failed to move frame — error={ex.Message}");
                 }
             }
 
@@ -132,7 +133,7 @@ namespace JahroConsole.Core.Snapshots
 
             ResetTimers();
 
-            Debug.Log($"[JahroVideo] Shadow committed — part: {partDirName}, frames: {newFrameNumber}");
+            JahroLogger.LogDebug($"[{JahroLogTag.Video}] Shadow committed — part={partDirName}, frames={newFrameNumber}");
             return partDirPath;
         }
 
@@ -159,7 +160,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogWarning($"[JahroVideo] Failed to delete shadow dir: {ex.Message}");
+                    JahroLogger.LogWarning($"[{JahroLogTag.Video}] Failed to delete shadow directory — path={_shadowPath}, error={ex.Message}");
                 }
                 _shadowPath = null;
             }
@@ -189,7 +190,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[JahroVideo] Shadow cleanup error: {ex.Message}");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Shadow cleanup failed — error={ex.Message}");
             }
         }
 

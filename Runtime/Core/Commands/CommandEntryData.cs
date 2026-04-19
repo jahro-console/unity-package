@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Utilities;
 using UnityEngine;
 
@@ -99,7 +100,7 @@ namespace JahroConsole.Core.Commands
                     }
                     else
                     {
-                        Debug.LogWarning("Couldn't map primitive type from string to object -> " + value);
+                        JahroLogger.LogWarning($"[{JahroLogTag.Commands}] Primitive type mapping failed — value={value}. Verify the input string is a valid representation of the target type.");
                         return;
                     }
                 }
@@ -123,7 +124,7 @@ namespace JahroConsole.Core.Commands
                     }
                     else
                     {
-                        Debug.LogWarning("Couldn't map array from string to object -> " + value);
+                        JahroLogger.LogWarning($"[{JahroLogTag.Commands}] Array mapping failed — value={value}. Expected a comma-separated list matching the element type.");
                         return;
                     }
                 }

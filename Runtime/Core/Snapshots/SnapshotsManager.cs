@@ -86,7 +86,7 @@ namespace JahroConsole.Core.Snapshots
         {
             if (_isRecording)
             {
-                Debug.LogWarning("Already recording a snapshot");
+                JahroLogger.LogWarning($"[{JahroLogTag.Snapshots}] StartSnapshot called while already recording — existing sessionId={_activeSession?.sessionId}. Call StopSnapshot first.");
                 return;
             }
 
@@ -234,7 +234,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"FlushAsync after log limit: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Log flush failed after limit — error={ex.Message}");
                 }
             });
         }
@@ -332,7 +332,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error stopping streaming snapshot: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Stop streaming snapshot failed — error={ex.Message}");
                 throw;
             }
         }
@@ -381,7 +381,7 @@ namespace JahroConsole.Core.Snapshots
             };
             updateRequest.OnFail = (error) =>
             {
-                Debug.LogError(error.ToLogString());
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Snapshot API request failed — {error.ToLogString()}");
                 onError?.Invoke(error.message);
             };
             await NetworkManager.Instance.SendRequestAsync(updateRequest);
@@ -408,7 +408,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError(ex.Message);
+                    JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Unexpected error — error={ex.GetType().Name}: {ex.Message}");
                     onError?.Invoke(ex.Message);
                 }
             }
@@ -428,7 +428,7 @@ namespace JahroConsole.Core.Snapshots
             };
             createRequest.OnFail = (error) =>
             {
-                Debug.LogError(error.ToLogString());
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Snapshot API request failed — {error.ToLogString()}");
                 onError?.Invoke(error.message);
             };
 
@@ -552,7 +552,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error processing log event: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Snapshots}] Log event processing failed — error={ex.Message}");
             }
         }
 
@@ -591,7 +591,7 @@ namespace JahroConsole.Core.Snapshots
             var viewManager = JahroViewManager.GetInstance();
             if (viewManager == null)
             {
-                Debug.LogWarning("[JahroVideo] Cannot create coroutine host: Jahro console root not found");
+                JahroLogger.LogWarning($"[{JahroLogTag.Snapshots}] Cannot create coroutine host — Jahro console root not found in scene. Ensure Jahro is initialized before starting video.");
                 return;
             }
 
@@ -622,7 +622,7 @@ namespace JahroConsole.Core.Snapshots
         {
             if (_activeSession == null)
             {
-                Debug.LogWarning("[JahroVideo] Cannot start: no active snapshot session");
+                JahroLogger.LogWarning($"[{JahroLogTag.Snapshots}] StartVideo called with no active snapshot session. Start a snapshot session first.");
                 yield break;
             }
             if (_videoRecorder == null) yield break;

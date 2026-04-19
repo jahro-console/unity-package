@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using JahroConsole.Core.Context;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Data
@@ -175,7 +176,7 @@ namespace JahroConsole.Core.Data
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"File read failed: {ex.GetType().Name} - {ex.Message}");
+                JahroLogger.LogWarning($"[{JahroLogTag.Storage}] State file read failed — error={ex.GetType().Name}: {ex.Message}. Will attempt PlayerPrefs fallback.");
             }
 
             return null;
@@ -191,7 +192,7 @@ namespace JahroConsole.Core.Data
             }
             catch (Exception ex)
             {
-                Debug.LogError($"PlayerPrefs save failed: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Storage}] PlayerPrefs save failed — error={ex.Message}. Console state will not persist this session.");
                 return false;
             }
         }
@@ -208,7 +209,7 @@ namespace JahroConsole.Core.Data
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"PlayerPrefs read failed: {ex.Message}");
+                JahroLogger.LogWarning($"[{JahroLogTag.Storage}] PlayerPrefs read failed — error={ex.Message}. Starting with empty state.");
                 return null;
             }
         }

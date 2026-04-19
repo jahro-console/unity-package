@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using JahroConsole.Core.Logging;
 using UnityEngine;
 
 namespace JahroConsole.Core.Snapshots
@@ -24,7 +25,7 @@ namespace JahroConsole.Core.Snapshots
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"[JahroVideo] Cannot determine disk space: {ex.Message}");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] Cannot determine available disk space — error={ex.Message}. Assuming unlimited.");
                 return long.MaxValue;
             }
         }

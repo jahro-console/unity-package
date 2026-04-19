@@ -7,28 +7,28 @@
                                                      "Visit <color=#17E96B>jahro.io</color> for more info.\n" +
                                                      "Feel free to reach support - <i>support@jahro.io\n</i>";
 
-        internal static readonly string LogCommandInvokeException = "Running the command <{0}> caused this exception: {1}";
+        internal static readonly string LogCommandInvokeException = "[Jahro.Commands] Command threw an unhandled exception — command={0}, error={1}. Check the method implementation for unguarded exceptions.";
 
-        internal static readonly string LogCommandCastError = "The input for the command <{0}> couldn't be mapped to this parameters {1}";
+        internal static readonly string LogCommandCastError = "[Jahro.Commands] Parameter mapping failed — command={0}, expectedParams={1}. Verify input types match the method signature.";
 
-        internal static readonly string LogCommandNotDefined = "The command <{0}> isn't defined.";
+        internal static readonly string LogCommandNotDefined = "[Jahro.Commands] Command not found — command={0}. Confirm the method has [JahroCommand] and its assembly is listed in Active Assemblies.";
 
-        internal static readonly string LogCommandMethodNotFound = "The method <{0}> couldn't be found for the command <{1}>";
+        internal static readonly string LogCommandMethodNotFound = "[Jahro.Commands] Method resolution failed — method={0}, command={1}. The method may have been renamed, removed, or is not accessible.";
 
-        internal static readonly string LogCommandRegisterObjectNullReference = "The target object is null for command <{0}>.";
+        internal static readonly string LogCommandRegisterObjectNullReference = "[Jahro.Commands] RegisterObject called with null — command={0}. Pass a valid instance; null registrations are skipped.";
 
-        internal static readonly string LogCommandNameHasDublicate = "The command <{0}> has a twin.";
+        internal static readonly string LogCommandNameHasDublicate = "[Jahro.Commands] Duplicate command name — command={0}. Command names must be unique across all registered assemblies. One registration will be ignored.";
 
-        internal static readonly string LogCommandNameHasSpacing = "The command <{0}> has a space in its name, and that's a no-go in text mode.";
+        internal static readonly string LogCommandNameHasSpacing = "[Jahro.Commands] Invalid command name — command={0}. Command names cannot contain spaces (text-mode input splits on whitespace). Use underscore or camelCase.";
 
-        internal static readonly string LogSavesParsingError = "There was an issue parsing the saves.";
+        internal static readonly string LogSavesParsingError = "[Jahro.Storage] State file parse failed. The local state file may be corrupt or written by an incompatible version. File will be reset.";
 
-        internal static readonly string LogCommandUnsupportedParamters = "Sorry, parameter {0} of type {1} isn't supported.";
+        internal static readonly string LogCommandUnsupportedParamters = "[Jahro.Commands] Unsupported parameter type — param={0}, type={1}. Supported types: bool, int, float, string, enum, Vector2, Vector3, and their arrays.";
 
-        internal static readonly string LogCommandObjectNullReference = "The target object is null.";
+        internal static readonly string LogCommandObjectNullReference = "[Jahro.Commands] Command target is null — the registered object was destroyed or garbage collected before the command executed.";
 
-        internal static readonly string LogCommandUnregisterCommandNotFound = "Can't find the command <{0}> in the group <{1}> to unregister it.";
+        internal static readonly string LogCommandUnregisterCommandNotFound = "[Jahro.Commands] Unregister failed — command={0}, group={1}. Command was not found; it may have already been unregistered.";
 
-        internal static readonly string LogWatcherNullObjectError = "Failed to watch over the object because it's null.";
+        internal static readonly string LogWatcherNullObjectError = "[Jahro.Watcher] Watch target is null — the registered object was destroyed or is not yet initialized. Call RegisterObject after the object is ready.";
     }
 }

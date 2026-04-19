@@ -6,10 +6,31 @@ namespace JahroConsole
     public static partial class Jahro
     {
         /// <summary>
+        /// Controls whether Jahro internal debug and warning logs are emitted.
+        /// When false, only errors and exceptions from JahroPackage are visible.
+        /// Defaults to true. Has no effect on Debug.Log calls from user code.
+        /// </summary>
+        public static bool DebugMode
+        {
+            get => JahroLogger.IsDebugMode;
+            set => JahroLogger.SetDebugMode(value);
+        }
+
+        /// <summary>
+        /// Logs a significant info-level event to the Jahro Console.
+        /// Gated by <see cref="DebugMode"/>.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        public static void LogInfo(string message)
+        {
+            JahroLogger.LogInfo(message);
+        }
+
+        /// <summary>
         /// Prints a message to the Jahro Console.
         /// </summary>
         /// <param name="message">The primary message to log.</param>
-        [Obsolete("Use Unity Debug.Log instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void Log(string message)
         {
             Log(message, string.Empty);
@@ -20,7 +41,7 @@ namespace JahroConsole
         /// </summary>
         /// <param name="message">The primary message.</param>
         /// <param name="details">Additional details that will be displayed when expanded.</param>
-        [Obsolete("Use Unity Debug.Log instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void Log(string message, string details)
         {
             LogDebug(message, details);
@@ -30,7 +51,7 @@ namespace JahroConsole
         /// Prints a debug-level message to the Jahro Console.
         /// </summary>
         /// <param name="message">The debug message to log.</param>
-        [Obsolete("Use Unity Debug.Log instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogDebug(string message)
         {
             LogDebug(message, string.Empty);
@@ -41,7 +62,7 @@ namespace JahroConsole
         /// </summary>
         /// <param name="message">The debug message.</param>
         /// <param name="details">Additional details that will be displayed when expanded.</param>
-        [Obsolete("Use Unity Debug.Log instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogDebug(string message, string details)
         {
             JahroLogger.Log(message, details, EJahroLogType.JahroDebug);
@@ -51,7 +72,7 @@ namespace JahroConsole
         /// Prints a warning-level message to the Jahro Console.
         /// </summary>
         /// <param name="message">The warning message to log.</param>
-        [Obsolete("Use Unity Debug.LogWarning instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogWarning(string message)
         {
             LogWarning(message, string.Empty);
@@ -62,7 +83,7 @@ namespace JahroConsole
         /// </summary>
         /// <param name="message">The warning message.</param>
         /// <param name="details">Additional details that will be displayed when expanded.</param>
-        [Obsolete("Use Unity Debug.LogWarning instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogWarning(string message, string details)
         {
             JahroLogger.Log(message, details, EJahroLogType.JahroWarning);
@@ -72,7 +93,7 @@ namespace JahroConsole
         /// Prints a formatted exception message to the Jahro Console.
         /// </summary>
         /// <param name="exception">The exception to log.</param>
-        [Obsolete("Use Unity Debug.LogException instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogException(Exception exception)
         {
             JahroLogger.Log(exception.Message, exception.StackTrace, EJahroLogType.JahroException);
@@ -83,7 +104,7 @@ namespace JahroConsole
         /// </summary>
         /// <param name="message">A custom message describing the exception.</param>
         /// <param name="exception">The exception to log.</param>
-        [Obsolete("Use Unity Debug.LogException instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogException(string message, Exception exception)
         {
             JahroLogger.Log(message, exception.StackTrace, EJahroLogType.JahroException);
@@ -93,7 +114,7 @@ namespace JahroConsole
         /// Prints an error-level message to the Jahro Console.
         /// </summary>
         /// <param name="message">The error message to log.</param>
-        [Obsolete("Use Unity Debug.LogError instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogError(string message)
         {
             LogError(message, string.Empty);
@@ -104,7 +125,7 @@ namespace JahroConsole
         /// </summary>
         /// <param name="message">The error message.</param>
         /// <param name="details">Additional details that will be displayed when expanded.</param>
-        [Obsolete("Use Unity Debug.LogError instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void LogError(string message, string details)
         {
             JahroLogger.Log(message, details, EJahroLogType.JahroError);
@@ -113,7 +134,7 @@ namespace JahroConsole
         /// <summary>
         /// Clears all logs from the Jahro Console.
         /// </summary>
-        [Obsolete("Use Unity Debug.LogClearAllLogs instead")]
+        [Obsolete("Use JahroLogger directly or Debug.Log for standard Unity logging.")]
         public static void ClearAllLogs()
         {
             JahroLogger.ClearAllLogs();

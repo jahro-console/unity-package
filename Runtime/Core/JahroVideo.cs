@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Snapshots;
 using UnityEngine;
 
@@ -34,7 +35,7 @@ namespace JahroConsole
         {
             if (!Enabled)
             {
-                Debug.LogWarning("Jahro Console disabled. Cannot start video recording");
+                JahroLogger.LogWarning($"[{JahroLogTag.Video}] StartVideoRecording called while Jahro is disabled");
                 return;
             }
             SnapshotsManager.Instance.StartVideoRecording();

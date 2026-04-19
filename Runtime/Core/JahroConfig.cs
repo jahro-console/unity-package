@@ -14,7 +14,7 @@ namespace JahroConsole
             PROD
         }
 
-        internal const Environment ENV = Environment.DEV;
+        internal const Environment ENV = Environment.PROD;
         public static readonly string CurrentVersion = "1.0.0-beta6";
 
         #endregion
@@ -83,6 +83,7 @@ namespace JahroConsole
 
         public const string LogEntryDelimiter = "J#DE";
         public const int DefaultBufferSize = 4096;
+        public const bool DebugMode = false;
 
         #endregion
 

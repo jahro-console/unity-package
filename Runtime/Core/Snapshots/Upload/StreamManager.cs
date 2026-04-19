@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using JahroConsole.Core.Context;
+using JahroConsole.Core.Logging;
 using JahroConsole.Core.Network;
 using UnityEngine;
 
@@ -65,7 +66,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Error during StreamManager shutdown: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Shutdown failed — error={ex.Message}");
                 }
             }
         }
@@ -88,7 +89,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Error during final uploads: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Final upload flush failed — error={ex.Message}");
                 }
             }
         }
@@ -180,7 +181,7 @@ namespace JahroConsole.Core.Snapshots
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Error processing upload queue: {ex.Message}");
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Upload queue processing failed — error={ex.Message}");
                 }
             }
         }
@@ -201,7 +202,7 @@ namespace JahroConsole.Core.Snapshots
 
                 request.OnFail = (error) =>
                 {
-                    Debug.LogError(error.ToLogString());
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Screenshot upload failed — screenshotId={screenshotMeta.id}, {error.ToLogString()}");
                     screenshotMeta.status = ScreenshotMeta.ScreenshotState.UploadFailed;
                     screenshotMeta.lastError = error.message;
                     ScreenshotFileUtility.SaveScreenshotMeta(screenshotMeta);
@@ -214,7 +215,7 @@ namespace JahroConsole.Core.Snapshots
                 screenshotMeta.status = ScreenshotMeta.ScreenshotState.UploadFailed;
                 screenshotMeta.lastError = ex.Message;
                 ScreenshotFileUtility.SaveScreenshotMeta(screenshotMeta);
-                Debug.LogError($"Screenshot {screenshotMeta.id} failed: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Screenshot upload exception — screenshotId={screenshotMeta.id}, error={ex.Message}");
             }
         }
 
@@ -246,7 +247,7 @@ namespace JahroConsole.Core.Snapshots
                         chunkInfo.lastError = error.message;
                         ChunkManager.UpdateChunkMeta(chunkInfo);
 
-                        Debug.LogError(error.ToLogString());
+                        JahroLogger.LogError($"[{JahroLogTag.Upload}] Chunk upload failed — chunkId={chunkInfo.chunkId}, {error.ToLogString()}");
                         var flushMsg = LogLimitFlushMessage(error, null);
                         if (flushMsg != null)
                         {
@@ -267,7 +268,7 @@ namespace JahroConsole.Core.Snapshots
                 chunkInfo.lastAttemptAt = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
                 ChunkManager.UpdateChunkMeta(chunkInfo);
 
-                Debug.LogError($"Chunk {chunkInfo.chunkId} failed: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Chunk upload exception — chunkId={chunkInfo.chunkId}, error={ex.Message}");
                 var flushMsgEx = LogLimitFlushMessage(null, ex.Message);
                 if (flushMsgEx != null)
                 {
@@ -296,7 +297,7 @@ namespace JahroConsole.Core.Snapshots
 
             _isProcessing = false;
             try { _cancellationTokenSource.Cancel(); }
-            catch (Exception ex) { Debug.LogWarning($"StreamManager cancel: {ex.Message}"); }
+            catch (Exception ex) { JahroLogger.LogWarning($"[{JahroLogTag.Upload}] Cancellation failed — error={ex.Message}"); }
 
             OnLogLimitExceeded?.Invoke(errorMessage);
         }
@@ -347,7 +348,7 @@ namespace JahroConsole.Core.Snapshots
 
                 request.OnFail = error =>
                 {
-                    Debug.LogError($"[JahroVideo] Frame upload failed: {error.ToLogString()}");
+                    JahroLogger.LogError($"[{JahroLogTag.Upload}] Video frame upload failed — videoId={videoId}, {error.ToLogString()}");
                 };
 
                 await NetworkManager.Instance.SendRequestAsync(request);
@@ -355,7 +356,7 @@ namespace JahroConsole.Core.Snapshots
             catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                Debug.LogError($"[JahroVideo] Frame batch upload error: {ex.Message}");
+                JahroLogger.LogError($"[{JahroLogTag.Upload}] Video frame batch upload exception — videoId={videoId}, error={ex.Message}");
             }
             finally
             {
