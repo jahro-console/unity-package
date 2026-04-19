@@ -98,69 +98,6 @@ namespace JahroConsole
             SnapshotsManager.Instance.CommitShadowRecording();
         }
 
-        // =====================================================================
-        // Video Recording — Diagnostics
-        // =====================================================================
-
-        /// <summary>Duration of the current video part in seconds.</summary>
-        public static float VideoRecordingDuration
-        {
-            get
-            {
-                var recorder = SnapshotsManager.Instance.VideoRecorder;
-                return recorder?.RecordingDurationSec ?? 0f;
-            }
-        }
-
-        /// <summary>Cumulative duration across all video parts in the current session.</summary>
-        public static float VideoTotalDuration
-        {
-            get
-            {
-                var recorder = SnapshotsManager.Instance.VideoRecorder;
-                return recorder?.TotalRecordingDurationSec ?? 0f;
-            }
-        }
-
-        /// <summary>Number of frames captured in the current video part.</summary>
-        public static int VideoFramesCaptured
-        {
-            get
-            {
-                var recorder = SnapshotsManager.Instance.VideoRecorder;
-                return recorder?.FramesCaptured ?? 0;
-            }
-        }
-
-        /// <summary>Total bytes written to disk for the current video part.</summary>
-        public static long VideoStorageUsedBytes
-        {
-            get
-            {
-                var recorder = SnapshotsManager.Instance.VideoRecorder;
-                return recorder?.StorageUsedBytes ?? 0;
-            }
-        }
-
-        /// <summary>Current video part index (1-based, increments each start).</summary>
-        public static int VideoPartIndex
-        {
-            get
-            {
-                var recorder = SnapshotsManager.Instance.VideoRecorder;
-                return recorder?.VideoPartIndex ?? 0;
-            }
-        }
-
-        /// <summary>Number of frames waiting to be written to disk.</summary>
-        public static int VideoWriteQueueDepth
-        {
-            get
-            {
-                var recorder = SnapshotsManager.Instance.VideoRecorder;
-                return recorder?.WriteQueueDepth ?? 0;
-            }
-        }
 
         // =====================================================================
         // Video Recording — Internal event forwarding
