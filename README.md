@@ -64,7 +64,7 @@ Capture **device logs (with stack traces), screenshots, and device metadata** in
 
 <br/>
 
-![Web Console — logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/web-logs-all.png)
+![Web Console — logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/media/web-v0426/jahroweb_replay_logs_general_2x.webp)
 
 <br/>
 
