@@ -24,11 +24,6 @@ namespace JahroConsole.Core.Snapshots
             [SerializeField] internal string deviceName;
             [SerializeField] internal string unityVersion;
             [SerializeField] internal string version;
-            // [SerializeField] internal bool hasVideo;
-            // [SerializeField] internal int videoFrameRate;
-            // [SerializeField] internal int videoResolutionWidth;
-            // [SerializeField] internal int videoResolutionHeight;
-            // [SerializeField] internal int videoJpegQuality;
         }
 
         internal Action<SnapshotSession.RemoteSnapshotInfo> OnComplete;
@@ -60,17 +55,12 @@ namespace JahroConsole.Core.Snapshots
                 tenantId = _context.TeamInfo.Id,
                 name = _session.name,
                 timezone = _session.timezone,
-                createdBy = _context.SelectedUserInfo.Id,
+                createdBy = _context.SelectedUserInfo?.Id ?? "",
                 createdAt = new DateTime(_session.dateTimeTicks).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
                 platform = Application.platform.ToString(),
                 deviceName = SystemInfo.deviceName,
                 unityVersion = Application.unityVersion,
                 version = Application.version,
-                // hasVideo = _session.videoPartsCount > 0,
-                // videoFrameRate = JahroVideoConfig.CaptureFrameRate,
-                // videoResolutionWidth = JahroVideoConfig.MaxPixelSize,
-                // videoResolutionHeight = JahroVideoConfig.MaxPixelSize,
-                // videoJpegQuality = JahroVideoConfig.JpegQuality,
             };
             return JsonUtility.ToJson(payload);
         }
@@ -78,7 +68,7 @@ namespace JahroConsole.Core.Snapshots
         internal override void FillHeaders(UnityWebRequest request)
         {
             request.SetRequestHeader("x-api-key", _context.ApiKey);
-            request.SetRequestHeader("x-user-id", _context.SelectedUserInfo.Id);
+            request.SetRequestHeader("x-user-id", _context.SelectedUserInfo?.Id ?? "");
             request.SetRequestHeader("x-log-version", "1.2");
         }
 

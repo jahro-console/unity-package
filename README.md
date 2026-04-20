@@ -1,18 +1,18 @@
-# Jahro — Unity Debugging Platform
+# Jahro — Unity debugging & session replay
 
 <div align="center">
 
 ![Jahro Interface](https://vdepoiw1jnimcohf.public.blob.vercel-storage.com/Jahro_3%201-f2rMPbdeHAvaTZaFEGHbfxIQ8hqFM0.png)
 
-**One-tap snapshots with logs, screenshots, and device info — shareable instantly.**
+**Capture logs, replay gameplay with log sync, and ship fixes faster — on real devices, without cables.**
 
 [![Unity Version](https://img.shields.io/badge/Unity-2021.3%2B-black.svg?style=flat&logo=unity)](https://unity.com)
 [![License](https://img.shields.io/badge/License-Custom-blue.svg)](https://github.com/jahro-console/unity-package/blob/main/LICENSE.md)
 
-[Getting Started](https://jahro.io/docs/getting-started?utm_source=github&utm_medium=readme&utm_campaign=unity_client) •
-[Website](https://jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client) •
-[Documentation](https://jahro.io/docs?utm_source=github&utm_medium=readme&utm_campaign=unity_client) •
-[Web Console](https://console.jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client) •
+[Getting Started](https://jahro.io/docs/getting-started?utm_source=github&utm_medium=readme&utm_campaign=unity_client) ·
+[Website](https://jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client) ·
+[Documentation](https://jahro.io/docs?utm_source=github&utm_medium=readme&utm_campaign=unity_client) ·
+[Web Console](https://console.jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client) ·
 [Discord](https://discord.gg/txcHFRDeV4)
 
 </div>
@@ -21,81 +21,80 @@
 
 ## Contents
 
-- [The Problem](#the-problem)
-- [The Solution](#the-solution)
-- [Core Features](#core-features)
-  - [Snapshots — Complete Context in One Tap](#snapshots--complete-context-in-one-tap)
-  - [Runtime Commands — Control Without Rebuilding](#runtime-commands--control-without-rebuilding)
-  - [Variable Watcher — See Values Live](#variable-watcher--see-values-live)
-- [Who Is This For?](#who-is-this-for)
-  - [Unity Developers](#unity-developers)
-  - [QA Testers](#qa-testers)
-  - [Tech Leads](#tech-leads)
-  - [Game Designers](#game-designers)
-- [Quick Start](#quick-start)
-- [Key Features at a Glance](#key-features-at-a-glance)
-- [Documentation & Resources](#documentation--resources)
-- [Community & Support](#community--support)
+- [Why Jahro](#why-teams-use-jahro)
+- [Core features](#core-features)
+  - [Snapshots — full context in one action](#snapshots--full-context-in-one-action)
+  - [Session Replay — watch the repro with logs on the timeline](#session-replay--watch-the-repro-with-logs-on-the-timeline)
+  - [Runtime commands — change the game without rebuilding](#runtime-commands--change-the-game-without-rebuilding)
+  - [Variable watcher — inspect values live](#variable-watcher--inspect-values-live)
+- [Who it’s for](#who-its-for)
+- [Quick start](#quick-start)
+- [Features at a glance](#features-at-a-glance)
+- [Documentation & resources](#documentation--resources)
+- [Community & support](#community--support)
 - [Requirements](#requirements)
 - [License](#license)
 
 ---
 
-## The Problem
+## Why Jahro
 
-**For Developers:** Tired of chasing QA for logs and reproduction steps? Spending hours debugging mobile-specific issues that "work in Editor"?
+**Developers:** You need enough context to reproduce device-only issues without chasing QA for steps, cables, or partial logs.
 
-**For QA:** Bugs dismissed as "can't reproduce"? No way to capture logs without cables, ADB, or asking devs for help?
+**QA:** You need bug reports that stick — not “can’t reproduce” because the evidence never left the device.
 
-**The reality:** 50-70% of bug reports lack sufficient context on first report. The average "can't reproduce" bug wastes 2-4 hours of developer time.
+Jahro is a Unity package plus web console. Your team captures **logs, screenshots, device metadata**, and optional **session replay** from iOS and Android builds. Everything lands in a **shareable link** so engineering can review the same artifact async.
 
----
-
-## The Solution
-
-Jahro helps Unity game teams **fix bugs faster** by enabling anyone to capture complete debug context — logs, screenshots, device info — directly on mobile devices and share it instantly with developers.
-
-**No cables. No ADB. No back-and-forth.**
-
-### What Makes Jahro Different
-
-|                             | Jahro | SRDebugger & Lunar | Sentry & Crashlytics |
-| --------------------------- | :---: | :----------------: | :------------------: |
-| **On-device logs**          |  ✅   |         ✅         |          ❌          |
-| **Cloud sharing**           |  ✅   |         ❌         |  ✅ (crashes only)   |
-| **QA-friendly** (no cables) |  ✅   |   ⚠️ Local only    |          ❌          |
-| **Runtime commands**        |  ✅   |         ✅         |          ❌          |
-| **Real-time debugging**     |  ✅   |         ✅         |          ❌          |
-| **Shareable web links**     |  ✅   |         ❌         |          ✅          |
-
-**The key difference:** Jahro is the only tool that bridges QA bug discovery and developer reproduction with shareable, complete context.
+**No ADB ritual. No Xcode tether. No “send me a video in chat.”**
 
 ---
 
-## Core Features
+## Core features
 
-### Snapshots — Complete Context in One Tap
+### Snapshots — full context in one action
 
-![Web Console Logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/web-logs-all.png)
+Capture **device logs (with stack traces), screenshots, and device metadata** in a session. Share a web link so the team reviews the same snapshot in the browser.
 
-Capture full device logs (with stack traces), screenshots, and device metadata in a session. Share a web link instantly.
+**Two capture modes:**
 
-**Two modes:**
+- **Recording** — Buffer locally, upload when you’re ready.
+- **Streaming** — Push logs on an interval so the team can watch a repro unfold in near real time.
 
-- **Recording Mode**: Capture locally, upload when ready
-- **Streaming Mode**: Real-time log streaming (~5-second intervals) — watch QA reproduce the bug live
+> **“The tester sends a snapshot. You finish your task and review what went wrong with all logs in hand.”** — Andriy, Unity developer
 
-> **"The tester says that the game is broken and sends a snapshot. You can finish your task and calmly review what went wrong with ALL logs in hands."** — Andriy, Unity Developer
+<br/>
 
-**Why this matters:** No more "can you send logs?" messages. QA captures everything in one tap. Dev opens link and sees full context. Bug gets fixed instead of dismissed.
+![Web Console — logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/web-logs-all.png)
+
+<br/>
 
 ---
 
-### Runtime Commands — Control Without Rebuilding
+### Session Replay — watch the repro with logs on the timeline
 
-![Unity Visual Commands](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-visual-full.png)
+**Session Replay** records from **inside your Unity build** on Android and iOS — no OS screen recorder, no cable. Frames are captured with **async GPU readback**, encoded for upload, and **time-aligned with your log stream**. In the web console you **scrub video and see log lines highlighted at the frame they fired**, so you can walk from stack trace to what the player was doing.
 
-Execute C# methods at runtime through visual UI or text commands. Change game parameters, skip levels, grant items, trigger events — **without waiting for rebuilds**.
+**Modes (pick the workflow that fits the bug):**
+
+- **Manual Replay** — Start and stop recording from the in-game Jahro UI when you see the issue.
+- **Autostart Replay** — Begin recording when the session starts (good for directed test passes).
+- **Shadow Replay** — Keep a rolling buffer so when something happens once in twenty runs, you can still **commit** the last segment into the snapshot after the fact.
+
+Performance is designed for real devices: capture runs at a **modest frame rate** with async readback so you’re not blocking the game thread for marketing-grade video. See the docs for current defaults and tuning.
+
+<br/>
+
+![Web console — Session Replay with logs](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/media/web-v0426/jahroweb_replay_logs_player_2x.webp)
+
+<br/>
+
+**Docs:** [Session Replay (Unity)](https://jahro.io/docs/unity/replay?utm_source=github&utm_medium=readme&utm_campaign=unity_client)
+
+---
+
+### Runtime commands — change the game without rebuilding
+
+Expose **C# methods** to a visual button UI or a text command line with autocomplete. Skip levels, grant currency, trigger events — **without a rebuild** every time someone tweaks a value.
 
 ```csharp
 [JahroCommand]
@@ -104,127 +103,100 @@ public void AddGold(int amount) {
 }
 ```
 
-**Visual Mode:** Button-based interface — perfect for QA and designers. No memorization required.
+**Visual mode** — Buttons for QA and designers. **Text mode** — CLI speed for day-to-day dev.
 
-**Text Mode:** CLI with autocomplete — for power users who want speed.
+<br/>
 
-**Why this matters:** Stop wasting 5-15 minutes per rebuild when testing balance changes. Iterate instantly on any device.
+![Unity — visual commands](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-visual-full.png)
+
+<br/>
 
 ---
 
-### Variable Watcher — See Values Live
+### Variable watcher — inspect values live
 
-![Unity Watcher](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-watcher-full.png)
-
-Monitor variable values in real-time without polluting logs with `Debug.Log` statements.
+Watch fields and properties **update in real time** without spamming `Debug.Log`.
 
 ```csharp
 [JahroWatch]
 public int PlayerHealth { get; set; }
 ```
 
-**Why this matters:** Track values frame-by-frame without performance impact or log spam. Perfect for tuning gameplay mechanics.
+<br/>
+
+![Unity — variable watcher](https://jahro-snapshots-bucket.fra1.digitaloceanspaces.com/promo/screenshots/unity-watcher-full.png)
+
+<br/>
 
 ---
 
-## Who Is This For?
+## Who it’s for
 
-### Unity Developers
-
-Stop spending hours debugging mobile-specific issues. See exactly what happened on any device without cables or ADB.
-
-- ✅ Reproduce bugs in minutes instead of hours
-- ✅ Get complete context from QA automatically
-- ✅ Review bugs async — no interruptions to your flow
-- ✅ Debug on any device
-
-### QA Testers
-
-Send complete bug reports in one tap. No more "can't reproduce" — devs get all logs, screenshots, and device info automatically.
-
-- ✅ Capture everything developers need without technical knowledge or ADB/Xcode
-- ✅ Triple-tap to open, tap to capture, share link — done
-- ✅ Your bugs get believed and fixed faster
-- ✅ Work independently without asking devs for setup help
-
-### Tech Leads
-
-Standardize debugging across all projects. Stop rebuilding debug tools from scratch.
-
-- ✅ Faster bug resolution = more stable releases
-- ✅ QA works independently = devs focus on features
-- ✅ Clear ROI: Save 10-15 hours/week per developer
-
-### Game Designers
-
-Change game parameters at runtime without asking devs to rebuild.
-
-- ✅ Test balance changes instantly
-- ✅ Iterate independently without blocking developers
-- ✅ Visual command interface — no coding required
-- ✅ See key values realtime directly inside Game view
+| Role                 | What you get                                                                |
+| -------------------- | --------------------------------------------------------------------------- |
+| **Unity developers** | Repro-friendly context from any build; async review from one link.          |
+| **QA**               | One-tap capture, shareable artifacts, no terminal.                          |
+| **Tech leads**       | One workflow across projects instead of rebuilding bespoke debug menus.     |
+| **Designers**        | Runtime tweaks via visual commands without blocking engineering for builds. |
 
 ---
 
-## Quick Start
+## Quick start
 
-### Installation
+### 1. Add the package (UPM)
 
-1. **Add Package via Unity Package Manager**
+```
+https://github.com/jahro-console/unity-package.git
+```
 
-   ```
-   https://github.com/jahro-console/unity-package.git
-   ```
+### 2. Create a project and API key
 
-2. **Get Your API Key**
+Register at [jahro.io](https://jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client), create a project, and copy your API key.
 
-   - Register at [jahro.io](https://jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client)
-   - Create a project and copy your API key
+### 3. Configure Unity
 
-3. **Configure in Unity**
+Open **Tools → Jahro Settings** and paste the API key.
 
-   - Go to **Tools > Jahro Settings**
-   - Paste your API key
+### 4. Add a command (optional but quick to verify)
 
-4. **Add Your First Command**
+```csharp
+[JahroCommand]
+public void GiveCoins(int amount) {
+    coins += amount;
+}
+```
 
-   ```csharp
-   [JahroCommand]
-   public void GiveCoins(int amount) {
-       coins += amount;
-   }
-   ```
+### 5. Run on device or in Play Mode
 
-5. **Build & Test**
-   - Build to your device or enter Play Mode in Unity
-   - Triple-tap the screen to open Jahro
-   - Execute your command or capture a snapshot
+Build to a device or enter Play Mode. **Triple-tap** to open Jahro, run a command, or capture a snapshot / replay per your [docs](https://jahro.io/docs?utm_source=github&utm_medium=readme&utm_campaign=unity_client).
 
 ---
 
-## Key Features at a Glance
+## Features at a glance
 
-- ✅ **Snapshots** — One-tap capture of logs + screenshots + device metadata
-- ✅ **Shareable Web Links** — QA sends link, dev reviews in browser
-- ✅ **Runtime Commands** — Execute C# methods with visual or text interface
-- ✅ **Variable Watcher** — Monitor values in real-time without Debug.Log spam
-- ✅ **Recording & Streaming Modes** — Capture locally or stream live to team
-- ✅ **Cross-Platform** — iOS, Android (works on low-end devices)
-- ✅ **Minimal Integration** — Attribute-based API
-- ✅ **Production-Safe** — Auto-disable in production builds
-- ✅ **Team Collaboration** — Projects, members, roles, shared sessions
+- **Snapshots** — Logs, screenshots, device metadata, shareable web links
+- **Session Replay** — In-engine replay on device; logs synced to the timeline in the dashboard
+- **Streaming & recording** — Local buffer or live log streaming for your workflow
+- **Runtime commands** — Attribute-based C# commands, visual or text UI
+- **Variable watcher** — Live values without log noise
+- **Cross-platform** — iOS and Android (including lower-end test devices)
+- **Light integration** — Attributes and settings; production-safe defaults
+- **Teams** — Projects, members, roles, shared sessions
 
 ---
 
-## Documentation & Resources
+## Documentation & resources
 
-- 📖 **[Full Documentation](https://jahro.io/docs?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — Complete guides and API reference
-- 🚀 **[Getting Started Guide](https://jahro.io/docs/getting-started?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — Step-by-step installation
-- 📚 **[Snapshots Guide](https://jahro.io/docs/unity/snapshots?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — Learn snapshot workflows
-- ⚡ **[Commands Guide](https://jahro.io/docs/unity/commands?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — Runtime commands deep-dive
-- 👁️ **[Watcher Guide](https://jahro.io/docs/unity/watcher?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — Variable watching tutorial
-- 🖥️ **[Web Console](https://console.jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — Review snapshots in browser
-- 🗺️ **[Roadmap](https://jahro.io/roadmap?utm_source=github&utm_medium=readme&utm_campaign=unity_client)** — See what's coming next
+| Resource            | Link                                                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Docs home**       | [jahro.io/docs](https://jahro.io/docs?utm_source=github&utm_medium=readme&utm_campaign=unity_client)                     |
+| **Getting started** | [Getting started](https://jahro.io/docs/getting-started?utm_source=github&utm_medium=readme&utm_campaign=unity_client)   |
+| **Session Replay**  | [Unity Session Replay](https://jahro.io/docs/unity/replay?utm_source=github&utm_medium=readme&utm_campaign=unity_client) |
+| **Snapshots**       | [Snapshots](https://jahro.io/docs/unity/snapshots?utm_source=github&utm_medium=readme&utm_campaign=unity_client)         |
+| **Commands**        | [Commands](https://jahro.io/docs/unity/commands?utm_source=github&utm_medium=readme&utm_campaign=unity_client)           |
+| **Watcher**         | [Watcher](https://jahro.io/docs/unity/watcher?utm_source=github&utm_medium=readme&utm_campaign=unity_client)             |
+| **Web console**     | [console.jahro.io](https://console.jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client)               |
+| **Roadmap**         | [Roadmap](https://jahro.io/roadmap?utm_source=github&utm_medium=readme&utm_campaign=unity_client)                        |
 
 ---
 
@@ -232,26 +204,18 @@ Change game parameters at runtime without asking devs to rebuild.
 
 ---
 
-## Community & Support
+## Community & support
 
-### Get Help
-
-- 💬 **[Discord Community](https://discord.gg/txcHFRDeV4)** — Chat with other users and the team
-- 🐛 **[GitHub Issues](https://github.com/jahro-console/unity-package/issues)** — Report bugs or request features
-- 📧 **[Email Support](mailto:support@jahro.com)** — Direct support for Pro users
+- **Discord:** [discord.gg/txcHFRDeV4](https://discord.gg/txcHFRDeV4)
+- **Issues & feature requests:** [GitHub Issues](https://github.com/jahro-console/unity-package/issues)
+- **Email (Pro):** [support@jahro.com](mailto:support@jahro.com)
 
 ---
 
 ## Requirements
 
-**Unity Version:**
-
-- Unity 2021.3 LTS or later
-- Unity 6 (recommended)
-
-**Account:**
-
-- Free account at [jahro.io](https://jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client) for cloud features
+- **Unity:** 2021.3 LTS or later (Unity 6 recommended)
+- **Account:** Free account at [jahro.io](https://jahro.io?utm_source=github&utm_medium=readme&utm_campaign=unity_client) for cloud-backed features
 
 ---
 
@@ -260,5 +224,3 @@ Change game parameters at runtime without asking devs to rebuild.
 This plugin is distributed under a [custom license](https://github.com/jahro-console/unity-package/blob/main/LICENSE.md).
 
 © 2026 Oleksii Bulat. All rights reserved.
-
----

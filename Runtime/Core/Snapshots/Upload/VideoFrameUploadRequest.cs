@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using JahroConsole.Core.Context;
 using JahroConsole.Core.Network;
@@ -9,6 +10,19 @@ namespace JahroConsole.Core.Snapshots
 {
     internal class VideoFrameUploadRequest : RequestBase, IDisposable
     {
+        [Serializable]
+        internal class VideoFrameUploadPayload
+        {
+            [SerializeField] internal string videoId;
+            [SerializeField] internal string videoFps;
+            [SerializeField] internal string frameRange;
+            [SerializeField] internal string frameCount;
+            [SerializeField] internal string uploadMode;
+            [SerializeField] internal string videoStatus;
+            [SerializeField] internal string totalFrames;
+            [SerializeField] internal string batchTimestamp;
+        }
+
         [Serializable]
         internal class VideoFrameUploadResponse
         {
@@ -47,11 +61,32 @@ namespace JahroConsole.Core.Snapshots
             _totalFrames = totalFrames;
         }
 
-        internal override RequestType GetRequestType() => RequestType.POST;
+        internal override RequestType GetRequestType() => RequestType.POST_MULTIPART;
 
         internal override string GetURL()
         {
             return $"{JahroConfig.HostUrl}/snapshots/{_session.snapshotId}/videos";
+        }
+
+        internal override List<IMultipartFormSection> FormDataMultipart()
+        {
+            if (!File.Exists(_zipFilePath))
+                throw new FileNotFoundException("ZIP package not found", _zipFilePath);
+
+            string filename = Path.GetFileName(_zipFilePath);
+            var formData = new List<IMultipartFormSection>
+            {
+                new MultipartFormDataSection("videoId", _videoId),
+                new MultipartFormDataSection("videoFps", _context.VideoConfig.frameRate.ToString()),
+                new MultipartFormDataSection("frameRange", $"{_fromFrame}-{_toFrame}"),
+                new MultipartFormDataSection("frameCount", _frameCount.ToString()),
+                new MultipartFormDataSection("uploadMode", _uploadMode),
+                new MultipartFormDataSection("videoStatus", _isFinal ? "final" : "open"),
+                new MultipartFormDataSection("totalFrames", _totalFrames.ToString()),
+                new MultipartFormDataSection("batchTimestamp", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")),
+                new MultipartFormFileSection("file", File.ReadAllBytes(_zipFilePath), filename, "application/zip")
+            };
+            return formData;
         }
 
         internal override void FillHeaders(UnityWebRequest request)
@@ -59,31 +94,8 @@ namespace JahroConsole.Core.Snapshots
             base.FillHeaders(request);
             request.SetRequestHeader("x-api-key", _context.ApiKey);
             request.SetRequestHeader("x-user-id", _context.SelectedUserInfo?.Id ?? "");
-            request.SetRequestHeader("Accept", "application/json");
-
-            request.SetRequestHeader("X-Video-Id", _videoId);
-            request.SetRequestHeader("X-Video-Fps", _context.VideoConfig.frameRate.ToString());
-            request.SetRequestHeader("X-Frame-Range", $"{_fromFrame}-{_toFrame}");
-            request.SetRequestHeader("X-Frame-Count", _frameCount.ToString());
-            request.SetRequestHeader("X-Upload-Mode", _uploadMode);
-            request.SetRequestHeader("X-Video-Status", _isFinal ? "final" : "open");
-            request.SetRequestHeader("X-Video-Total-Frames", _totalFrames.ToString());
-            request.SetRequestHeader("X-Batch-Timestamp",
-                DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+            request.SetRequestHeader("Content-Encoding", "gzip");
         }
-
-        internal override UploadHandler GetUploadHandler()
-        {
-            if (!File.Exists(_zipFilePath))
-                throw new FileNotFoundException("ZIP package not found", _zipFilePath);
-
-            return new UploadHandlerFile(_zipFilePath)
-            {
-                contentType = GetContentType()
-            };
-        }
-
-        internal override string GetContentType() => "application/zip";
 
         protected override void OnRequestComplete(string result)
         {
