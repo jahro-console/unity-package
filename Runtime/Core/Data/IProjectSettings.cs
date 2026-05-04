@@ -14,6 +14,8 @@ namespace JahroConsole.Core.Data
         }
         public bool JahroEnabled { get; set; }
 
+        public bool JahroOpenButtonEnabled { get; set; }
+
         public bool UseLaunchKeyboardShortcut { get; set; }
 
         public bool UseLaunchTapArea { get; set; }

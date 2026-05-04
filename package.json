@@ -1,6 +1,6 @@
 {
   "name": "io.jahro.console",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "displayName": "Jahro",
   "description": "Unity debugging platform that captures complete device logs, session replays, screenshots, and metadata in one tap. Execute runtime commands, watch variables live, and share debug sessions instantly with your team via web links.",
   "unity": "2021.1",

@@ -36,6 +36,11 @@ namespace JahroConsole
 
         /// <summary>
         /// Confirms if the Jahro Console's Launch button is currently enabled.
+        /// Initial value is taken from <see cref="JahroProjectSettings.JahroOpenButtonEnabled"/>
+        /// at startup, and can be overridden at runtime via
+        /// <see cref="EnableLaunchButton"/> / <see cref="DisableLaunchButton"/>.
+        /// When false, the floating Open button is never shown — Jahro can still be opened
+        /// via Launch Key, Mobile Tap, or <see cref="ShowConsoleView"/>.
         /// </summary>
         /// <value></value>
         public static bool IsLaunchButtonEnabled { get; private set; } = true;
@@ -106,6 +111,8 @@ namespace JahroConsole
                 JahroLogger.LogInfo($"[{JahroLogTag.Core}] Jahro disabled in this build — autoDisableInRelease={projectSettings.AutoDisableInRelease}, isDebugBuild={Debug.isDebugBuild}");
                 return;
             }
+
+            IsLaunchButtonEnabled = projectSettings.JahroOpenButtonEnabled;
 
             JahroLogger.Instance.StartCatching();
 
@@ -194,7 +201,9 @@ namespace JahroConsole
         }
 
         /// <summary>
-        /// Enables the Jahro Console's Launch button.
+        /// Enables the Jahro Console's Launch button and makes it visible immediately
+        /// when the main window is closed. Use this to override the
+        /// <c>Enable Open Button</c> project setting at runtime.
         /// </summary>
         public static void EnableLaunchButton()
         {
@@ -204,10 +213,15 @@ namespace JahroConsole
                 return;
             }
             IsLaunchButtonEnabled = true;
+            if (_viewManager != null && !_viewManager.IsWindowOpen() && !_viewManager.IsOpenButtonVisible())
+            {
+                _viewManager.ShowLaunchButton();
+            }
         }
 
         /// <summary>
-        /// Disables the Jahro Console's Launch button.
+        /// Disables the Jahro Console's Launch button and hides it immediately if visible.
+        /// Jahro can still be opened via Launch Key, Mobile Tap, or <see cref="ShowConsoleView"/>.
         /// </summary>
         public static void DisableLaunchButton()
         {

@@ -24,6 +24,11 @@ namespace JahroConsole.Editor
         [MenuItem("Tools/Jahro Settings")]
         public static void ShowWindow()
         {
+            if (Application.isBatchMode)
+            {
+                return;
+            }
+
             JahroEditorView wnd = GetWindow<JahroEditorView>(false, "Jahro Settings", true);
             wnd.titleContent = new GUIContent("Jahro Settings");
             wnd.minSize = new Vector2(300, 300);
@@ -34,6 +39,11 @@ namespace JahroConsole.Editor
 
         public async void CreateGUI()
         {
+            if (m_VisualTreeAsset == null)
+            {
+                return;
+            }
+
             _controller = new JahroEditorController();
             SetupControllerEvents();
 
@@ -75,7 +85,8 @@ namespace JahroConsole.Editor
             _versionButton.clicked += () => Application.OpenURL(JahroConfig.ChangelogUrl);
 
             var projectPageLink = root.Q<Button>("ProjectPageLink");
-            projectPageLink.clicked += () => Application.OpenURL("https://console.jahro.io");
+            projectPageLink.clicked += () => Application.OpenURL(
+                "https://console.jahro.io?utm_source=unity_editor&utm_medium=welcome&utm_campaign=signup");
         }
 
         private void SetupViews(VisualElement root)
@@ -175,13 +186,13 @@ namespace JahroConsole.Editor
             if (response.updateRequired)
             {
                 _versionLabel.style.display = DisplayStyle.Flex;
-                _versionLabel.text = "Please update Jahro to the latest version.";
+                _versionLabel.text = "Update required — click the version to see the changelog.";
                 _versionButton.style.backgroundColor = new Color(1, 0.41f, 0.41f);
             }
             else if (response.updateRecommended)
             {
                 _versionLabel.style.display = DisplayStyle.Flex;
-                _versionLabel.text = "There is a new version available.";
+                _versionLabel.text = "New version available — click to view the changelog.";
                 _versionButton.style.backgroundColor = new Color(1, 1, 0.41f);
             }
             else

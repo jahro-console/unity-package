@@ -19,9 +19,17 @@ namespace JahroConsole.Editor
 
         private static void onProjectChanged()
         {
-            bool isSettingsFileExists = JahroProjectSettings.isSettingsFileExists();
+            if (Application.isBatchMode || Application.isPlaying)
+            {
+                return;
+            }
+
+            string assetPath = $"{JahroConfig.ProjectResourcesFolder}/{JahroConfig.ProjectSettingFile}.asset";
+            bool settingsExisted = File.Exists(assetPath);
+
             ValidateSettingsFile(JahroProjectSettings.Load());
-            if (!isSettingsFileExists && Application.isPlaying == false)
+
+            if (!settingsExisted)
             {
                 JahroEditorView.isFreshInstall = true;
                 JahroEditorView.ShowWindow();
@@ -32,6 +40,12 @@ namespace JahroConsole.Editor
         {
 #if UNITY_EDITOR
             string assetPath = $"{JahroConfig.ProjectResourcesFolder}/{JahroConfig.ProjectSettingFile}.asset";
+
+            if (File.Exists(assetPath))
+            {
+                return settings ?? AssetDatabase.LoadAssetAtPath<JahroProjectSettings>(assetPath);
+            }
+
             if (settings == null)
             {
                 settings = JahroProjectSettings.CreateDefault();

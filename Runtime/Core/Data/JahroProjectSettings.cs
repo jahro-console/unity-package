@@ -14,6 +14,8 @@ namespace JahroConsole.Core.Data
 
         [SerializeField]
         private bool _jahroEnabled;
+        [SerializeField]
+        private bool _jahroOpenButtonEnabled;
 
         [SerializeField]
         private bool _useLaunchKeyboardShortcut;
@@ -43,6 +45,19 @@ namespace JahroConsole.Core.Data
                 if (_jahroEnabled != value)
                 {
                     _jahroEnabled = value;
+                    NotifySettingsChanged();
+                }
+            }
+        }
+
+        public bool JahroOpenButtonEnabled
+        {
+            get => _jahroOpenButtonEnabled;
+            set
+            {
+                if (_jahroOpenButtonEnabled != value)
+                {
+                    _jahroOpenButtonEnabled = value;
                     NotifySettingsChanged();
                 }
             }
@@ -168,6 +183,7 @@ namespace JahroConsole.Core.Data
             var settings = ScriptableObject.CreateInstance<JahroProjectSettings>();
             settings._APIKey = "";
             settings._jahroEnabled = true;
+            settings._jahroOpenButtonEnabled = true;
             settings._useLaunchKeyboardShortcut = true;
             settings._useLaunchTapArea = true;
             settings._activeAssemblies = new List<string>();

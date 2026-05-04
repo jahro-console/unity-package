@@ -26,6 +26,7 @@ namespace JahroConsole.Editor
         private Button _accountSettingsButton;
         private Toggle _jahroEnableToggle;
         private Toggle _autoDisableToggle;
+        private Toggle _openButtonEnableToggle;
         private EnumField _launchKeyField;
         private Toggle _keyboardShortcutsToggle;
         private Toggle _mobileTapAreaToggle;
@@ -60,6 +61,7 @@ namespace JahroConsole.Editor
             var scrollView = settingsTab.Q<ScrollView>();
             _jahroEnableToggle = scrollView.Q<Toggle>("JahroEnableToggle");
             _autoDisableToggle = scrollView.Q<Toggle>("AutoDisableToggle");
+            _openButtonEnableToggle = scrollView.Q<Toggle>("OpenButtonEnableToggle");
             _keyboardShortcutsToggle = scrollView.Q<Toggle>("KeyboardShortcutsToggle");
             _mobileTapAreaToggle = scrollView.Q<Toggle>("MobileTapAreaToggle");
             _launchKeyField = scrollView.Q<EnumField>("LaunchKeyPicker");
@@ -185,6 +187,7 @@ namespace JahroConsole.Editor
             // Set initial values
             _jahroEnableToggle.value = _projectSettings.JahroEnabled;
             _autoDisableToggle.value = _projectSettings.AutoDisableInRelease;
+            _openButtonEnableToggle.value = _projectSettings.JahroOpenButtonEnabled;
             _keyboardShortcutsToggle.value = _projectSettings.UseLaunchKeyboardShortcut;
             _mobileTapAreaToggle.value = _projectSettings.UseLaunchTapArea;
             _launchKeyField.value = _projectSettings.LaunchKey;
@@ -199,6 +202,8 @@ namespace JahroConsole.Editor
                 _projectSettings.JahroEnabled = evt.newValue);
             _autoDisableToggle.RegisterValueChangedCallback(evt =>
                 _projectSettings.AutoDisableInRelease = evt.newValue);
+            _openButtonEnableToggle.RegisterValueChangedCallback(evt =>
+                _projectSettings.JahroOpenButtonEnabled = evt.newValue);
             _keyboardShortcutsToggle.RegisterValueChangedCallback(evt =>
                 _projectSettings.UseLaunchKeyboardShortcut = evt.newValue);
             _mobileTapAreaToggle.RegisterValueChangedCallback(evt =>

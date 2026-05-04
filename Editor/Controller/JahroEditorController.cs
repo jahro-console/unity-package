@@ -68,7 +68,7 @@ namespace JahroConsole.Editor
             if (string.IsNullOrEmpty(apiKey))
             {
                 SetState(EditorState.Welcome);
-                OnValidationComplete?.Invoke(false, $"API key is required");
+                OnValidationComplete?.Invoke(false, "Paste your API key to connect this project.");
                 return;
             }
 
@@ -79,7 +79,7 @@ namespace JahroConsole.Editor
                     (error) =>
                     {
                         SetState(EditorState.Welcome);
-                        OnValidationComplete?.Invoke(false, $"API key error: {error.message}");
+                        OnValidationComplete?.Invoke(false, BuildValidationFailureMessage(error?.message));
                     }
                 );
             }
@@ -88,6 +88,16 @@ namespace JahroConsole.Editor
                 SetState(EditorState.Welcome);
                 OnLoadingError?.Invoke(ex.Message);
             }
+        }
+
+        private static string BuildValidationFailureMessage(string serverMessage)
+        {
+            const string fallback = "We couldn't connect with that API key. Double-check it on console.jahro.io or try again.";
+            if (string.IsNullOrEmpty(serverMessage))
+            {
+                return fallback;
+            }
+            return $"{fallback} ({serverMessage})";
         }
 
         private async Task PerformInitializationAsync()

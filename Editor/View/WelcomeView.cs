@@ -19,7 +19,7 @@ namespace JahroConsole.Editor
             _keyInput = root.Q<TextField>("key-input");
             _errorLabel = root.Q<Label>("KeyErrorLabel");
             _validateButton = root.Q<Button>("ValidateKey");
-            _validateButton.text = "Submit";
+            _validateButton.text = "Connect";
 
             _errorLabel.style.display = DisplayStyle.None;
 
@@ -62,13 +62,13 @@ namespace JahroConsole.Editor
         {
             _validateButton.SetEnabled(false);
 
-            _validateButton.text = "Validating...";
+            _validateButton.text = "Connecting…";
         }
 
         private void StopLoadingAnimation()
         {
             _validateButton.SetEnabled(true);
-            _validateButton.text = "Submit";
+            _validateButton.text = "Connect";
         }
 
         public void Show()
